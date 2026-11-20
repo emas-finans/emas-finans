@@ -1,4 +1,4 @@
-const CACHE_NAME = 'emas-finans-pwa-v4';
+const CACHE_NAME = 'emas-finans-pwa-v5';
 const ASSETS = [
   './',
   './index.html',
@@ -8,8 +8,9 @@ const ASSETS = [
 ];
 
 self.addEventListener('install', (event) => {
+  self.skipWaiting();
   event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => cache.addAll(ASSETS)).then(() => self.skipWaiting())
+    caches.open(CACHE_NAME).then((cache) => cache.addAll(ASSETS))
   );
 });
 
@@ -27,7 +28,7 @@ self.addEventListener('fetch', (event) => {
     return;
   }
   event.respondWith(
-    fetch(event.request)
+    fetch(event.request, { cache: 'no-cache' })
       .then((response) => {
         const copy = response.clone();
         caches.open(CACHE_NAME).then((cache) => cache.put(event.request, copy)).catch(() => {});

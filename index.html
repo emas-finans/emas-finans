@@ -2800,301 +2800,9 @@
       showAuthError('');
       showAuthNotice('');
 
-      // Aktif oturumda her tıklama/yazma ve sekme dönüşünde 24 saatlik sayacı kontrol et & tazele
-      ['click', 'keydown', 'touchstart', 'change'].forEach(evName => {
-        document.addEventListener(evName, () => {
-          if (activeAuthSession.unlocked) touchSessionActivity(false);
-        }, { passive: true });
-      });
-
-      document.addEventListener('visibilitychange', () => {
-        if (document.visibilityState === 'visible' && activeAuthSession.unlocked) {
-          touchSessionActivity(true);
-        }
-      });
-
-      // Giriş & Kurulum Ekranı Etkileşimleri
-      document.getElementById('btnToggleLoginPwd').addEventListener('click', () => {
-        const inp = document.getElementById('loginPassword');
-        const isPwd = inp.type === 'password';
-        inp.type = isPwd ? 'text' : 'password';
-        document.getElementById('btnToggleLoginPwd').textContent = isPwd ? 'Gizle' : 'Şifreyi Göster';
-      });
-
-      document.getElementById('btnToggleSetupPwd').addEventListener('click', () => {
-        const p1 = document.getElementById('setupPass1');
-        const p2 = document.getElementById('setupPass1Confirm');
-        const isPwd = p1.type === 'password';
-        p1.type = isPwd ? 'text' : 'password';
-        p2.type = isPwd ? 'text' : 'password';
-        document.getElementById('btnToggleSetupPwd').textContent = isPwd ? 'Gizle' : 'Göster';
-      });
-
-      document.getElementById('setupEnableUser2').addEventListener('change', (e) => {
-        document.getElementById('setupUser2Fields').classList.toggle('hidden', !e.target.checked);
-      });
-
-      document.getElementById('btnSwitchToSetup').addEventListener('click', () => switchAuthMode('SETUP'));
-      document.getElementById('btnSwitchToLogin').addEventListener('click', () => switchAuthMode('LOGIN'));
-
-      document.getElementById('btnToggleLoginCloudBox').addEventListener('click', () => {
-        document.getElementById('loginCloudConnectBox').classList.toggle('hidden');
-      });
-
-      document.getElementById('btnConnectCloudFromLogin').addEventListener('click', async () => {
-        showAuthError('');
-        let rawInput = document.getElementById('loginCloudInput').value.trim();
-        if (!rawInput) {
-          showAuthError('Lütfen WhatsApp davet bağlantısını veya Firebase adresini yapıştırın.');
-          return;
-        }
-        try {
-          if (rawInput.includes('#woka_sync=')) {
-            const encoded = decodeURIComponent(rawInput.split('#woka_sync=')[1].trim());
-            const decodedJson = decodeURIComponent(escape(atob(encoded)));
-            const incoming = JSON.parse(decodedJson);
-            cloudConfig.dbUrl = incoming.dbUrl || '';
-            cloudConfig.roomKey = incoming.roomKey || 'emas_woka_ortak_kasa';
-            cloudConfig.authSecret = incoming.authSecret || '';
-          } else {
-            cloudConfig.dbUrl = rawInput;
-          }
-          cloudConfig.enabled = true;
-          saveCloudConfig();
-          const remote = await fetchRemoteVaultRaw();
-          if (remote && remote.vaultFormat === 'EMAS_ENCRYPTED_VAULT_V1' && Array.isArray(remote.users)) {
-            writeLocalVault(remote);
-            document.getElementById('loginCloudConnectBox').classList.add('hidden');
-            switchAuthMode('LOGIN');
-            showAuthNotice('☁️ Ortak şifreli kasa bu cihaza bağlandı! Şimdi kullanıcı adı ve şifrenizle giriş yapabilirsiniz.');
-          } else if (remote && Array.isArray(remote.contractors)) {
-            try { localStorage.setItem(STORAGE_KEY, JSON.stringify(remote)); } catch (e) {}
-            switchAuthMode('SETUP');
-            showAuthNotice('☁️ Buluttaki veriler alındı! Şimdi kasanızı şifrelemek için kullanıcı adı ve şifrenizi belirleyin.');
-          } else {
-            showAuthError('Belirtilen bulut adresinde henüz kurulu bir kasa bulunamadı.');
-          }
-        } catch (err) {
-          showAuthError('Bulut bağlantısı kurulamadı: Adresi kontrol edin.');
-        }
-      });
-
-      // İLK KURULUM FORMU GÖNDERİMİ
-      document.getElementById('authSetupForm').addEventListener('submit', async (e) => {
-        e.preventDefault();
-        showAuthError('');
-        const hasLegacy = !!readLegacyPlaintextState();
-        if (!hasLegacy) {
-          const codeRaw = (document.getElementById('setupActivationCode').value || '').trim().toLowerCase();
-          const candidateHash = await sha256Hex(codeRaw + '::emas_finans_salt_v1');
-          if (candidateHash !== SETUP_ACTIVATION_SHA256) {
-            showAuthError('❌ Kurucu Doğrulama Kodu hatalı! Yetkisiz kurulum engellendi.');
-            return;
-          }
-        }
-
-        const u1 = document.getElementById('setupUser1').value.trim().toLowerCase();
-        const n1 = document.getElementById('setupName1').value.trim() || 'Onur Doğan';
-        const p1 = document.getElementById('setupPass1').value;
-        const p1c = document.getElementById('setupPass1Confirm').value;
-
-        if (!u1 || p1.length < 4) {
-          showAuthError('Kullanıcı adı boş olamaz ve şifre en az 4 karakter olmalıdır.');
-          return;
-        }
-        if (p1 !== p1c) {
-          showAuthError('Girdiğiniz iki şifre birbiriyle eşleşmiyor.');
-          return;
-        }
-
-        const masterKeyBytes = randomBytes(32);
-        const masterKeyB64 = bytesToB64(masterKeyBytes);
-        const users = [];
-        const adminRec = await createWrappedUserRecord(u1, n1, 'ADMIN', p1, masterKeyB64);
-        users.push(adminRec);
-
-        if (document.getElementById('setupEnableUser2').checked) {
-          const u2 = document.getElementById('setupUser2').value.trim().toLowerCase();
-          const n2 = document.getElementById('setupName2').value.trim() || 'Rüstem Çiftçi';
-          const p2 = document.getElementById('setupPass2').value;
-          if (!u2 || p2.length < 4) {
-            showAuthError('2. ortak hesabı için kullanıcı adı ve en az 4 karakterli şifre girin (veya kutucuğu kaldırın).');
-            return;
-          }
-          if (u2 === u1) {
-            showAuthError('İki kullanıcının kullanıcı adı birbirinden farklı olmalıdır.');
-            return;
-          }
-          users.push(await createWrappedUserRecord(u2, n2, 'ADMIN', p2, masterKeyB64));
-        }
-
-        const initialData = readLegacyPlaintextState() || JSON.parse(JSON.stringify(DEFAULT_STATE));
-        initialData.updatedAt = Date.now();
-        initialData.updatedBy = n1;
-        const encryptedState = await encryptWithRawKey(masterKeyBytes, JSON.stringify(initialData));
-
-        const vaultObj = {
-          version: 1,
-          vaultFormat: 'EMAS_ENCRYPTED_VAULT_V1',
-          updatedAt: initialData.updatedAt,
-          updatedBy: n1,
-          users,
-          encryptedState
-        };
-        writeLocalVault(vaultObj);
-        // Eski şifresiz kopyayı temizle
-        try { localStorage.removeItem(STORAGE_KEY); } catch (err) {}
-
-        unlockAndEnterApp(initialData, masterKeyB64, adminRec);
-        if (cloudConfig.enabled && cloudConfig.dbUrl) {
-          pushToCloud(false);
-        }
-        showToast('🛡️ Şifreli kasanız oluşturuldu! Siz Kilitle demedikçe (24 saat) açık kalacaktır.');
-      });
-
-      // GİRİŞ FORMU GÖNDERİMİ
-      document.getElementById('authLoginForm').addEventListener('submit', async (e) => {
-        e.preventDefault();
-        showAuthError('');
-        const uname = document.getElementById('loginUsername').value.trim().toLowerCase();
-        const pwd = document.getElementById('loginPassword').value;
-
-        let vault = readLocalVault();
-        // Bulut aktifse en güncel şifre/kullanıcı listesini önce buluttan tazele
-        if (cloudConfig.enabled && cloudConfig.dbUrl) {
-          try {
-            const remote = await fetchRemoteVaultRaw();
-            if (remote && remote.vaultFormat === 'EMAS_ENCRYPTED_VAULT_V1' && Array.isArray(remote.users)) {
-              writeLocalVault(remote);
-              vault = remote;
-            }
-          } catch (err) {}
-        }
-
-        if (!vault || !Array.isArray(vault.users) || !vault.encryptedState) {
-          showAuthError('❌ Bu cihazda henüz yetkili kasa tanımlanmamış. İlk kurulum yapın veya ortak bulut kasasını bağlayın.');
-          return;
-        }
-
-        const userRec = vault.users.find(u => u.username === uname);
-        if (!userRec) {
-          showAuthError('❌ Hatalı kullanıcı adı veya şifre!');
-          return;
-        }
-
-        try {
-          const masterKeyB64 = await unwrapUserMasterKey(userRec, pwd);
-          const decryptedStr = await decryptWithRawKey(b64ToBytes(masterKeyB64), vault.encryptedState);
-          const parsedState = JSON.parse(decryptedStr);
-          unlockAndEnterApp(parsedState, masterKeyB64, userRec);
-          showToast(`🔓 Hoş geldiniz, ${userRec.displayName}!`);
-        } catch (err) {
-          showAuthError('❌ Hatalı kullanıcı adı veya şifre!');
-        }
-      });
-
-      // ÜST BAR: OTURUMU KİLİTLE & ŞİFRE YÖNETİMİ BUTONLARI
-      document.getElementById('btnSessionLock').addEventListener('click', () => {
-        lockAppSession('MANUAL');
-      });
-
-      document.getElementById('btnLockNowInsideModal').addEventListener('click', () => {
-        lockAppSession('MANUAL');
-      });
-
-      document.getElementById('btnUserSecurity').addEventListener('click', () => {
-        renderVaultUsersList();
-        document.getElementById('userSecurityModal').classList.remove('hidden');
-      });
-
-      document.getElementById('btnCloseUserSecurity').addEventListener('click', () => {
-        document.getElementById('userSecurityModal').classList.add('hidden');
-      });
-
-      // Kendi Şifremi Değiştir
-      document.getElementById('changeOwnPwdForm').addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const oldP = document.getElementById('chgOldPwd').value;
-        const newP = document.getElementById('chgNewPwd').value;
-        const newP2 = document.getElementById('chgNewPwd2').value;
-        if (newP.length < 4 || newP !== newP2) {
-          showToast('❌ Yeni şifre en az 4 karakter olmalı ve tekrarıyla eşleşmelidir.');
-          return;
-        }
-        const vault = readLocalVault();
-        if (!vault) return;
-        const idx = vault.users.findIndex(u => u.username === activeAuthSession.username);
-        if (idx === -1) return;
-        try {
-          const verifiedMaster = await unwrapUserMasterKey(vault.users[idx], oldP);
-          vault.users[idx] = await createWrappedUserRecord(
-            vault.users[idx].username,
-            vault.users[idx].displayName,
-            vault.users[idx].role,
-            newP,
-            verifiedMaster
-          );
-          vault.updatedAt = Date.now();
-          vault.updatedBy = activeAuthSession.displayName;
-          writeLocalVault(vault);
-          if (cloudConfig.enabled && cloudConfig.dbUrl) pushToCloud(false);
-          document.getElementById('chgOldPwd').value = '';
-          document.getElementById('chgNewPwd').value = '';
-          document.getElementById('chgNewPwd2').value = '';
-          showToast('✅ Giriş şifreniz başarıyla güncellendi.');
-        } catch (err) {
-          showToast('❌ Mevcut şifrenizi hatalı girdiniz!');
-        }
-      });
-
-      // Yeni Kullanıcı Ekle / Ortak Şifresi Ata
-      document.getElementById('addOrUpdateUserForm').addEventListener('submit', async (e) => {
-        e.preventDefault();
-        if (activeAuthSession.role === 'VIEWER' || !activeAuthSession.masterKeyB64) return;
-        const uLogin = document.getElementById('newUsrLogin').value.trim().toLowerCase();
-        const uDisp = document.getElementById('newUsrDisplay').value.trim();
-        const uPwd = document.getElementById('newUsrPwd').value;
-        const uRole = document.getElementById('newUsrRole').value;
-        if (!uLogin || uPwd.length < 4) {
-          showToast('❌ Kullanıcı adı ve en az 4 karakterli şifre zorunludur.');
-          return;
-        }
-        const vault = readLocalVault();
-        if (!vault) return;
-        const newRec = await createWrappedUserRecord(uLogin, uDisp, uRole, uPwd, activeAuthSession.masterKeyB64);
-        const existingIdx = vault.users.findIndex(u => u.username === uLogin);
-        if (existingIdx >= 0) {
-          vault.users[existingIdx] = newRec;
-        } else {
-          vault.users.push(newRec);
-        }
-        vault.updatedAt = Date.now();
-        vault.updatedBy = activeAuthSession.displayName;
-        writeLocalVault(vault);
-        if (cloudConfig.enabled && cloudConfig.dbUrl) pushToCloud(false);
-        document.getElementById('newUsrLogin').value = '';
-        document.getElementById('newUsrDisplay').value = '';
-        document.getElementById('newUsrPwd').value = '';
-        renderVaultUsersList();
-        showToast(`✅ @${uLogin} kullanıcısı ve şifresi kaydedildi.`);
-      });
-
-      // Kullanıcı Silme
-      document.getElementById('vaultUsersList').addEventListener('click', (e) => {
-        const delBtn = e.target.closest('[data-del-vault-user]');
-        if (!delBtn || activeAuthSession.role === 'VIEWER') return;
-        const targetUser = delBtn.getAttribute('data-del-vault-user');
-        const vault = readLocalVault();
-        if (!vault) return;
-        vault.users = vault.users.filter(u => u.username !== targetUser);
-        vault.updatedAt = Date.now();
-        writeLocalVault(vault);
-        if (cloudConfig.enabled && cloudConfig.dbUrl) pushToCloud(false);
-        renderVaultUsersList();
-        showToast(`🗑️ @${targetUser} kullanıcısının erişimi kaldırıldı.`);
-      });
-
-      bootAuthGate();
+      populateSelects();
+      renderAll();
+      startCloudPolling();
 
       if (sessionWatchTimer) clearInterval(sessionWatchTimer);
       sessionWatchTimer = setInterval(() => {
@@ -4200,7 +3908,7 @@
       const vals = ['COGS', 'LABOR', 'RENT', 'UTILITIES', 'COMMISSIONS', 'OPEX', 'TAXES'].map(k => Math.round(totals[k].net));
       const allZero = vals.every(v => v === 0);
       if (pnlChartInstance) pnlChartInstance.destroy();
-      pnlChartInstance = new Chart(ctx, {
+      if (typeof Chart !== 'undefined' && ctx) pnlChartInstance = new Chart(ctx, {
         type: 'doughnut',
         data: {
           labels: allZero ? ['Henüz İşletme Gideri Girilmedi (0 ₺)'] : ['SMM/Gıda', 'Personel', 'AVM Kira', 'Enerji', 'Komisyon', 'İşletme', 'Vergi'],
@@ -4252,9 +3960,301 @@
         }
       }
 
-      populateSelects();
-      renderAll();
-      startCloudPolling();
+      // Aktif oturumda her tıklama/yazma ve sekme dönüşünde 24 saatlik sayacı kontrol et & tazele
+      ['click', 'keydown', 'touchstart', 'change'].forEach(evName => {
+        document.addEventListener(evName, () => {
+          if (activeAuthSession.unlocked) touchSessionActivity(false);
+        }, { passive: true });
+      });
+
+      document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'visible' && activeAuthSession.unlocked) {
+          touchSessionActivity(true);
+        }
+      });
+
+      // Giriş & Kurulum Ekranı Etkileşimleri
+      document.getElementById('btnToggleLoginPwd').addEventListener('click', () => {
+        const inp = document.getElementById('loginPassword');
+        const isPwd = inp.type === 'password';
+        inp.type = isPwd ? 'text' : 'password';
+        document.getElementById('btnToggleLoginPwd').textContent = isPwd ? 'Gizle' : 'Şifreyi Göster';
+      });
+
+      document.getElementById('btnToggleSetupPwd').addEventListener('click', () => {
+        const p1 = document.getElementById('setupPass1');
+        const p2 = document.getElementById('setupPass1Confirm');
+        const isPwd = p1.type === 'password';
+        p1.type = isPwd ? 'text' : 'password';
+        p2.type = isPwd ? 'text' : 'password';
+        document.getElementById('btnToggleSetupPwd').textContent = isPwd ? 'Gizle' : 'Göster';
+      });
+
+      document.getElementById('setupEnableUser2').addEventListener('change', (e) => {
+        document.getElementById('setupUser2Fields').classList.toggle('hidden', !e.target.checked);
+      });
+
+      document.getElementById('btnSwitchToSetup').addEventListener('click', () => switchAuthMode('SETUP'));
+      document.getElementById('btnSwitchToLogin').addEventListener('click', () => switchAuthMode('LOGIN'));
+
+      document.getElementById('btnToggleLoginCloudBox').addEventListener('click', () => {
+        document.getElementById('loginCloudConnectBox').classList.toggle('hidden');
+      });
+
+      document.getElementById('btnConnectCloudFromLogin').addEventListener('click', async () => {
+        showAuthError('');
+        let rawInput = document.getElementById('loginCloudInput').value.trim();
+        if (!rawInput) {
+          showAuthError('Lütfen WhatsApp davet bağlantısını veya Firebase adresini yapıştırın.');
+          return;
+        }
+        try {
+          if (rawInput.includes('#woka_sync=')) {
+            const encoded = decodeURIComponent(rawInput.split('#woka_sync=')[1].trim());
+            const decodedJson = decodeURIComponent(escape(atob(encoded)));
+            const incoming = JSON.parse(decodedJson);
+            cloudConfig.dbUrl = incoming.dbUrl || '';
+            cloudConfig.roomKey = incoming.roomKey || 'emas_woka_ortak_kasa';
+            cloudConfig.authSecret = incoming.authSecret || '';
+          } else {
+            cloudConfig.dbUrl = rawInput;
+          }
+          cloudConfig.enabled = true;
+          saveCloudConfig();
+          const remote = await fetchRemoteVaultRaw();
+          if (remote && remote.vaultFormat === 'EMAS_ENCRYPTED_VAULT_V1' && Array.isArray(remote.users)) {
+            writeLocalVault(remote);
+            document.getElementById('loginCloudConnectBox').classList.add('hidden');
+            switchAuthMode('LOGIN');
+            showAuthNotice('☁️ Ortak şifreli kasa bu cihaza bağlandı! Şimdi kullanıcı adı ve şifrenizle giriş yapabilirsiniz.');
+          } else if (remote && Array.isArray(remote.contractors)) {
+            try { localStorage.setItem(STORAGE_KEY, JSON.stringify(remote)); } catch (e) {}
+            switchAuthMode('SETUP');
+            showAuthNotice('☁️ Buluttaki veriler alındı! Şimdi kasanızı şifrelemek için kullanıcı adı ve şifrenizi belirleyin.');
+          } else {
+            showAuthError('Belirtilen bulut adresinde henüz kurulu bir kasa bulunamadı.');
+          }
+        } catch (err) {
+          showAuthError('Bulut bağlantısı kurulamadı: Adresi kontrol edin.');
+        }
+      });
+
+      // İLK KURULUM FORMU GÖNDERİMİ
+      document.getElementById('authSetupForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        showAuthError('');
+        const hasLegacy = !!readLegacyPlaintextState();
+        if (!hasLegacy) {
+          const codeRaw = (document.getElementById('setupActivationCode').value || '').trim().toLowerCase();
+          const candidateHash = await sha256Hex(codeRaw + '::emas_finans_salt_v1');
+          if (candidateHash !== SETUP_ACTIVATION_SHA256) {
+            showAuthError('❌ Kurucu Doğrulama Kodu hatalı! Yetkisiz kurulum engellendi.');
+            return;
+          }
+        }
+
+        const u1 = document.getElementById('setupUser1').value.trim().toLowerCase();
+        const n1 = document.getElementById('setupName1').value.trim() || 'Onur Doğan';
+        const p1 = document.getElementById('setupPass1').value;
+        const p1c = document.getElementById('setupPass1Confirm').value;
+
+        if (!u1 || p1.length < 4) {
+          showAuthError('Kullanıcı adı boş olamaz ve şifre en az 4 karakter olmalıdır.');
+          return;
+        }
+        if (p1 !== p1c) {
+          showAuthError('Girdiğiniz iki şifre birbiriyle eşleşmiyor.');
+          return;
+        }
+
+        const masterKeyBytes = randomBytes(32);
+        const masterKeyB64 = bytesToB64(masterKeyBytes);
+        const users = [];
+        const adminRec = await createWrappedUserRecord(u1, n1, 'ADMIN', p1, masterKeyB64);
+        users.push(adminRec);
+
+        if (document.getElementById('setupEnableUser2').checked) {
+          const u2 = document.getElementById('setupUser2').value.trim().toLowerCase();
+          const n2 = document.getElementById('setupName2').value.trim() || 'Rüstem Çiftçi';
+          const p2 = document.getElementById('setupPass2').value;
+          if (!u2 || p2.length < 4) {
+            showAuthError('2. ortak hesabı için kullanıcı adı ve en az 4 karakterli şifre girin (veya kutucuğu kaldırın).');
+            return;
+          }
+          if (u2 === u1) {
+            showAuthError('İki kullanıcının kullanıcı adı birbirinden farklı olmalıdır.');
+            return;
+          }
+          users.push(await createWrappedUserRecord(u2, n2, 'ADMIN', p2, masterKeyB64));
+        }
+
+        const initialData = readLegacyPlaintextState() || JSON.parse(JSON.stringify(DEFAULT_STATE));
+        initialData.updatedAt = Date.now();
+        initialData.updatedBy = n1;
+        const encryptedState = await encryptWithRawKey(masterKeyBytes, JSON.stringify(initialData));
+
+        const vaultObj = {
+          version: 1,
+          vaultFormat: 'EMAS_ENCRYPTED_VAULT_V1',
+          updatedAt: initialData.updatedAt,
+          updatedBy: n1,
+          users,
+          encryptedState
+        };
+        writeLocalVault(vaultObj);
+        // Eski şifresiz kopyayı temizle
+        try { localStorage.removeItem(STORAGE_KEY); } catch (err) {}
+
+        unlockAndEnterApp(initialData, masterKeyB64, adminRec);
+        if (cloudConfig.enabled && cloudConfig.dbUrl) {
+          pushToCloud(false);
+        }
+        showToast('🛡️ Şifreli kasanız oluşturuldu! Siz Kilitle demedikçe (24 saat) açık kalacaktır.');
+      });
+
+      // GİRİŞ FORMU GÖNDERİMİ
+      document.getElementById('authLoginForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        showAuthError('');
+        const uname = document.getElementById('loginUsername').value.trim().toLowerCase();
+        const pwd = document.getElementById('loginPassword').value;
+
+        let vault = readLocalVault();
+        // Bulut aktifse en güncel şifre/kullanıcı listesini önce buluttan tazele
+        if (cloudConfig.enabled && cloudConfig.dbUrl) {
+          try {
+            const remote = await fetchRemoteVaultRaw();
+            if (remote && remote.vaultFormat === 'EMAS_ENCRYPTED_VAULT_V1' && Array.isArray(remote.users)) {
+              writeLocalVault(remote);
+              vault = remote;
+            }
+          } catch (err) {}
+        }
+
+        if (!vault || !Array.isArray(vault.users) || !vault.encryptedState) {
+          showAuthError('❌ Bu cihazda henüz yetkili kasa tanımlanmamış. İlk kurulum yapın veya ortak bulut kasasını bağlayın.');
+          return;
+        }
+
+        const userRec = vault.users.find(u => u.username === uname);
+        if (!userRec) {
+          showAuthError('❌ Hatalı kullanıcı adı veya şifre!');
+          return;
+        }
+
+        try {
+          const masterKeyB64 = await unwrapUserMasterKey(userRec, pwd);
+          const decryptedStr = await decryptWithRawKey(b64ToBytes(masterKeyB64), vault.encryptedState);
+          const parsedState = JSON.parse(decryptedStr);
+          unlockAndEnterApp(parsedState, masterKeyB64, userRec);
+          showToast(`🔓 Hoş geldiniz, ${userRec.displayName}!`);
+        } catch (err) {
+          showAuthError('❌ Hatalı kullanıcı adı veya şifre!');
+        }
+      });
+
+      // ÜST BAR: OTURUMU KİLİTLE & ŞİFRE YÖNETİMİ BUTONLARI
+      document.getElementById('btnSessionLock').addEventListener('click', () => {
+        lockAppSession('MANUAL');
+      });
+
+      document.getElementById('btnLockNowInsideModal').addEventListener('click', () => {
+        lockAppSession('MANUAL');
+      });
+
+      document.getElementById('btnUserSecurity').addEventListener('click', () => {
+        renderVaultUsersList();
+        document.getElementById('userSecurityModal').classList.remove('hidden');
+      });
+
+      document.getElementById('btnCloseUserSecurity').addEventListener('click', () => {
+        document.getElementById('userSecurityModal').classList.add('hidden');
+      });
+
+      // Kendi Şifremi Değiştir
+      document.getElementById('changeOwnPwdForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const oldP = document.getElementById('chgOldPwd').value;
+        const newP = document.getElementById('chgNewPwd').value;
+        const newP2 = document.getElementById('chgNewPwd2').value;
+        if (newP.length < 4 || newP !== newP2) {
+          showToast('❌ Yeni şifre en az 4 karakter olmalı ve tekrarıyla eşleşmelidir.');
+          return;
+        }
+        const vault = readLocalVault();
+        if (!vault) return;
+        const idx = vault.users.findIndex(u => u.username === activeAuthSession.username);
+        if (idx === -1) return;
+        try {
+          const verifiedMaster = await unwrapUserMasterKey(vault.users[idx], oldP);
+          vault.users[idx] = await createWrappedUserRecord(
+            vault.users[idx].username,
+            vault.users[idx].displayName,
+            vault.users[idx].role,
+            newP,
+            verifiedMaster
+          );
+          vault.updatedAt = Date.now();
+          vault.updatedBy = activeAuthSession.displayName;
+          writeLocalVault(vault);
+          if (cloudConfig.enabled && cloudConfig.dbUrl) pushToCloud(false);
+          document.getElementById('chgOldPwd').value = '';
+          document.getElementById('chgNewPwd').value = '';
+          document.getElementById('chgNewPwd2').value = '';
+          showToast('✅ Giriş şifreniz başarıyla güncellendi.');
+        } catch (err) {
+          showToast('❌ Mevcut şifrenizi hatalı girdiniz!');
+        }
+      });
+
+      // Yeni Kullanıcı Ekle / Ortak Şifresi Ata
+      document.getElementById('addOrUpdateUserForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        if (activeAuthSession.role === 'VIEWER' || !activeAuthSession.masterKeyB64) return;
+        const uLogin = document.getElementById('newUsrLogin').value.trim().toLowerCase();
+        const uDisp = document.getElementById('newUsrDisplay').value.trim();
+        const uPwd = document.getElementById('newUsrPwd').value;
+        const uRole = document.getElementById('newUsrRole').value;
+        if (!uLogin || uPwd.length < 4) {
+          showToast('❌ Kullanıcı adı ve en az 4 karakterli şifre zorunludur.');
+          return;
+        }
+        const vault = readLocalVault();
+        if (!vault) return;
+        const newRec = await createWrappedUserRecord(uLogin, uDisp, uRole, uPwd, activeAuthSession.masterKeyB64);
+        const existingIdx = vault.users.findIndex(u => u.username === uLogin);
+        if (existingIdx >= 0) {
+          vault.users[existingIdx] = newRec;
+        } else {
+          vault.users.push(newRec);
+        }
+        vault.updatedAt = Date.now();
+        vault.updatedBy = activeAuthSession.displayName;
+        writeLocalVault(vault);
+        if (cloudConfig.enabled && cloudConfig.dbUrl) pushToCloud(false);
+        document.getElementById('newUsrLogin').value = '';
+        document.getElementById('newUsrDisplay').value = '';
+        document.getElementById('newUsrPwd').value = '';
+        renderVaultUsersList();
+        showToast(`✅ @${uLogin} kullanıcısı ve şifresi kaydedildi.`);
+      });
+
+      // Kullanıcı Silme
+      document.getElementById('vaultUsersList').addEventListener('click', (e) => {
+        const delBtn = e.target.closest('[data-del-vault-user]');
+        if (!delBtn || activeAuthSession.role === 'VIEWER') return;
+        const targetUser = delBtn.getAttribute('data-del-vault-user');
+        const vault = readLocalVault();
+        if (!vault) return;
+        vault.users = vault.users.filter(u => u.username !== targetUser);
+        vault.updatedAt = Date.now();
+        writeLocalVault(vault);
+        if (cloudConfig.enabled && cloudConfig.dbUrl) pushToCloud(false);
+        renderVaultUsersList();
+        showToast(`🗑️ @${targetUser} kullanıcısının erişimi kaldırıldı.`);
+      });
+
+      bootAuthGate();
 
       // PWA Native Install Yakalayıcı
       window.addEventListener('beforeinstallprompt', (ev) => {
@@ -5393,7 +5393,7 @@
   <script>
     if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')) {
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js').catch(() => {});
+        navigator.serviceWorker.register('./sw.js').then(reg => { reg.update(); }).catch(() => {});
       });
     }
   </script>
