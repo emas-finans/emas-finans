@@ -1,18 +1,13 @@
 EMAS FİNANS (EMAS LOKANTA İŞLETMECİLİĞİ A.Ş.)
-MOBİL + MASAÜSTÜ UYGULAMA (PWA) VE CANLI BULUT KURULUM REHBERİ
+ŞİFRE KORUMALI MOBİL + MASAÜSTÜ UYGULAMA (PWA) VE CANLI BULUT REHBERİ
 
-1. UYGULAMAYI YAYINA ALMA (30 Saniye - Ücretsiz):
-   - Bu ZIP dosyasını bilgisayarınızda bir klasöre çıkarın.
-   - https://app.netlify.com/drop sayfasını açıp çıkardığınız `emas_finans_pwa` klasörünü kutuya sürükleyip bırakın.
-   - Size özel https://...netlify.app adresiniz oluşacaktır (Site Settings bölümünden emas-finans.netlify.app olarak adlandırabilirsiniz).
+1. GITHUB PAGES ÜZERİNDE GÜNCELLEME (30 Saniye):
+   - GitHub'daki `emas-finans` proje sayfanızı açın.
+   - "Add file" -> "Upload files" seçeneğine tıklayın.
+   - Bu paketteki yeni `index.html` ve `sw.js` dosyalarını kutuya sürükleyip "Commit changes" butonuna basın.
 
-2. ONUR DOĞAN & RÜSTEM ÇİFTÇİ CANLI BULUT EŞİTLEME:
-   - https://console.firebase.google.com üzerinden ücretsiz bir proje açıp Sol Menü -> Build -> Realtime Database -> Create Database (Start in test mode) seçin.
-   - Üstteki https://...-default-rtdb....firebasedatabase.app adresini kopyalayın.
-   - EMAS Finans uygulamanızda üstteki "☁️ Bulut Eşitleme" butonuna basıp adresi yapıştırın ve "Bağlan ve Şimdi Eşitle" deyin.
-   - Aynı penceredeki "🔗 Davet Bağlantısını Kopyala" butonuyla aldığınız linki kendi telefonunuza ve Rüstem Bey'e WhatsApp'tan gönderin; linke dokunan cihaz otomatik bağlanır!
-
-3. TELEFONA VE BİLGİSAYARA "EMAS FİNANS" İKONUYLA KURMA:
-   - iPhone / iPad (Safari): Linki Safari'de açın -> Paylaş (⬆️) -> "Ana Ekrana Ekle".
-   - Android (Chrome): Linki Chrome'da açın -> Sağ üst (⋮) -> "Uygulamayı yükle".
-   - Bilgisayar (Windows / Mac - Chrome veya Edge): Adres çubuğunun sağındaki "Uygulamayı Yükle" simgesine tıklayın.
+2. İLK GİRİŞ, OTURUM KİLİTLEME VE 24 SAAT KURALI:
+   - İlk açılışta kendi Kullanıcı Adınızı (örn: onur) ve Şifrenizi belirleyin. (Boş/yeni tarayıcıda Kurucu Doğrulama Kodu sorulursa: EMAS2026)
+   - Siz üst menüden "🔐 Kilitle" butonuna basmadığınız sürece uygulamayı kapatıp açsanız bile şifre sormadan doğrudan açılır.
+   - Üst menüden "🔐 Kilitle" derseniz VEYA 24 saat boyunca hiç giriş yapmazsanız otomatik olarak şifre ekranı devreye girer.
+   - Üst menüdeki "🔑 Şifreler" butonundan dilediğiniz zaman şifrenizi değiştirebilir, Rüstem Bey için ayrı tam yetkili hesap veya sadece görüntüleme yetkili hesap ekleyebilirsiniz.
