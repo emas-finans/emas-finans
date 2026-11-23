@@ -727,6 +727,140 @@
     </div>
   </div>
 
+  <!-- Şirket Kredi Kartı Düzenleme Modalı (Limit, Kesim & Son Ödeme Güncelleme) -->
+  <div id="editCompanyCardModal" class="fixed inset-0 z-50 hidden bg-slate-950/85 backdrop-blur-sm flex items-center justify-center p-4 no-print">
+    <div class="bg-slate-900 border border-purple-500/50 rounded-2xl max-w-lg w-full p-6 space-y-4 shadow-2xl">
+      <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+        <div>
+          <h3 class="text-base font-bold text-purple-300">💳 Şirket Kredi Kartı Bilgilerini &amp; Limitini Güncelle</h3>
+          <p class="text-xs text-slate-400">Kart limitini, hesap kesim ve son ödeme gün/tarihlerini dilediğiniz zaman güncelleyebilirsiniz.</p>
+        </div>
+        <button id="btnCloseEditCardModal" type="button" class="text-slate-400 hover:text-white text-sm px-2">✕</button>
+      </div>
+      <form id="editCompanyCardForm" class="space-y-3.5 text-xs">
+        <input type="hidden" id="eccId" value="">
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div class="sm:col-span-2">
+            <label class="block text-purple-300 font-semibold mb-1">Kart Adı / Banka *</label>
+            <input type="text" list="bankSuggestionsList" id="eccCardName" required placeholder="Örn: VakıfBank World Business" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-white font-semibold">
+          </div>
+          <div>
+            <label class="block text-amber-300 font-semibold mb-1">Son 4 Hane</label>
+            <input type="text" id="eccLast4" maxlength="4" placeholder="4821" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-amber-300 font-mono font-bold">
+          </div>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label class="block text-emerald-300 font-semibold mb-1">Toplam Kart Limiti (₺)</label>
+            <input type="number" step="0.01" min="0" id="eccLimit" value="0" class="w-full bg-slate-950 border border-emerald-500/40 rounded-lg px-3 py-2 text-white font-bold text-sm">
+          </div>
+          <div>
+            <label class="block text-slate-300 mb-1">Kart Hamili / Not (İsteğe Bağlı)</label>
+            <input type="text" id="eccHolderNote" placeholder="Örn: Onur Doğan Şirket Kartı" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-white">
+          </div>
+        </div>
+        <div class="p-3.5 rounded-xl bg-slate-950/90 border border-slate-800 space-y-3">
+          <div class="text-[11px] font-bold text-purple-200">📅 Hesap Kesim &amp; Son Ödeme Takvimi</div>
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="block text-slate-300 font-medium mb-1">Hesap Kesim Günü (1-31)</label>
+              <input type="number" min="1" max="31" id="eccCutoff" required class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-white font-bold">
+            </div>
+            <div>
+              <label class="block text-amber-300 font-medium mb-1">Son Ödeme Günü (1-31)</label>
+              <input type="number" min="1" max="31" id="eccDueDay" required class="w-full bg-slate-900 border border-amber-500/40 rounded-lg px-3 py-2 text-white font-bold">
+            </div>
+          </div>
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="block text-slate-400 mb-1">Bu Dönem Kesim Tarihi (Opsiyonel)</label>
+              <input type="date" id="eccNextCutoffDate" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1.5 text-white">
+            </div>
+            <div>
+              <label class="block text-slate-400 mb-1">Bu Dönem Son Ödeme Tarihi (Opsiyonel)</label>
+              <input type="date" id="eccNextDueDate" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1.5 text-white">
+            </div>
+          </div>
+        </div>
+        <div class="flex justify-end gap-2 pt-2 border-t border-slate-800">
+          <button type="button" id="btnCancelEditCardModal" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold">Vazgeç</button>
+          <button type="submit" class="px-5 py-2 rounded-xl bg-purple-500 hover:bg-purple-400 text-slate-950 font-bold">💾 Kart Bilgilerini Güncelle</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Vergi / SGK Tahakkuk Ödeme & Geç Ödeme Gecikme Zammı/Faizi Penceresi -->
+  <div id="payTaxModal" class="fixed inset-0 z-50 hidden bg-slate-950/85 backdrop-blur-sm flex items-center justify-center p-4 no-print">
+    <div class="bg-slate-900 border border-indigo-500/50 rounded-2xl max-w-lg w-full p-6 space-y-4 shadow-2xl">
+      <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+        <div>
+          <h3 class="text-base font-bold text-indigo-300">🏛️ Vergi / SGK Tahakkuku Öde (Geç Ödeme Faizi Dahil)</h3>
+          <p class="text-xs text-slate-400">Vadesinden sonra ödüyorsanız oluşan gecikme zammı / faizini ekleyerek gerçek ödeme tutarını kasadan düşebilirsiniz.</p>
+        </div>
+        <button id="btnClosePayTaxModal" type="button" class="text-slate-400 hover:text-white text-sm px-2">✕</button>
+      </div>
+      <form id="payTaxModalForm" class="space-y-3.5 text-xs">
+        <input type="hidden" id="ptmTaxId" value="">
+        <div id="ptmSummaryBox" class="p-3 rounded-xl bg-slate-950 border border-slate-800 space-y-1 text-slate-200"></div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-slate-300 font-semibold mb-1">Fiili Ödeme Tarihi</label>
+            <input type="date" id="ptmPaidDate" required class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-white">
+          </div>
+          <div>
+            <label class="block text-rose-300 font-semibold mb-1">Geç Ödeme Faizi / Zammı (1086 - ₺)</label>
+            <input type="number" step="0.01" min="0" id="ptmLateFee" value="0" placeholder="Örn: 10.00" class="w-full bg-slate-950 border border-rose-500/40 rounded-lg px-3 py-2 text-rose-300 font-bold">
+          </div>
+        </div>
+        <div id="ptmTotalPreview" class="p-3 rounded-xl bg-indigo-950/35 border border-indigo-500/40 flex items-center justify-between font-bold text-sm">
+          <span class="text-indigo-200">Kasadan / Karttan Çıkacak Genel Toplam:</span>
+          <span id="ptmGrandTotalSpan" class="text-emerald-400 text-base">0,00 ₺</span>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label class="block text-amber-300 font-semibold mb-1">Hangi Hesaptan Ödendi?</label>
+            <select id="ptmSource" class="w-full bg-slate-950 border border-amber-500/40 rounded-lg px-3 py-2 text-white font-semibold">
+              <option value="COMPANY_BANK">🏦 Şirket Banka / Nakit Kasası</option>
+              <option value="COMPANY_CARD">💳 Şirket Kredi Kartı</option>
+              <option value="ONUR_PERSONAL">👤 Onur Doğan Şahsiden Ödedi (+331)</option>
+              <option value="RUSTEM_PERSONAL">👤 Rüstem Çiftçi Şahsiden Ödedi (+331)</option>
+            </select>
+          </div>
+          <div id="ptmCardWrap" class="hidden">
+            <label class="block text-purple-300 font-semibold mb-1">Hangi Şirket Kredi Kartı?</label>
+            <select id="ptmCompanyCardId" class="w-full bg-slate-950 border border-purple-500/40 rounded-lg px-3 py-2 text-white font-semibold"></select>
+          </div>
+        </div>
+        <div class="flex justify-end gap-2 pt-2 border-t border-slate-800">
+          <button type="button" id="btnCancelPayTaxModal" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold">Vazgeç</button>
+          <button type="submit" class="px-5 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold">✅ Ödemeyi Kasaya &amp; P&amp;L'e İşle</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- GİB Resmi Vergi Türü Kodları Öneri Listesi -->
+  <datalist id="gibTaxCodeSuggestions">
+    <option value="0003">0003 - Gelir Vergisi Stopajı (Muhtasar)</option>
+    <option value="0033">0033 - Kurum Geçici Vergi</option>
+    <option value="0015">0015 - Gerçek Usulde Katma Değer Vergisi (KDV-1)</option>
+    <option value="9015">9015 - Sorumlu Sıfatıyla KDV Tevkifatı (KDV-2)</option>
+    <option value="0010">0010 - Kurumlar Vergisi</option>
+    <option value="0011">0011 - Kurumlar Vergisi Stopajı</option>
+    <option value="0040">0040 - Beyannameli Damga Vergisi</option>
+    <option value="1047">1047 - Damga Vergisi (Beyanname)</option>
+    <option value="1048">1048 - 5035 Sayılı Kanuna Göre Damga Vergisi</option>
+    <option value="1084">1084 - Gecikme Faizi</option>
+    <option value="1085">1085 - Para Cezası Faizi</option>
+    <option value="1086">1086 - Gecikme Zammı</option>
+    <option value="3074">3074 - Özel Usulsüzlük Cezası</option>
+    <option value="3080">3080 - Vergi Ziyaı Cezası</option>
+    <option value="4008">4008 - Gelir Dahili Tevkifat</option>
+    <option value="5510">5510 - SGK 4A Sigorta Primi</option>
+    <option value="4447">4447 - SGK İşsizlik Sigortası Primi</option>
+  </datalist>
+
   <!-- 4. TÜM UYGULAMA SEKMELERİ, ŞİRKET BAŞLIĞI, ORTAKLAR VE P&L KALEMLERİ ÖZELLEŞTİRME MODALI -->
   <div id="customizeAppModal" class="fixed inset-0 z-50 hidden bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
     <div class="bg-slate-900 border border-amber-500/50 rounded-2xl max-w-3xl w-full p-6 space-y-5 shadow-2xl max-h-[90vh] overflow-y-auto custom-scrollbar">
@@ -1089,13 +1223,17 @@
     <!-- SEKME 1: KASA DEFTERİ (Cari Entegreli, Şirket & Onur Şahsi Çekli)   -->
     <!-- =================================================================== -->
     <section id="tab-kasadefteri" class="tab-panel space-y-6">
-      <!-- Kasa Defteri Hızlı Kayıt Formu -->
-      <div class="bg-slate-900 border border-slate-700 rounded-2xl p-5 no-print shadow-xl">
-        <div class="mb-3">
-          <h2 class="text-base font-bold text-white">➕ Kasa Defterine Yaz (Ödediğiniz Tedarikçiyi Seçerseniz Otomatik O Firmanın Carisine de İşler)</h2>
-          <p class="text-xs text-slate-400">Banka çıkışı, şahsi kredi kartı harcaması, VakıfBank şirket çeki veya Onur Doğan şahsi çekini tek satırdan kaydedin.</p>
+      <!-- Kasa Defteri Hızlı Kayıt Formu (Tıklayınca Açılan Geniş Pencere) -->
+      <div class="fold-window bg-slate-900 border border-amber-500/35 rounded-2xl overflow-hidden no-print shadow-xl transition-all" data-fold-card="fold-kasa-form">
+        <div class="p-4 sm:p-5 flex items-center justify-between gap-3 cursor-pointer hover:bg-slate-800/60 transition select-none" data-fold-btn="fold-kasa-form">
+          <div>
+            <h2 class="text-base font-bold text-amber-300">➕ Kasa Defterine Yaz (Banka, Kart veya Çek Giriş / Çıkışı)</h2>
+            <p class="text-xs text-slate-400">Banka çıkışı, şirket/şahsi kredi kartı harcaması, VakıfBank şirket çeki veya Onur Doğan şahsi çekini girmek için tıklayın.</p>
+          </div>
+          <span data-fold-badge="fold-kasa-form" class="px-3.5 py-1.5 rounded-xl bg-amber-500/20 text-amber-300 border border-amber-500/40 text-xs font-bold whitespace-nowrap">Pencereyi Aç ▾</span>
         </div>
 
+        <div id="fold-kasa-form" class="fold-body hidden p-5 border-t border-slate-800 bg-slate-900/95">
         <form id="kasaForm" class="space-y-4 text-xs">
           <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-3">
             <div class="lg:col-span-2">
@@ -1226,6 +1364,7 @@
             </div>
           </div>
         </form>
+        </div>
       </div>
 
       <!-- Kasa Defteri Listesi ve Filtreler -->
@@ -1313,15 +1452,25 @@
       </div>
 
       <!-- Görünüm B: Seçili Tek Tedarikçi / Firma Detay Sayfası -->
-      <div id="singleContractorPanel" class="hidden space-y-6">
-        <!-- Üst: Firma Ünvanı & Anlaşma Fiyatı Düzenleme + Cari Durum Kartları -->
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-5">
-          <!-- Firma Künyesi ve Anlaşma Güncelleme Formu -->
-          <div class="lg:col-span-5 bg-slate-900 border border-amber-500/30 rounded-2xl p-5">
-            <div class="flex items-center justify-between mb-3">
-              <h3 id="scHeadingTitle" class="text-base font-bold text-amber-400">Firma Künyesi &amp; Anlaşma</h3>
-              <button id="btnDeleteContractor" type="button" class="text-[11px] text-slate-500 hover:text-rose-400">Sekmeyi Sil</button>
+      <div id="singleContractorPanel" class="hidden space-y-5">
+        <!-- Seçili Firmanın 4'lü Bakiye Özeti (Tam Genişlik) -->
+        <div id="scSummaryCards" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4"></div>
+
+        <!-- 3 Tıklayınca Açılan Geniş İşlem Penceresi (Künye, Ödeme/Çek, Fatura) -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-4" data-fold-group="sc-actions">
+          <!-- Pencere 1: Firma Künyesi ve Anlaşma Güncelleme -->
+          <div class="fold-window bg-slate-900 border border-amber-500/30 rounded-2xl overflow-hidden transition-all" data-fold-card="fold-sc-edit" data-fold-col="lg:col-span-1" data-fold-open-col="lg:col-span-3">
+            <div class="p-4 flex items-center justify-between gap-2 cursor-pointer hover:bg-slate-800/60 transition select-none" data-fold-btn="fold-sc-edit">
+              <div>
+                <h3 id="scHeadingTitle" class="text-sm font-bold text-amber-400">🏢 Firma Künyesi &amp; Anlaşma</h3>
+                <div class="text-[11px] text-slate-400 mt-0.5">Ünvan, üst iş kalemi ve anlaşma bedelini düzenle</div>
+              </div>
+              <span data-fold-badge="fold-sc-edit" class="px-3 py-1 rounded-lg bg-amber-500/20 text-amber-300 border border-amber-500/30 text-xs font-bold whitespace-nowrap">Aç ▾</span>
             </div>
+            <div id="fold-sc-edit" class="fold-body hidden p-5 border-t border-slate-800 space-y-3">
+              <div class="flex justify-end">
+                <button id="btnDeleteContractor" type="button" class="text-[11px] text-slate-400 hover:text-rose-400">Sekmeyi Sil</button>
+              </div>
             <form id="editContractorForm" class="space-y-3 text-xs">
               <div>
                 <label class="block text-amber-300 font-semibold mb-1">Bağlı Olduğu Üst İş Kalemi (Aynı adı taşıyanlar tek sekmede gruplanır)</label>
@@ -1362,20 +1511,19 @@
                 💾 Firma Ünvanı &amp; Anlaşma Fiyatını Güncelle
               </button>
             </form>
+            </div>
           </div>
 
-          <!-- Sağ: Seçili Firmanın 4'lü Bakiye Özeti -->
-          <div id="scSummaryCards" class="lg:col-span-7 grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <!-- JS ile doldurulur -->
-          </div>
-        </div>
-
-        <!-- Orta: Bu Firmaya (1) Ödeme/Çek Çıkışı Gir ve (2) KDV'li/KDV'siz Fatura Gir -->
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
-          <!-- Sol Kutu: Firmaya Ödeme / Çek Çıkışı Yap -->
-          <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5">
-            <h4 class="text-sm font-bold text-emerald-400 mb-1">💸 Bu Firmaya Ödeme veya Çek Çıkışı Gir</h4>
-            <p class="text-[11px] text-slate-400 mb-3">Buradan girdiğiniz ödeme hem bu firmanın carisinden düşer hem de otomatik olarak Kasa Defterine (ve seçtiyseniz Çek sekmesine) işlenir.</p>
+          <!-- Pencere 2: Firmaya Ödeme / Çek Çıkışı Yap -->
+          <div class="fold-window bg-slate-900 border border-emerald-500/30 rounded-2xl overflow-hidden transition-all" data-fold-card="fold-sc-pay" data-fold-col="lg:col-span-1" data-fold-open-col="lg:col-span-3">
+            <div class="p-4 flex items-center justify-between gap-2 cursor-pointer hover:bg-slate-800/60 transition select-none" data-fold-btn="fold-sc-pay">
+              <div>
+                <h4 class="text-sm font-bold text-emerald-400">💸 Bu Firmaya Ödeme / Çek Çıkışı Gir</h4>
+                <div class="text-[11px] text-slate-400 mt-0.5">Banka, kart veya çek ödemesini cariye &amp; kasaya işle</div>
+              </div>
+              <span data-fold-badge="fold-sc-pay" class="px-3 py-1 rounded-lg bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-xs font-bold whitespace-nowrap">Aç ▾</span>
+            </div>
+            <div id="fold-sc-pay" class="fold-body hidden p-5 border-t border-slate-800">
             <form id="scPaymentForm" class="space-y-3 text-xs">
               <div class="grid grid-cols-2 gap-3">
                 <div>
@@ -1460,12 +1608,19 @@
                 ✅ Ödemeyi / Çeki Bu Cariye ve Kasa Defterine İşle
               </button>
             </form>
+            </div>
           </div>
 
-          <!-- Sağ Kutu: Bu Firmadan Gelen Faturayı Gir (KDV'li / KDV'siz) -->
-          <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5">
-            <h4 class="text-sm font-bold text-sky-400 mb-1">🧾 Bu Firmadan Gelen Fatura / İrsaliye Girişi (KDV'li / KDV'siz)</h4>
-            <p class="text-[11px] text-slate-400 mb-3">Firmanın kestiği resmi KDV'li faturayı veya faturasız (KDV'siz) iş/malzeme teslimini buradan işleyin.</p>
+          <!-- Pencere 3: Bu Firmadan Gelen Faturayı Gir -->
+          <div class="fold-window bg-slate-900 border border-sky-500/30 rounded-2xl overflow-hidden transition-all" data-fold-card="fold-sc-inv" data-fold-col="lg:col-span-1" data-fold-open-col="lg:col-span-3">
+            <div class="p-4 flex items-center justify-between gap-2 cursor-pointer hover:bg-slate-800/60 transition select-none" data-fold-btn="fold-sc-inv">
+              <div>
+                <h4 class="text-sm font-bold text-sky-400">🧾 Bu Firmadan Gelen Fatura / İrsaliye Girişi</h4>
+                <div class="text-[11px] text-slate-400 mt-0.5">KDV'li, tevkifatlı veya KDV'siz alım faturası işle</div>
+              </div>
+              <span data-fold-badge="fold-sc-inv" class="px-3 py-1 rounded-lg bg-sky-500/20 text-sky-300 border border-sky-500/30 text-xs font-bold whitespace-nowrap">Aç ▾</span>
+            </div>
+            <div id="fold-sc-inv" class="fold-body hidden p-5 border-t border-slate-800">
             <form id="scInvoiceForm" class="space-y-3 text-xs">
               <div class="grid grid-cols-2 gap-3">
                 <div>
@@ -1539,6 +1694,7 @@
                 🧾 Faturayı Bu Cariye ve Fatura Defterine Kaydet
               </button>
             </form>
+            </div>
           </div>
         </div>
 
@@ -1572,10 +1728,17 @@
     <!-- =================================================================== -->
     <section id="tab-onurchecks" class="tab-panel hidden space-y-6">
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <!-- Sol: Onur Şahsi Çek Kayıt Formu -->
-        <div class="bg-slate-900 border border-amber-500/30 rounded-2xl p-5 h-fit">
-          <h2 class="text-base font-bold text-amber-400 mb-1">📝 Onur Doğan — Şahsi Çek Yaprağı Çıkışı</h2>
-          <p class="text-xs text-slate-400 mb-4">Şirket ödemeleri veya tedarikçiler için kendi şahsi çek karnenizden verdiğiniz çekleri buradan kaydedin. Otomatik olarak tedarikçi carisinden düşer ve şirketten olan 331 alacağınıza eklenir.</p>
+        <!-- Sol: Onur Şahsi Çek Kayıt Penceresi (Tıklayınca Açılır & Genişler) -->
+        <div class="lg:col-span-1 h-fit transition-all" data-fold-sidebar="lg:col-span-1" data-fold-expanded="lg:col-span-3">
+          <div class="fold-window bg-slate-900 border border-amber-500/35 rounded-2xl overflow-hidden shadow-lg" data-fold-card="fold-onur-check">
+            <div class="p-4 flex items-center justify-between gap-2 cursor-pointer hover:bg-slate-800/60 transition select-none" data-fold-btn="fold-onur-check">
+              <div>
+                <h2 class="text-sm font-bold text-amber-400">📝 Yeni Şahsi Çek Yaprağı Çıkışı Ekle</h2>
+                <p class="text-[11px] text-slate-400 mt-0.5">Tıklayıp şahsi çek bilgilerini girin (Cari + 331'e işler)</p>
+              </div>
+              <span data-fold-badge="fold-onur-check" class="px-3 py-1.5 rounded-xl bg-amber-500/20 text-amber-300 border border-amber-500/35 text-xs font-bold whitespace-nowrap">Pencereyi Aç ▾</span>
+            </div>
+            <div id="fold-onur-check" class="fold-body hidden p-5 border-t border-slate-800">
           <form id="onurCheckForm" class="space-y-3 text-xs">
             <div class="grid grid-cols-2 gap-2.5">
               <div>
@@ -1628,10 +1791,12 @@
               💾 Onur Şahsi Çekini Kaydet (Cariye &amp; Kasaya İşle)
             </button>
           </form>
+            </div>
+          </div>
         </div>
 
         <!-- Sağ: Onur Şahsi Çekleri Tablosu -->
-        <div class="lg:col-span-2 bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden">
+        <div class="lg:col-span-2 bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden" data-fold-peer="lg:col-span-2" data-fold-peer-expanded="lg:col-span-3">
           <div class="p-4 border-b border-slate-800 flex flex-wrap items-center justify-between gap-2">
             <div>
               <h3 class="text-base font-bold text-white">📋 Onur Doğan Şahsi Çek Kayıt &amp; Vade Takip Listesi</h3>
@@ -1661,7 +1826,57 @@
     <!-- =================================================================== -->
     <!-- SEKME 4: ŞİRKET ÇEKLERİ (VAKIFBANK 10 YAPRAK - ONUR & RÜSTEM)       -->
     <!-- =================================================================== -->
-    <section id="tab-companychecks" class="tab-panel hidden space-y-6">
+    <section id="tab-companychecks" class="tab-panel hidden space-y-5">
+      <div class="fold-window bg-slate-900 border border-sky-500/35 rounded-2xl overflow-hidden shadow-lg no-print" data-fold-card="fold-compcheck-direct">
+        <div class="p-4 flex items-center justify-between gap-3 cursor-pointer hover:bg-slate-800/60 transition select-none" data-fold-btn="fold-compcheck-direct">
+          <div>
+            <div class="text-sm font-bold text-sky-300">🏦 Şirket Çek Karnesinden Yeni Çek Çıkışı Yaz</div>
+            <div class="text-[11px] text-slate-400 mt-0.5">Seçili yaprağı doldurup doğrudan tedarikçi carisine ve Kasa Defterine işlemek için tıklayın</div>
+          </div>
+          <span data-fold-badge="fold-compcheck-direct" class="px-3 py-1.5 rounded-xl bg-sky-500/20 text-sky-300 border border-sky-500/35 text-xs font-bold whitespace-nowrap">Pencereyi Aç ▾</span>
+        </div>
+        <div id="fold-compcheck-direct" class="fold-body hidden p-5 border-t border-slate-800">
+          <form id="directCompanyCheckForm" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 text-xs">
+            <div>
+              <label class="block text-sky-300 font-semibold mb-1">Çek Yaprağı Seçin</label>
+              <select id="dccLeafNo" class="w-full bg-slate-950 border border-sky-500/40 rounded-lg px-2.5 py-2 text-white font-semibold"></select>
+            </div>
+            <div>
+              <label class="block text-slate-300 mb-1">Banka &amp; Seri No</label>
+              <div class="grid grid-cols-2 gap-1.5">
+                <input type="text" list="bankSuggestionsList" id="dccBank" value="VakıfBank" class="bg-slate-950 border border-slate-700 rounded-lg px-2 py-2 text-white">
+                <input type="text" id="dccSerial" placeholder="Seri No" class="bg-slate-950 border border-slate-700 rounded-lg px-2 py-2 text-white">
+              </div>
+            </div>
+            <div>
+              <label class="block text-slate-300 mb-1">Keşide / Vade Tarihi</label>
+              <div class="grid grid-cols-2 gap-1.5">
+                <input type="date" id="dccIssueDate" required class="bg-slate-950 border border-slate-700 rounded-lg px-2 py-2 text-white">
+                <input type="date" id="dccDueDate" required class="bg-slate-950 border border-amber-500/40 rounded-lg px-2 py-2 text-white">
+              </div>
+            </div>
+            <div>
+              <label class="block text-emerald-300 font-semibold mb-1">Tedarikçi / Cari Seçimi</label>
+              <select id="dccContractorId" class="w-full bg-slate-950 border border-emerald-500/40 rounded-lg px-2.5 py-2 text-white"></select>
+            </div>
+            <div>
+              <label class="block text-slate-300 mb-1">Lehdar (Kime Verildi?)</label>
+              <input type="text" id="dccPayee" required placeholder="Firma / Kişi Adı" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-2 text-white">
+            </div>
+            <div>
+              <label class="block text-white font-semibold mb-1">Çek Tutarı (₺)</label>
+              <input type="number" step="0.01" min="0.01" id="dccAmount" required placeholder="0.00" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-2 text-white font-bold">
+            </div>
+            <div>
+              <label class="block text-slate-300 mb-1">Açıklama / Hakediş Notu</label>
+              <input type="text" id="dccNote" required placeholder="Örn: Mutfak cihazları 2. çek" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-2 text-white">
+            </div>
+            <div class="flex items-end">
+              <button type="submit" class="w-full py-2 rounded-xl bg-sky-500 hover:bg-sky-400 text-slate-950 font-bold">💾 Şirket Çekini Kaydet</button>
+            </div>
+          </form>
+        </div>
+      </div>
       <div class="bg-slate-900 border border-sky-500/30 rounded-2xl overflow-hidden">
         <div class="p-5 border-b border-slate-800 flex flex-wrap items-center justify-between gap-3">
           <div>
@@ -1697,10 +1912,17 @@
     <!-- =================================================================== -->
     <section id="tab-invoices" class="tab-panel hidden space-y-6">
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <!-- Sol: Merkezi Fatura Giriş Formu -->
-        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 h-fit">
-          <h2 class="text-base font-bold text-white mb-1">🧾 Yeni Fatura / Belge Girişi (KDV'li &amp; KDV'siz)</h2>
-          <p class="text-xs text-slate-400 mb-4">Gelen faturaları buradan veya ilgili firmanın kendi cari sekmesinden girebilirsiniz; her ikisi de aynı yere kaydolur ve İndirilecek KDV'yi otomatik hesaplar.</p>
+        <!-- Sol: Merkezi Fatura Giriş Penceresi (Tıklayınca Açılır & Genişler) -->
+        <div class="lg:col-span-1 h-fit transition-all" data-fold-sidebar="lg:col-span-1" data-fold-expanded="lg:col-span-3">
+          <div class="fold-window bg-slate-900 border border-sky-500/35 rounded-2xl overflow-hidden shadow-lg" data-fold-card="fold-central-inv">
+            <div class="p-4 flex items-center justify-between gap-2 cursor-pointer hover:bg-slate-800/60 transition select-none" data-fold-btn="fold-central-inv">
+              <div>
+                <h2 class="text-sm font-bold text-sky-300">🧾 Yeni Fatura / Belge Girişi Ekle</h2>
+                <p class="text-[11px] text-slate-400 mt-0.5">KDV'li, tevkifatlı veya KDV'siz fatura işlemek için tıklayın</p>
+              </div>
+              <span data-fold-badge="fold-central-inv" class="px-3 py-1.5 rounded-xl bg-sky-500/20 text-sky-300 border border-sky-500/35 text-xs font-bold whitespace-nowrap">Pencereyi Aç ▾</span>
+            </div>
+            <div id="fold-central-inv" class="fold-body hidden p-5 border-t border-slate-800">
           <form id="centralInvoiceForm" class="space-y-3 text-xs">
             <div>
               <label class="block text-emerald-400 font-semibold mb-1">Faturayı Kesen Tedarikçi / Cari</label>
@@ -1778,10 +2000,12 @@
               🧾 Faturayı Kaydet
             </button>
           </form>
+            </div>
+          </div>
         </div>
 
         <!-- Sağ: Fatura Özeti ve KDV'li / KDV'siz Fatura Listesi -->
-        <div class="lg:col-span-2 space-y-4">
+        <div class="lg:col-span-2 space-y-4" data-fold-peer="lg:col-span-2" data-fold-peer-expanded="lg:col-span-3">
           <div class="grid grid-cols-1 sm:grid-cols-3 gap-3.5 text-xs">
             <div class="bg-slate-900 border border-slate-800 rounded-xl p-4">
               <div class="text-slate-400">KDV'li Resmi Faturalar (Matrah + KDV)</div>
@@ -1845,8 +2069,16 @@
 
       <!-- Ortaklara Borç Geri Ödemesi / Direkt Ortak İşlemi ve Ekstre -->
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 h-fit space-y-4">
-          <h3 class="text-sm font-bold text-white">➕ Ortağa Borç Geri Ödemesi / Sermaye Ayarı</h3>
+        <div class="lg:col-span-1 h-fit transition-all" data-fold-sidebar="lg:col-span-1" data-fold-expanded="lg:col-span-3">
+          <div class="fold-window bg-slate-900 border border-purple-500/35 rounded-2xl overflow-hidden shadow-lg" data-fold-card="fold-partner-repay">
+            <div class="p-4 flex items-center justify-between gap-2 cursor-pointer hover:bg-slate-800/60 transition select-none" data-fold-btn="fold-partner-repay">
+              <div>
+                <h3 class="text-sm font-bold text-purple-300">➕ Ortağa Borç Geri Ödemesi / Ek Borç İşle</h3>
+                <p class="text-[11px] text-slate-400 mt-0.5">331 ortak cari mahsubu veya geri ödeme girmek için tıklayın</p>
+              </div>
+              <span data-fold-badge="fold-partner-repay" class="px-3 py-1.5 rounded-xl bg-purple-500/20 text-purple-300 border border-purple-500/35 text-xs font-bold whitespace-nowrap">Pencereyi Aç ▾</span>
+            </div>
+            <div id="fold-partner-repay" class="fold-body hidden p-5 border-t border-slate-800">
           <form id="partnerRepayForm" class="space-y-3 text-xs">
             <div>
               <label class="block text-slate-400 mb-1">Ortak</label>
@@ -1881,9 +2113,11 @@
               💾 Ortak Cari Hareketini Kaydet
             </button>
           </form>
+            </div>
+          </div>
         </div>
 
-        <div class="lg:col-span-2 bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden">
+        <div class="lg:col-span-2 bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden" data-fold-peer="lg:col-span-2" data-fold-peer-expanded="lg:col-span-3">
           <div class="p-4 border-b border-slate-800 space-y-3">
             <div class="flex flex-wrap items-center justify-between gap-2">
               <div>
@@ -1943,10 +2177,17 @@
     <!-- =================================================================== -->
     <section id="tab-pnl" class="tab-panel hidden space-y-6">
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <!-- Sol: İşletme Ciro & Günlük P&L Gider Girişi -->
-        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 h-fit space-y-4 no-print">
-          <h3 class="text-base font-bold text-white">➕ İşletme Ciro (Satış) &amp; P&amp;L Gideri Gir</h3>
-          <p class="text-xs text-slate-400">Mağaza açıldığında günlük/haftalık POS satış cirolarınızı ve maaş/kira/vergi gibi işletme giderlerinizi buradan P&amp;L tablosuna işleyin.</p>
+        <!-- Sol: İşletme Ciro & Günlük P&L Gider Girişi (Tıklayınca Açılır) -->
+        <div class="lg:col-span-1 h-fit space-y-4 no-print transition-all" data-fold-sidebar="lg:col-span-1" data-fold-expanded="lg:col-span-3">
+          <div class="fold-window bg-slate-900 border border-emerald-500/35 rounded-2xl overflow-hidden shadow-lg" data-fold-card="fold-pnl-tx">
+            <div class="p-4 flex items-center justify-between gap-2 cursor-pointer hover:bg-slate-800/60 transition select-none" data-fold-btn="fold-pnl-tx">
+              <div>
+                <h3 class="text-sm font-bold text-emerald-300">➕ İşletme Ciro (Satış) &amp; P&amp;L Gideri Gir</h3>
+                <p class="text-[11px] text-slate-400 mt-0.5">Doğrudan ciro veya işletme gideri girmek için tıklayın</p>
+              </div>
+              <span data-fold-badge="fold-pnl-tx" class="px-3 py-1.5 rounded-xl bg-emerald-500/20 text-emerald-300 border border-emerald-500/35 text-xs font-bold whitespace-nowrap">Pencereyi Aç ▾</span>
+            </div>
+            <div id="fold-pnl-tx" class="fold-body hidden p-5 border-t border-slate-800">
           <form id="pnlTxForm" class="space-y-3 text-xs">
             <div class="grid grid-cols-2 gap-2.5">
               <div>
@@ -1995,9 +2236,11 @@
               💾 P&amp;L Tablosuna İşle
             </button>
           </form>
+            </div>
+          </div>
 
           <!-- KDV Mahsup Özeti (Yatırım Faturalarından Gelen KDV Dahil!) -->
-          <div class="pt-4 border-t border-slate-800 space-y-2 text-xs">
+          <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 space-y-2 text-xs">
             <h4 class="font-bold text-amber-400">🧾 KDV Avantajı &amp; Devreden KDV Özeti</h4>
             <div class="flex justify-between"><span class="text-slate-400">Satışlardan Hesaplanan KDV:</span> <span id="pnlVatOut" class="text-rose-400 font-semibold">0,00 ₺</span></div>
             <div class="flex justify-between"><span class="text-slate-400">Yatırım &amp; Gider İndirilecek KDV:</span> <span id="pnlVatIn" class="text-emerald-400 font-semibold">0,00 ₺</span></div>
@@ -2009,7 +2252,7 @@
         </div>
 
         <!-- Sağ 2 Sütun: Tek Sayfa P&L Tablosu + Grafik -->
-        <div class="lg:col-span-2 space-y-6">
+        <div class="lg:col-span-2 space-y-6" data-fold-peer="lg:col-span-2" data-fold-peer-expanded="lg:col-span-3">
           <div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden print-card">
             <div class="p-4 border-b border-slate-800">
               <h2 class="text-base font-bold text-white print-text-dark">EMAS LOKANTA İŞLETMECİLİĞİ A.Ş. — WOKA TEMA WORLD AVM TEK SAYFA P&amp;L TABLOSU</h2>
@@ -2046,8 +2289,16 @@
 
       <!-- Maaş, SGK, Vergi & Kira Ödeme Takvimi -->
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 no-print">
-        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 h-fit">
-          <h3 class="text-sm font-bold text-amber-400 mb-2">🗓️ Maaş, SGK, Vergi &amp; Sabit Ödeme Takvimi Ekle</h3>
+        <div class="lg:col-span-1 h-fit transition-all" data-fold-sidebar="lg:col-span-1" data-fold-expanded="lg:col-span-3">
+          <div class="fold-window bg-slate-900 border border-amber-500/30 rounded-2xl overflow-hidden shadow-lg" data-fold-card="fold-pnl-ob">
+            <div class="p-4 flex items-center justify-between gap-2 cursor-pointer hover:bg-slate-800/60 transition select-none" data-fold-btn="fold-pnl-ob">
+              <div>
+                <h3 class="text-sm font-bold text-amber-400">🗓️ Sabit Ödeme Takvimine Hatırlatma Ekle</h3>
+                <p class="text-[11px] text-slate-400 mt-0.5">Kira, maaş veya sabit ödeme planlamak için tıklayın</p>
+              </div>
+              <span data-fold-badge="fold-pnl-ob" class="px-3 py-1.5 rounded-xl bg-amber-500/20 text-amber-300 border border-amber-500/35 text-xs font-bold whitespace-nowrap">Pencereyi Aç ▾</span>
+            </div>
+            <div id="fold-pnl-ob" class="fold-body hidden p-5 border-t border-slate-800">
           <form id="obligationForm" class="space-y-3 text-xs">
             <div>
               <label class="block text-slate-400 mb-1">Ödeme Başlığı</label>
@@ -2074,8 +2325,10 @@
             </div>
             <button type="submit" class="w-full py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs transition">+ Takvime Ekle</button>
           </form>
+            </div>
+          </div>
         </div>
-        <div class="lg:col-span-2 bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden">
+        <div class="lg:col-span-2 bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden" data-fold-peer="lg:col-span-2" data-fold-peer-expanded="lg:col-span-3">
           <div class="p-4 border-b border-slate-800">
             <h3 class="text-sm font-bold text-white">🏛️ Yaklaşan Maaş, SGK, Vergi &amp; Kira Ödemeleri</h3>
           </div>
@@ -2112,9 +2365,16 @@
       </div>
 
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        <div class="lg:col-span-5 space-y-5">
-          <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-3.5">
-            <h3 class="text-sm font-bold text-amber-300">➕ Masraf Koduna Gider İşle (Kasa + P&amp;L Entegreli)</h3>
+        <div class="lg:col-span-4 space-y-3.5 h-fit transition-all" data-fold-sidebar="lg:col-span-4" data-fold-expanded="lg:col-span-12">
+          <div class="fold-window bg-slate-900 border border-teal-500/35 rounded-2xl overflow-hidden shadow-lg" data-fold-card="fold-exp-entry">
+            <div class="p-4 flex items-center justify-between gap-2 cursor-pointer hover:bg-slate-800/60 transition select-none" data-fold-btn="fold-exp-entry">
+              <div>
+                <h3 class="text-sm font-bold text-amber-300">➕ Masraf Koduna Gider İşle</h3>
+                <p class="text-[11px] text-slate-400 mt-0.5">Elektrik, su, yakıt, internet vb. masraf girmek için tıklayın</p>
+              </div>
+              <span data-fold-badge="fold-exp-entry" class="px-3 py-1.5 rounded-xl bg-teal-500/20 text-teal-300 border border-teal-500/35 text-xs font-bold whitespace-nowrap">Pencereyi Aç ▾</span>
+            </div>
+            <div id="fold-exp-entry" class="fold-body hidden p-5 border-t border-slate-800">
             <form id="expenseEntryForm" class="space-y-3 text-xs">
               <div class="grid grid-cols-2 gap-2.5">
                 <div>
@@ -2168,10 +2428,18 @@
                 💾 Masrafı Kaydet (P&amp;L ve Kasaya İşle)
               </button>
             </form>
+            </div>
           </div>
 
-          <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-3">
-            <h3 class="text-sm font-bold text-white">🏷️ Yeni Özel Masraf Kodu Aç</h3>
+          <div class="fold-window bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-lg" data-fold-card="fold-exp-code">
+            <div class="p-4 flex items-center justify-between gap-2 cursor-pointer hover:bg-slate-800/60 transition select-none" data-fold-btn="fold-exp-code">
+              <div>
+                <h3 class="text-sm font-bold text-white">🏷️ Yeni Özel Masraf Kodu Aç</h3>
+                <p class="text-[11px] text-slate-400 mt-0.5">Yeni masraf kodu ve varsayılan P&amp;L grubu tanımlayın</p>
+              </div>
+              <span data-fold-badge="fold-exp-code" class="px-3 py-1.5 rounded-xl bg-slate-800 text-teal-300 border border-teal-500/30 text-xs font-bold whitespace-nowrap">Pencereyi Aç ▾</span>
+            </div>
+            <div id="fold-exp-code" class="fold-body hidden p-5 border-t border-slate-800">
             <form id="newExpenseCodeForm" class="space-y-2.5 text-xs">
               <div class="grid grid-cols-3 gap-2">
                 <div>
@@ -2197,10 +2465,11 @@
                 + Yeni Masraf Kodunu Ekle
               </button>
             </form>
+            </div>
           </div>
         </div>
 
-        <div class="lg:col-span-7 space-y-5">
+        <div class="lg:col-span-8 space-y-5" data-fold-peer="lg:col-span-8" data-fold-peer-expanded="lg:col-span-12">
           <div id="expenseCodeSummaryGrid" class="grid grid-cols-2 sm:grid-cols-3 gap-3 text-xs"></div>
 
           <div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden">
@@ -2267,93 +2536,240 @@
       </div>
 
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        <div class="lg:col-span-4 bg-slate-900 border border-slate-800 rounded-2xl p-5 h-fit space-y-3">
-          <h3 class="text-sm font-bold text-white">➕ Yeni Vergi / SGK Tahakkuku Ekle</h3>
-          <form id="taxEntryForm" class="space-y-3 text-xs">
-            <div class="grid grid-cols-2 gap-2.5">
+        <!-- Sol: Tıklayınca Genişleyen GİB Tahakkuk Fişi Penceresi -->
+        <div class="lg:col-span-4 h-fit transition-all" data-fold-sidebar="lg:col-span-4" data-fold-expanded="lg:col-span-12">
+          <div class="fold-window bg-slate-900 border border-indigo-500/40 rounded-2xl overflow-hidden shadow-xl" data-fold-card="fold-tax-entry">
+            <div class="p-4 flex items-center justify-between gap-3 cursor-pointer hover:bg-slate-800/60 transition select-none" data-fold-btn="fold-tax-entry">
               <div>
-                <label class="block text-indigo-300 font-semibold mb-1">Vergi / Prim Türü</label>
-                <select id="txTaxType" class="w-full bg-slate-950 border border-indigo-500/40 rounded-lg px-2.5 py-2 text-white font-semibold">
-                  <option value="KDV1">KDV-1 (Aylık KDV)</option>
-                  <option value="KDV2">KDV-2 (Sorumlu Sıfatıyla Tevkifat)</option>
-                  <option value="STOPAJ">Muhtasar / Stopaj (Kira, Maaş, SMMM)</option>
-                  <option value="SGK">SGK 4A Prim &amp; İşsizlik</option>
-                  <option value="GECICI_VERGI">Kurum Geçici Vergi (3 Aylık)</option>
-                  <option value="KURUMLAR">Kurumlar Vergisi</option>
-                  <option value="DAMGA_HARC">Damga Vergisi / Belediye / Harç</option>
-                </select>
+                <h3 id="txFormHeading" class="text-sm font-bold text-indigo-300">➕ Yeni Vergi / SGK Tahakkuk Fişi Ekle</h3>
+                <p class="text-[11px] text-slate-400 mt-0.5">Ana vergi kodu, dönem aralığı, 0033/1047/1048 alt kodları ve gecikme faiziyle işlemek için tıklayın</p>
               </div>
-              <div>
-                <label class="block text-slate-300 mb-1">Ait Olduğu Dönem</label>
-                <input type="month" id="txPeriod" value="2026-11" required class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-2 text-white">
-              </div>
+              <span data-fold-badge="fold-tax-entry" class="px-3 py-1.5 rounded-xl bg-indigo-500/20 text-indigo-300 border border-indigo-500/35 text-xs font-bold whitespace-nowrap">Pencereyi Aç ▾</span>
             </div>
-            <div class="grid grid-cols-2 gap-2.5">
-              <div>
-                <label class="block text-slate-300 font-semibold mb-1">Vergi/Prim Tutarı (₺)</label>
-                <input type="number" step="0.01" min="0" id="txBaseAmount" required placeholder="0.00" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-2 text-white font-bold">
+
+            <div id="fold-tax-entry" class="fold-body hidden p-5 border-t border-slate-800 bg-slate-900/95 space-y-4">
+              <div class="flex flex-wrap items-center justify-between gap-2 pb-2 border-b border-slate-800">
+                <div class="text-xs text-slate-300">
+                  📄 <strong>GİB Resmi Tahakkuk Fişi Görünümü:</strong> Beyannamedeki ana vergi kodunu, dönem başlangıç–bitiş aralığını ve alt vergi kodlarını birebir işleyebilirsiniz.
+                </div>
+                <button type="button" id="btnCancelTaxEdit" class="hidden px-3 py-1.5 rounded-lg bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 border border-rose-500/35 text-xs font-bold">Vazgeç</button>
               </div>
-              <div>
-                <label class="block text-slate-400 mb-1">Beyanname Damga V. (₺)</label>
-                <input type="number" step="0.01" min="0" id="txStampTax" value="0" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-2 text-white">
-              </div>
+
+              <form id="taxEntryForm" class="space-y-4 text-xs">
+                <input type="hidden" id="txEditId" value="">
+                <!-- Geriye dönük uyumluluk için saklı alanlar -->
+                <div class="hidden">
+                  <select id="txPeriodMode"><option value="QUARTERLY">Q</option><option value="MONTHLY">M</option><option value="YEARLY">Y</option></select>
+                  <div id="txQuarterlyWrap"><input type="number" id="txQuarterYear" value="2026"><select id="txQuarterCode"><option value="Q1">Q1</option><option value="Q2">Q2</option><option value="Q3">Q3</option><option value="Q4" selected>Q4</option></select></div>
+                  <div id="txMonthlyWrap"><input type="month" id="txPeriod" value="2026-11"></div>
+                  <div id="txYearlyWrap"><input type="number" id="txYearOnly" value="2026"></div>
+                  <input type="number" step="0.01" id="txBaseAmount" value="0">
+                  <input type="number" step="0.01" id="txStampTax" value="0">
+                </div>
+
+                <!-- 1. Satır: Beyanname Türü + Ana Vergi Kodu + Tahakkuk Fiş/Barkod No -->
+                <div class="grid grid-cols-1 sm:grid-cols-12 gap-3">
+                  <div class="sm:col-span-5">
+                    <label class="block text-indigo-300 font-semibold mb-1">1. Beyanname / Tahakkuk Türü</label>
+                    <select id="txTaxType" class="w-full bg-slate-950 border border-indigo-500/40 rounded-lg px-3 py-2 text-white font-semibold">
+                      <option value="STOPAJ">Muhtasar ve Prim Hizmet (Stopaj - 0003)</option>
+                      <option value="GECICI_VERGI">Kurum Geçici Vergi Beyannamesi (0033)</option>
+                      <option value="KDV1">Katma Değer Vergisi Beyannamesi (KDV-1 - 0015)</option>
+                      <option value="KDV2">Sorumlu Sıfatıyla KDV Tevkifatı (KDV-2 - 9015)</option>
+                      <option value="SGK">SGK 4A Sigorta &amp; İşsizlik Tahakkuku (5510)</option>
+                      <option value="KURUMLAR">Yıllık Kurumlar Vergisi Beyannamesi (0010)</option>
+                      <option value="DAMGA_HARC">Damga Vergisi / Belediye / Resmi Harç (0040)</option>
+                    </select>
+                  </div>
+                  <div class="sm:col-span-3">
+                    <label class="block text-amber-300 font-semibold mb-1">2. Ana Vergi Kodu (GİB)</label>
+                    <input type="text" list="gibTaxCodeSuggestions" id="txMainTaxCode" value="0003" required placeholder="Örn: 0033, 0003" class="w-full bg-slate-950 border border-amber-500/40 rounded-lg px-3 py-2 text-amber-300 font-mono font-bold">
+                  </div>
+                  <div class="sm:col-span-4">
+                    <label class="block text-slate-300 font-semibold mb-1">3. Tahakkuk Fiş / Barkod No (Opsiyonel)</label>
+                    <input type="text" id="txReceiptNo" placeholder="Örn: 202611230150000..." class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-white font-mono">
+                  </div>
+                </div>
+
+                <!-- 2. Satır: Gerçek Vergilendirme Dönemi Aralığı (Başlangıç Ay/Yıl – Bitiş Ay/Yıl) -->
+                <div class="p-3.5 rounded-xl bg-indigo-950/25 border border-indigo-500/35 space-y-3">
+                  <div class="flex flex-wrap items-center justify-between gap-2">
+                    <div class="font-bold text-indigo-200">📆 4. Ait Olduğu Vergilendirme Dönemi Aralığı (Örn: Temmuz 2026 – Eylül 2026)</div>
+                    <div class="flex flex-wrap gap-1">
+                      <button type="button" data-tx-qpreset="Q1" class="px-2 py-1 rounded bg-slate-800 hover:bg-indigo-500/30 text-indigo-200 border border-slate-700 text-[10px] font-semibold">1. Dönem (Oca-Mar)</button>
+                      <button type="button" data-tx-qpreset="Q2" class="px-2 py-1 rounded bg-slate-800 hover:bg-indigo-500/30 text-indigo-200 border border-slate-700 text-[10px] font-semibold">2. Dönem (Nis-Haz)</button>
+                      <button type="button" data-tx-qpreset="Q3" class="px-2 py-1 rounded bg-slate-800 hover:bg-indigo-500/30 text-indigo-200 border border-slate-700 text-[10px] font-semibold">3. Dönem (Tem-Eyl)</button>
+                      <button type="button" data-tx-qpreset="Q4" class="px-2 py-1 rounded bg-slate-800 hover:bg-indigo-500/30 text-indigo-200 border border-slate-700 text-[10px] font-semibold">4. Dönem (Eki-Ara)</button>
+                      <button type="button" data-tx-qpreset="SINGLE" class="px-2 py-1 rounded bg-slate-800 hover:bg-amber-500/30 text-amber-200 border border-slate-700 text-[10px] font-semibold">Tek Aylık Yap</button>
+                      <button type="button" data-tx-qpreset="YEAR" class="px-2 py-1 rounded bg-slate-800 hover:bg-emerald-500/30 text-emerald-200 border border-slate-700 text-[10px] font-semibold">Tam Yıl (Oca-Ara)</button>
+                    </div>
+                  </div>
+                  <div class="grid grid-cols-1 sm:grid-cols-12 gap-3 items-end">
+                    <div class="sm:col-span-5">
+                      <label class="block text-slate-300 font-semibold mb-1">Dönem Başlangıç (Ay / Yıl)</label>
+                      <div class="grid grid-cols-3 gap-2">
+                        <select id="txStartMonth" class="col-span-2 bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-2 text-white font-semibold">
+                      <option value="01">01 - Ocak</option>
+                      <option value="02">02 - Şubat</option>
+                      <option value="03">03 - Mart</option>
+                      <option value="04">04 - Nisan</option>
+                      <option value="05">05 - Mayıs</option>
+                      <option value="06">06 - Haziran</option>
+                      <option value="07">07 - Temmuz</option>
+                      <option value="08">08 - Ağustos</option>
+                      <option value="09">09 - Eylül</option>
+                      <option value="10" selected>10 - Ekim</option>
+                      <option value="11">11 - Kasım</option>
+                      <option value="12">12 - Aralık</option></select>
+                        <input type="number" id="txStartYear" min="2020" max="2040" value="2026" class="bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-2 text-white font-bold">
+                      </div>
+                    </div>
+                    <div class="sm:col-span-5">
+                      <label class="block text-amber-300 font-semibold mb-1">Dönem Bitiş (Ay / Yıl)</label>
+                      <div class="grid grid-cols-3 gap-2">
+                        <select id="txEndMonth" class="col-span-2 bg-slate-950 border border-amber-500/40 rounded-lg px-2.5 py-2 text-white font-semibold">
+                      <option value="01">01 - Ocak</option>
+                      <option value="02">02 - Şubat</option>
+                      <option value="03">03 - Mart</option>
+                      <option value="04">04 - Nisan</option>
+                      <option value="05">05 - Mayıs</option>
+                      <option value="06">06 - Haziran</option>
+                      <option value="07">07 - Temmuz</option>
+                      <option value="08">08 - Ağustos</option>
+                      <option value="09">09 - Eylül</option>
+                      <option value="10">10 - Ekim</option>
+                      <option value="11">11 - Kasım</option>
+                      <option value="12" selected>12 - Aralık</option></select>
+                        <input type="number" id="txEndYear" min="2020" max="2040" value="2026" class="bg-slate-950 border border-amber-500/40 rounded-lg px-2.5 py-2 text-white font-bold">
+                      </div>
+                    </div>
+                    <div class="sm:col-span-2">
+                      <div id="txPeriodRangePreview" class="p-2 rounded-lg bg-slate-950 border border-indigo-500/40 text-center text-[11px] font-bold text-amber-300">Ekim 2026 – Aralık 2026</div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- 3. Satır: Tahakkuk Fişi Alt Kalem Tablosu (0033, 1047, 1048 vb. Manuel Satırlar) -->
+                <div class="p-3.5 rounded-xl bg-slate-950 border border-slate-800 space-y-3">
+                  <div class="flex flex-wrap items-center justify-between gap-2">
+                    <div>
+                      <div class="font-bold text-white">🧾 5. Tahakkuk Fişi Vergi Kodu &amp; Tutar Satırları (0033, 1047, 1048 vb.)</div>
+                      <div class="text-[11px] text-slate-400">Tahakkuk fişindeki her satırı koduyla birlikte manuel yazabilir veya yeni kod satırı ekleyebilirsiniz.</div>
+                    </div>
+                    <div class="flex items-center gap-2">
+                      <button type="button" id="btnResetTaxTemplateLines" class="px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-[11px] font-semibold">Şablon Kodları Getir</button>
+                      <button type="button" id="btnAddTaxLine" class="px-3 py-1.5 rounded-lg bg-indigo-500/25 hover:bg-indigo-500/40 text-indigo-200 border border-indigo-500/40 text-xs font-bold">+ Vergi Kodu Satırı Ekle</button>
+                    </div>
+                  </div>
+                  <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse text-xs">
+                      <thead>
+                        <tr class="text-slate-400 border-b border-slate-800 text-[11px] uppercase">
+                          <th class="py-2 pr-2 w-28">Vergi Kodu</th>
+                          <th class="py-2 px-2">Vergi / Fon / Damga Açıklaması</th>
+                          <th class="py-2 px-2 w-36 text-right">Matrah (₺ Opsiyonel)</th>
+                          <th class="py-2 px-2 w-40 text-right">Tahakkuk Eden Tutar (₺)</th>
+                          <th class="py-2 pl-2 w-10 text-center">Sil</th>
+                        </tr>
+                      </thead>
+                      <tbody id="txLinesBody" class="divide-y divide-slate-800/60"></tbody>
+                    </table>
+                  </div>
+                </div>
+
+                <!-- 4. Satır: Geç Ödeme Faizi / Gecikme Zammı (1084 / 1086) & Canlı Tahakkuk Özeti -->
+                <div class="grid grid-cols-1 sm:grid-cols-12 gap-3 p-3.5 rounded-xl bg-slate-950/90 border border-amber-500/30 items-center">
+                  <div class="sm:col-span-4">
+                    <div class="text-[11px] text-slate-400">Tahakkuk Fişi Ana Toplamı (Kalemler)</div>
+                    <div id="txSummaryPrincipal" class="text-base font-bold text-white mt-0.5">0,00 ₺</div>
+                  </div>
+                  <div class="sm:col-span-4">
+                    <label class="block text-rose-300 font-semibold mb-1">Geç Ödeme Gecikme Zammı / Faizi (1086 - ₺)</label>
+                    <input type="number" step="0.01" min="0" id="txLateFee" value="0" placeholder="Geç ödendiyse faiz tutarı (Örn: 10)" class="w-full bg-slate-900 border border-rose-500/40 rounded-lg px-3 py-1.5 text-rose-300 font-bold">
+                  </div>
+                  <div class="sm:col-span-4 sm:text-right">
+                    <div class="text-[11px] text-emerald-300 font-semibold">Ödenecek / Ödenen Genel Toplam</div>
+                    <div id="txSummaryGrandTotal" class="text-xl font-bold text-emerald-400 mt-0.5">0,00 ₺</div>
+                  </div>
+                </div>
+
+                <!-- 5. Satır: Son Ödeme Vadesi, P&L Yansıması, Durum ve Ödeme Hesabı -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                  <div>
+                    <label class="block text-amber-300 font-semibold mb-1">Son Ödeme (Vade) Tarihi</label>
+                    <input type="date" id="txDueDate" required class="w-full bg-slate-950 border border-amber-500/40 rounded-lg px-2.5 py-2 text-white">
+                  </div>
+                  <div>
+                    <label class="block text-slate-300 font-semibold mb-1">P&amp;L Yansıması</label>
+                    <select id="txPnlGroup" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-2 text-white">
+                      <option value="TAXES">8. Vergi, Stopaj &amp; Damga (P&amp;L)</option>
+                      <option value="LABOR">3. Personel SGK Gideri (P&amp;L)</option>
+                      <option value="RENT">4. Kira Stopajı (P&amp;L Kira)</option>
+                      <option value="NONE">P&amp;L Dışı (KDV1/KDV2/Geçici Mahsubu)</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label class="block text-slate-300 font-semibold mb-1">Ödeme Durumu</label>
+                    <select id="txInitStatus" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-2 text-white font-semibold">
+                      <option value="BEKLIYOR">⏳ Tahakkuk Etti (Ödeme Bekliyor)</option>
+                      <option value="ODENDI">✅ Ödendi Olarak İşle</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label class="block text-slate-300 font-semibold mb-1">Ödeme Hesabı (Ödendiyse)</label>
+                    <select id="txPaidSource" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-2 text-white">
+                      <option value="COMPANY_BANK">🏦 Şirket Bankası</option>
+                      <option value="COMPANY_CARD">💳 Şirket Kredi Kartı</option>
+                      <option value="ONUR_PERSONAL">💳 Onur Şahsi (+331)</option>
+                      <option value="RUSTEM_PERSONAL">💳 Rüstem Şahsi (+331)</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div id="txPaidExtraRow" class="hidden grid grid-cols-1 sm:grid-cols-2 gap-3 p-3 rounded-xl bg-purple-950/25 border border-purple-500/35">
+                  <div>
+                    <label class="block text-slate-300 font-semibold mb-1">Fiili Ödeme Tarihi</label>
+                    <input type="date" id="txPaidDateInput" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-1.5 text-white">
+                  </div>
+                  <div id="txPaidCardSelectWrap" class="hidden">
+                    <label class="block text-purple-300 font-semibold mb-1">Hangi Şirket Kredi Kartıyla Ödendi?</label>
+                    <select id="txPaidCardId" class="w-full bg-slate-950 border border-purple-500/40 rounded-lg px-2.5 py-1.5 text-white font-semibold"></select>
+                  </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-12 gap-3 items-end">
+                  <div class="sm:col-span-9">
+                    <label class="block text-slate-300 font-semibold mb-1">Beyanname / Tahakkuk Açıklaması</label>
+                    <input type="text" id="txNote" required placeholder="Örn: Temmuz-Eylül 2026 Muhtasar Kira &amp; SMMM Stopajı / 3. Dönem Kurum Geçici" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-white">
+                  </div>
+                  <div class="sm:col-span-3">
+                    <button type="submit" id="btnSubmitTaxForm" class="w-full py-2.5 rounded-xl bg-indigo-500 hover:bg-indigo-400 text-slate-950 font-bold text-xs transition shadow-lg">
+                      🏛️ Tahakkuku Kaydet
+                    </button>
+                  </div>
+                </div>
+              </form>
             </div>
-            <div class="grid grid-cols-2 gap-2.5">
-              <div>
-                <label class="block text-amber-300 font-semibold mb-1">Son Ödeme Tarihi</label>
-                <input type="date" id="txDueDate" required class="w-full bg-slate-950 border border-amber-500/40 rounded-lg px-2.5 py-2 text-white">
-              </div>
-              <div>
-                <label class="block text-slate-300 mb-1">P&amp;L Yansıması</label>
-                <select id="txPnlGroup" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-2 text-white">
-                  <option value="TAXES">8. Vergi, Stopaj &amp; Damga (P&amp;L)</option>
-                  <option value="LABOR">3. Personel SGK Gideri (P&amp;L)</option>
-                  <option value="RENT">4. Kira Stopajı (P&amp;L Kira)</option>
-                  <option value="NONE">P&amp;L Dışı (KDV1/KDV2 Mahsubu)</option>
-                </select>
-              </div>
-            </div>
-            <div class="grid grid-cols-2 gap-2.5">
-              <div>
-                <label class="block text-slate-400 mb-1">Durumu</label>
-                <select id="txInitStatus" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-2 text-white">
-                  <option value="BEKLIYOR">⏳ Tahakkuk Etti (Bekliyor)</option>
-                  <option value="ODENDI">✅ Hemen Ödendi Olarak İşle</option>
-                </select>
-              </div>
-              <div>
-                <label class="block text-slate-400 mb-1">Ödeme Hesabı (Ödendiyse)</label>
-                <select id="txPaidSource" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-2 text-white">
-                  <option value="COMPANY_BANK">🏦 Şirket Bankası</option>
-                  <option value="COMPANY_CARD">💳 Şirket Kredi Kartı</option>
-                  <option value="ONUR_PERSONAL">💳 Onur Şahsi</option>
-                  <option value="RUSTEM_PERSONAL">💳 Rüstem Şahsi</option>
-                </select>
-              </div>
-            </div>
-            <div>
-              <label class="block text-slate-400 mb-1">Tahakkuk Fiş No / Açıklama</label>
-              <input type="text" id="txNote" required placeholder="Örn: Kasım 2026 Kira + Muhasebe Muhtasar Stopajı" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-white">
-            </div>
-            <button type="submit" class="w-full py-2.5 rounded-xl bg-indigo-500 hover:bg-indigo-400 text-slate-950 font-bold text-xs transition">
-              🏛️ Tahakkuku Kaydet
-            </button>
-          </form>
+          </div>
         </div>
 
-        <div class="lg:col-span-8 bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden">
+        <!-- Sağ: Tahakkuk & Ödeme Geçmişi Tablosu -->
+        <div class="lg:col-span-8 bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden" data-fold-peer="lg:col-span-8" data-fold-peer-expanded="lg:col-span-12">
           <div class="p-4 border-b border-slate-800 flex flex-wrap items-center justify-between gap-2 text-xs">
-            <h3 class="text-sm font-bold text-white">📋 Vergi &amp; SGK Tahakkuk ve Ödeme Geçmişi</h3>
+            <div>
+              <h3 class="text-sm font-bold text-white">📋 Vergi &amp; SGK Tahakkuk Fişleri ve Ödeme Geçmişi</h3>
+              <p class="text-[11px] text-slate-400">Geçmiş beyannameleri <strong>✏️ Düzelt</strong> ile güncelleyebilir, bekleyen tahakkukları <strong>💳 Öde</strong> ile gecikme faizi ekleyerek kapatabilirsiniz.</p>
+            </div>
             <div class="flex flex-wrap gap-2">
               <select id="txFilterType" class="bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-1.5 text-white">
                 <option value="ALL">Tüm Vergi &amp; SGK Türleri</option>
-                <option value="KDV1">KDV-1</option>
-                <option value="KDV2">KDV-2 (Tevkifat)</option>
-                <option value="STOPAJ">Muhtasar / Stopaj</option>
-                <option value="SGK">SGK Primleri</option>
-                <option value="GECICI_VERGI">Kurum Geçici Vergi</option>
-                <option value="KURUMLAR">Kurumlar Vergisi</option>
-                <option value="DAMGA_HARC">Damga / Harç</option>
+                <option value="STOPAJ">0003 - Muhtasar / Stopaj</option>
+                <option value="GECICI_VERGI">0033 - Kurum Geçici Vergi</option>
+                <option value="KDV1">0015 - KDV-1</option>
+                <option value="KDV2">9015 - KDV-2 (Tevkifat)</option>
+                <option value="SGK">5510 - SGK Primleri</option>
+                <option value="KURUMLAR">0010 - Kurumlar Vergisi</option>
+                <option value="DAMGA_HARC">0040 - Damga / Harç</option>
               </select>
               <select id="txFilterStatus" class="bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-1.5 text-white">
                 <option value="ALL">Tümü (Bekleyen + Ödenen)</option>
@@ -2362,14 +2778,14 @@
               </select>
             </div>
           </div>
-          <div class="overflow-x-auto max-h-[500px] custom-scrollbar">
+          <div class="overflow-x-auto max-h-[560px] custom-scrollbar">
             <table class="w-full text-left border-collapse text-xs">
               <thead>
                 <tr class="bg-slate-950 text-slate-400 border-b border-slate-800 uppercase text-[11px]">
-                  <th class="py-3 px-3">Dönem / Vade</th>
-                  <th class="py-3 px-3">Tür</th>
-                  <th class="py-3 px-3">Açıklama &amp; Fiş No</th>
-                  <th class="py-3 px-3 text-right">Vergi + Damga</th>
+                  <th class="py-3 px-3">Dönem Aralığı / Vade</th>
+                  <th class="py-3 px-3">Ana Kod &amp; Tür</th>
+                  <th class="py-3 px-3">Tahakkuk Fişi Alt Kodları (0033, 1047, 1048...) &amp; Detay</th>
+                  <th class="py-3 px-3 text-right">Asıl + Faiz = Toplam</th>
                   <th class="py-3 px-3 text-center">Durum</th>
                   <th class="py-3 px-3 text-center">İşlem</th>
                 </tr>
@@ -2507,13 +2923,22 @@
         </div>
       </div>
 
-      <div id="singleEmployeePanel" class="hidden space-y-6">
+      <div id="singleEmployeePanel" class="hidden space-y-5">
+        <div id="seSummaryCards" class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs"></div>
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-          <div class="lg:col-span-5 bg-slate-900 border border-amber-500/30 rounded-2xl p-5 space-y-3">
-            <div class="flex items-center justify-between border-b border-slate-800 pb-2">
-              <h3 id="seCardTitle" class="text-base font-bold text-amber-300">👤 Personel Özlük Kişi Kartı</h3>
-              <button type="button" id="btnDeleteEmployee" class="text-[11px] text-slate-500 hover:text-rose-400">Kartı Sil</button>
-            </div>
+          <div class="lg:col-span-4 space-y-3.5 h-fit transition-all" data-fold-sidebar="lg:col-span-4" data-fold-expanded="lg:col-span-12">
+            <div class="fold-window bg-slate-900 border border-amber-500/35 rounded-2xl overflow-hidden shadow-lg" data-fold-card="fold-emp-edit">
+              <div class="p-4 flex items-center justify-between gap-2 cursor-pointer hover:bg-slate-800/60 transition select-none" data-fold-btn="fold-emp-edit">
+                <div>
+                  <h3 id="seCardTitle" class="text-sm font-bold text-amber-300">👤 Personel Özlük Kişi Kartı</h3>
+                  <p class="text-[11px] text-slate-400 mt-0.5">Maaş, SGK, IBAN ve özlük bilgilerini görmek/düzenlemek için tıklayın</p>
+                </div>
+                <span data-fold-badge="fold-emp-edit" class="px-3 py-1 rounded-lg bg-amber-500/20 text-amber-300 border border-amber-500/30 text-xs font-bold whitespace-nowrap">Pencereyi Aç ▾</span>
+              </div>
+              <div id="fold-emp-edit" class="fold-body hidden p-5 border-t border-slate-800 space-y-3">
+                <div class="flex justify-end">
+                  <button type="button" id="btnDeleteEmployee" class="text-[11px] text-slate-400 hover:text-rose-400">Kartı Sil</button>
+                </div>
             <form id="editEmployeeForm" class="space-y-2.5 text-xs">
               <div class="grid grid-cols-2 gap-2">
                 <div>
@@ -2586,13 +3011,18 @@
                 💾 Özlük ve Maaş Bilgilerini Güncelle
               </button>
             </form>
-          </div>
+              </div>
+            </div>
 
-          <div class="lg:col-span-7 space-y-5">
-            <div id="seSummaryCards" class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs"></div>
-
-            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-3">
-              <h4 class="text-sm font-bold text-emerald-400">💸 Bu Personele Avans, Maaş Ödemesi veya Hakediş / Tazminat İşle</h4>
+            <div class="fold-window bg-slate-900 border border-emerald-500/35 rounded-2xl overflow-hidden shadow-lg" data-fold-card="fold-emp-tx">
+              <div class="p-4 flex items-center justify-between gap-2 cursor-pointer hover:bg-slate-800/60 transition select-none" data-fold-btn="fold-emp-tx">
+                <div>
+                  <h4 class="text-sm font-bold text-emerald-400">💸 Avans, Maaş Ödemesi veya Tazminat İşle</h4>
+                  <p class="text-[11px] text-slate-400 mt-0.5">Bu personele ödeme veya hakediş girmek için tıklayın</p>
+                </div>
+                <span data-fold-badge="fold-emp-tx" class="px-3 py-1 rounded-lg bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-xs font-bold whitespace-nowrap">Pencereyi Aç ▾</span>
+              </div>
+              <div id="fold-emp-tx" class="fold-body hidden p-5 border-t border-slate-800">
               <form id="empTxForm" class="space-y-3 text-xs">
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
                   <div>
@@ -2636,8 +3066,11 @@
                   ✅ Personel Hesabına, Kasaya ve P&amp;L'e İşle
                 </button>
               </form>
+              </div>
             </div>
+          </div>
 
+          <div class="lg:col-span-8 space-y-5" data-fold-peer="lg:col-span-8" data-fold-peer-expanded="lg:col-span-12">
             <div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden">
               <div class="p-4 border-b border-slate-800 flex items-center justify-between">
                 <h4 class="text-sm font-bold text-white">📒 Bu Personelin Tüm Hesap Hareketleri &amp; Avans Ekstresi</h4>
@@ -2702,9 +3135,16 @@
       </div>
 
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        <div class="lg:col-span-5 space-y-5">
-          <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-3">
-            <h3 class="text-sm font-bold text-pink-300">➕ Günlük / Haftalık / Aylık POS veya Platform Mutabakatı Gir</h3>
+        <div class="lg:col-span-4 space-y-3.5 h-fit transition-all" data-fold-sidebar="lg:col-span-4" data-fold-expanded="lg:col-span-12">
+          <div class="fold-window bg-slate-900 border border-pink-500/35 rounded-2xl overflow-hidden shadow-lg" data-fold-card="fold-comm-entry">
+            <div class="p-4 flex items-center justify-between gap-2 cursor-pointer hover:bg-slate-800/60 transition select-none" data-fold-btn="fold-comm-entry">
+              <div>
+                <h3 class="text-sm font-bold text-pink-300">➕ POS veya Platform Mutabakatı Gir</h3>
+                <p class="text-[11px] text-slate-400 mt-0.5">Yemeksepeti, Getir, Uber Eats veya POS satışını işlemek için tıklayın</p>
+              </div>
+              <span data-fold-badge="fold-comm-entry" class="px-3 py-1.5 rounded-xl bg-pink-500/20 text-pink-300 border border-pink-500/35 text-xs font-bold whitespace-nowrap">Pencereyi Aç ▾</span>
+            </div>
+            <div id="fold-comm-entry" class="fold-body hidden p-5 border-t border-slate-800">
             <form id="commissionEntryForm" class="space-y-3 text-xs">
               <div class="grid grid-cols-2 gap-2.5">
                 <div>
@@ -2760,19 +3200,28 @@
                 💾 Ciroyu, Komisyon Giderini ve Net Tahsilatı İşle
               </button>
             </form>
+            </div>
           </div>
 
-          <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 space-y-2.5">
-            <div class="text-xs font-bold text-white">+ Yeni POS / Satış Platformu Ekle veya Oran Güncelle</div>
+          <div class="fold-window bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-lg" data-fold-card="fold-comm-channel">
+            <div class="p-4 flex items-center justify-between gap-2 cursor-pointer hover:bg-slate-800/60 transition select-none" data-fold-btn="fold-comm-channel">
+              <div>
+                <div class="text-sm font-bold text-white">🛵 Yeni POS / Satış Platformu Ekle</div>
+                <div class="text-[11px] text-slate-400 mt-0.5">Yeni banka POS veya online platform kanalı tanımlayın</div>
+              </div>
+              <span data-fold-badge="fold-comm-channel" class="px-3 py-1.5 rounded-xl bg-slate-800 text-pink-300 border border-pink-500/30 text-xs font-bold whitespace-nowrap">Pencereyi Aç ▾</span>
+            </div>
+            <div id="fold-comm-channel" class="fold-body hidden p-4 border-t border-slate-800">
             <form id="newChannelForm" class="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs">
               <input type="text" id="nchName" required placeholder="Örn: QNB POS / Fuudy" class="bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-1.5 text-white">
               <input type="number" step="0.01" id="nchRate" required placeholder="Komisyon %" class="bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-1.5 text-white">
               <button type="submit" class="py-1.5 px-3 rounded-lg bg-slate-800 hover:bg-slate-700 text-pink-300 border border-pink-500/30 font-bold">+ Kanal Ekle</button>
             </form>
+            </div>
           </div>
         </div>
 
-        <div class="lg:col-span-7 space-y-5">
+        <div class="lg:col-span-8 space-y-5" data-fold-peer="lg:col-span-8" data-fold-peer-expanded="lg:col-span-12">
           <div id="channelSummaryGrid" class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 text-xs"></div>
 
           <div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden">
@@ -2816,73 +3265,155 @@
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-          <div class="lg:col-span-4 space-y-4">
-            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 space-y-3 text-xs">
-              <h3 class="text-sm font-bold text-purple-300">➕ Şirket Kredi Kartı Tanımla / Güncelle</h3>
-              <form id="companyCardForm" class="space-y-2.5">
-                <div class="grid grid-cols-2 gap-2">
-                  <div>
-                    <label class="block text-slate-400 mb-0.5">Kart Adı / Banka</label>
-                    <input type="text" id="ccCardName" required placeholder="Örn: VakıfBank Business" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-1.5 text-white font-semibold">
-                  </div>
-                  <div>
-                    <label class="block text-slate-400 mb-0.5">Son 4 Hane</label>
-                    <input type="text" id="ccLast4" maxlength="4" placeholder="4821" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-1.5 text-amber-300 font-mono font-bold">
-                  </div>
+          <!-- Sol Seçenekler: Tıklayınca Pencerelerle Açılıp Büyüyen Kart İşlemleri -->
+          <div class="lg:col-span-4 space-y-3 h-fit transition-all" data-fold-sidebar="lg:col-span-4" data-fold-expanded="lg:col-span-12">
+            <!-- Pencere 1: Yeni Şirket Kredi Kartı Tanımla -->
+            <div class="fold-window bg-slate-900 border border-purple-500/35 rounded-2xl overflow-hidden shadow-lg text-xs" data-fold-card="fold-cc-add">
+              <div class="p-4 flex items-center justify-between gap-2 cursor-pointer hover:bg-slate-800/60 transition select-none" data-fold-btn="fold-cc-add">
+                <div>
+                  <h3 class="text-sm font-bold text-purple-300">💳 Yeni Şirket Kredi Kartı Tanımla</h3>
+                  <p class="text-[11px] text-slate-400 mt-0.5">Yeni şirket kartı, limit ve kesim günü eklemek için tıklayın</p>
                 </div>
-                <div class="grid grid-cols-3 gap-2">
-                  <div>
-                    <label class="block text-slate-400 mb-0.5">Kart Limiti (₺)</label>
-                    <input type="number" step="1" min="0" id="ccLimit" value="0" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2 py-1.5 text-white">
+                <span data-fold-badge="fold-cc-add" class="px-3 py-1.5 rounded-xl bg-purple-500/20 text-purple-300 border border-purple-500/35 text-xs font-bold whitespace-nowrap">Pencereyi Aç ▾</span>
+              </div>
+              <div id="fold-cc-add" class="fold-body hidden p-5 border-t border-slate-800">
+                <form id="companyCardForm" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-3 items-end">
+                  <div class="lg:col-span-2">
+                    <label class="block text-purple-300 font-semibold mb-1">Kart Adı / Banka *</label>
+                    <input type="text" list="bankSuggestionsList" id="ccCardName" required placeholder="Örn: VakıfBank Business" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-white font-semibold">
                   </div>
                   <div>
-                    <label class="block text-slate-400 mb-0.5">Kesim Günü</label>
-                    <input type="number" min="1" max="31" id="ccCutoff" value="15" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2 py-1.5 text-white">
+                    <label class="block text-amber-300 font-semibold mb-1">Son 4 Hane</label>
+                    <input type="text" id="ccLast4" maxlength="4" placeholder="4821" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-amber-300 font-mono font-bold">
                   </div>
                   <div>
-                    <label class="block text-slate-400 mb-0.5">Son Ödeme</label>
-                    <input type="number" min="1" max="31" id="ccDueDay" value="25" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2 py-1.5 text-white">
+                    <label class="block text-emerald-300 font-semibold mb-1">Kart Limiti (₺)</label>
+                    <input type="number" step="0.01" min="0" id="ccLimit" value="0" placeholder="Örn: 500000" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-white font-bold">
                   </div>
-                </div>
-                <button type="submit" class="w-full py-2 rounded-xl bg-purple-500 hover:bg-purple-400 text-slate-950 font-bold">+ Yeni Şirket Kartı Ekle</button>
-              </form>
+                  <div>
+                    <label class="block text-slate-300 mb-1">Kesim / Son Ödeme Günü</label>
+                    <div class="grid grid-cols-2 gap-1.5">
+                      <input type="number" min="1" max="31" id="ccCutoff" value="15" title="Hesap Kesim Günü" placeholder="Kesim" class="bg-slate-950 border border-slate-700 rounded-lg px-2 py-2 text-white text-center font-bold">
+                      <input type="number" min="1" max="31" id="ccDueDay" value="25" title="Son Ödeme Günü" placeholder="Son Öd." class="bg-slate-950 border border-amber-500/40 rounded-lg px-2 py-2 text-white text-center font-bold">
+                    </div>
+                  </div>
+                  <div>
+                    <button type="submit" class="w-full py-2 px-3 rounded-xl bg-purple-500 hover:bg-purple-400 text-slate-950 font-bold">+ Yeni Şirket Kartı Ekle</button>
+                  </div>
+                </form>
+              </div>
             </div>
 
-            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 space-y-2.5 text-xs">
-              <h3 class="text-sm font-bold text-emerald-400">💸 Şirket Kredi Kartı Ekstre Borcu Öde</h3>
-              <form id="payCompanyCardForm" class="space-y-2.5">
-                <select id="pccCardId" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-1.5 text-white font-semibold"></select>
-                <div class="grid grid-cols-2 gap-2">
-                  <input type="date" id="pccDate" required class="bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-1.5 text-white">
-                  <input type="number" step="0.01" min="0.01" id="pccAmount" required placeholder="Ödenen Tutar ₺" class="bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-1.5 text-white font-bold">
+            <!-- Pencere 2: Şirket Kredi Kartı Ekstre Borcu Öde -->
+            <div class="fold-window bg-slate-900 border border-emerald-500/35 rounded-2xl overflow-hidden shadow-lg text-xs" data-fold-card="fold-cc-pay">
+              <div class="p-4 flex items-center justify-between gap-2 cursor-pointer hover:bg-slate-800/60 transition select-none" data-fold-btn="fold-cc-pay">
+                <div>
+                  <h3 class="text-sm font-bold text-emerald-400">💸 Şirket Kredi Kartı Ekstre Borcu Öde</h3>
+                  <p class="text-[11px] text-slate-400 mt-0.5">Kart dönem borcunu banka veya ortak hesabından kapatmak için tıklayın</p>
                 </div>
-                <select id="pccSource" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-1.5 text-white">
-                  <option value="COMPANY_BANK">🏦 Şirket Banka Hesabından Ödendi</option>
-                  <option value="ONUR_PERSONAL">👤 Onur Doğan Şahsiden Ödedi (+331)</option>
-                  <option value="RUSTEM_PERSONAL">👤 Rüstem Çiftçi Şahsiden Ödedi (+331)</option>
-                </select>
-                <button type="submit" class="w-full py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold">✅ Kart Borcunu Düş &amp; Kasaya İşle</button>
-              </form>
+                <span data-fold-badge="fold-cc-pay" class="px-3 py-1.5 rounded-xl bg-emerald-500/20 text-emerald-300 border border-emerald-500/35 text-xs font-bold whitespace-nowrap">Pencereyi Aç ▾</span>
+              </div>
+              <div id="fold-cc-pay" class="fold-body hidden p-5 border-t border-slate-800">
+                <form id="payCompanyCardForm" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 items-end">
+                  <div>
+                    <label class="block text-purple-300 font-semibold mb-1">Ödenecek Şirket Kartı</label>
+                    <select id="pccCardId" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-2 text-white font-semibold"></select>
+                  </div>
+                  <div>
+                    <label class="block text-slate-300 mb-1">Ödeme Tarihi</label>
+                    <input type="date" id="pccDate" required class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-2 text-white">
+                  </div>
+                  <div>
+                    <label class="block text-white font-semibold mb-1">Ödenen Tutar (₺)</label>
+                    <input type="number" step="0.01" min="0.01" id="pccAmount" required placeholder="Ödenen Tutar ₺" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-2 text-white font-bold">
+                  </div>
+                  <div>
+                    <label class="block text-amber-300 font-semibold mb-1">Ödeme Kaynağı</label>
+                    <select id="pccSource" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-2 text-white">
+                      <option value="COMPANY_BANK">🏦 Şirket Banka Hesabından Ödendi</option>
+                      <option value="ONUR_PERSONAL">👤 Onur Doğan Şahsiden Ödedi (+331)</option>
+                      <option value="RUSTEM_PERSONAL">👤 Rüstem Çiftçi Şahsiden Ödedi (+331)</option>
+                    </select>
+                  </div>
+                  <div>
+                    <button type="submit" class="w-full py-2 px-3 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold">✅ Kart Borcunu Düş &amp; Kasaya İşle</button>
+                  </div>
+                </form>
+              </div>
             </div>
 
-            <div class="bg-slate-900 border border-purple-500/30 rounded-2xl p-4 space-y-2.5 text-xs">
-              <h3 class="text-sm font-bold text-amber-300">📄 Karta PDF Ekstre Yükle &amp; Sakla</h3>
-              <form id="uploadCardPdfForm" class="space-y-2.5">
-                <select id="ucpCardId" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-1.5 text-white font-semibold"></select>
-                <div class="grid grid-cols-2 gap-2">
-                  <input type="month" id="ucpPeriod" value="2026-11" required class="bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-1.5 text-white">
-                  <input type="number" step="0.01" min="0" id="ucpStmtTotal" placeholder="Ekstre Toplamı ₺" class="bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-1.5 text-white font-bold">
+            <!-- Pencere 3: Karta PDF Ekstre Yükle & Sakla -->
+            <div class="fold-window bg-slate-900 border border-amber-500/35 rounded-2xl overflow-hidden shadow-lg text-xs" data-fold-card="fold-cc-pdf">
+              <div class="p-4 flex items-center justify-between gap-2 cursor-pointer hover:bg-slate-800/60 transition select-none" data-fold-btn="fold-cc-pdf">
+                <div>
+                  <h3 class="text-sm font-bold text-amber-300">📄 Karta PDF Ekstre Yükle &amp; Sakla</h3>
+                  <p class="text-[11px] text-slate-400 mt-0.5">Banka PDF ekstresini yükleyip kart altında arşivlemek için tıklayın</p>
                 </div>
-                <input type="file" id="ucpPdfFile" accept="application/pdf,.pdf" required class="w-full text-[11px] text-slate-300 file:mr-2 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:bg-purple-500/20 file:text-purple-300 file:font-semibold">
-                <input type="text" id="ucpNote" placeholder="İsteğe bağlı ekstre notu..." class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-1.5 text-white">
-                <button type="submit" class="w-full py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold">📎 PDF Ekstreyi Oku ve Kart Altına Kaydet</button>
-              </form>
+                <span data-fold-badge="fold-cc-pdf" class="px-3 py-1.5 rounded-xl bg-amber-500/20 text-amber-300 border border-amber-500/35 text-xs font-bold whitespace-nowrap">Pencereyi Aç ▾</span>
+              </div>
+              <div id="fold-cc-pdf" class="fold-body hidden p-5 border-t border-slate-800">
+                <form id="uploadCardPdfForm" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 items-end">
+                  <div>
+                    <label class="block text-purple-300 font-semibold mb-1">Şirket Kartı</label>
+                    <select id="ucpCardId" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-2 text-white font-semibold"></select>
+                  </div>
+                  <div>
+                    <label class="block text-slate-300 mb-1">Ekstre Dönemi &amp; Tutarı</label>
+                    <div class="grid grid-cols-2 gap-1.5">
+                      <input type="month" id="ucpPeriod" value="2026-11" required class="bg-slate-950 border border-slate-700 rounded-lg px-2 py-2 text-white">
+                      <input type="number" step="0.01" min="0" id="ucpStmtTotal" placeholder="Tutar ₺" class="bg-slate-950 border border-slate-700 rounded-lg px-2 py-2 text-white font-bold">
+                    </div>
+                  </div>
+                  <div>
+                    <label class="block text-amber-300 font-semibold mb-1">PDF Dosyası Seç</label>
+                    <input type="file" id="ucpPdfFile" accept="application/pdf,.pdf" required class="w-full text-[11px] text-slate-300 file:mr-2 file:py-1.5 file:px-2.5 file:rounded-lg file:border-0 file:bg-purple-500/20 file:text-purple-300 file:font-semibold">
+                  </div>
+                  <div>
+                    <label class="block text-slate-300 mb-1">Ekstre Notu</label>
+                    <input type="text" id="ucpNote" placeholder="İsteğe bağlı not..." class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-2 text-white">
+                  </div>
+                  <div>
+                    <button type="submit" class="w-full py-2 px-3 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold">📎 PDF Ekstreyi Oku ve Kart Altına Kaydet</button>
+                  </div>
+                </form>
+              </div>
             </div>
           </div>
 
-          <div class="lg:col-span-8 space-y-4">
-            <div id="companyCardsGrid" class="grid grid-cols-1 sm:grid-cols-2 gap-3.5 text-xs"></div>
+          <!-- Sağ Alan: Kayıtlı Şirket Kredi Kartları LİSTESİ + PDF Arşivi + Harcama Ekstresi -->
+          <div class="lg:col-span-8 space-y-5" data-fold-peer="lg:col-span-8" data-fold-peer-expanded="lg:col-span-12">
+            <!-- 1. Tüm Şirket Kredi Kartları Detaylı Liste & Düzenleme Tablosu -->
+            <div class="bg-slate-900 border border-purple-500/35 rounded-2xl overflow-hidden shadow-lg">
+              <div class="p-4 border-b border-slate-800 flex flex-wrap items-center justify-between gap-2">
+                <div>
+                  <h3 class="text-sm font-bold text-white">💳 Kayıtlı Şirket Kredi Kartları Listesi (Limit, Kesim &amp; Son Ödeme Yönetimi)</h3>
+                  <p class="text-[11px] text-slate-400">Herhangi bir kartın limitini, hesap kesim veya son ödeme gününü/tarihini değiştirmek için satırdaki <strong>✏️ Düzenle</strong> butonuna tıklayın.</p>
+                </div>
+                <span id="companyCardsCountBadge" class="px-3 py-1 rounded-lg bg-purple-500/15 text-purple-300 text-xs font-bold">0 Kart</span>
+              </div>
+              <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse text-xs">
+                  <thead>
+                    <tr class="bg-slate-950 text-slate-400 border-b border-slate-800 uppercase text-[11px]">
+                      <th class="py-3 px-3">Kart &amp; Banka Adı</th>
+                      <th class="py-3 px-3 text-center">Son 4 Hane</th>
+                      <th class="py-3 px-3 text-right">Kart Limiti</th>
+                      <th class="py-3 px-3 text-right">Güncel Borç</th>
+                      <th class="py-3 px-3 text-right">Kalan Limit</th>
+                      <th class="py-3 px-3 text-center">Hesap Kesim</th>
+                      <th class="py-3 px-3 text-center">Son Ödeme</th>
+                      <th class="py-3 px-3 text-center">İşlem / Güncelle</th>
+                    </tr>
+                  </thead>
+                  <tbody id="companyCardsTableBody" class="divide-y divide-slate-800/60"></tbody>
+                </table>
+              </div>
+            </div>
 
+            <!-- Kart Özet Kutuları (Hızlı Görünüm) -->
+            <div id="companyCardsGrid" class="hidden"></div>
+
+            <!-- 2. Yüklenen PDF Kart Ekstreleri Arşivi -->
             <div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden">
               <div class="p-4 border-b border-slate-800">
                 <h3 class="text-sm font-bold text-white">📎 Yüklenen PDF Kart Ekstreleri Arşivi</h3>
@@ -2890,6 +3421,7 @@
               <div id="cardPdfStatementsList" class="p-4 space-y-2 text-xs"></div>
             </div>
 
+            <!-- 3. Şirket Kartlarıyla Yapılan Tüm Harcamalar & Ödemeler -->
             <div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden">
               <div class="p-4 border-b border-slate-800">
                 <h3 class="text-sm font-bold text-white">📋 Şirket Kredi Kartlarıyla Yapılan Tüm Harcamalar &amp; Borç Ödemeleri</h3>
@@ -2913,6 +3445,7 @@
         </div>
       </div>
 
+      <!-- Alt Bölüm: Banka Kredileri & Taksit Ödeme Planları -->
       <div class="space-y-4 pt-4 border-t border-slate-800">
         <div class="bg-slate-900 border border-sky-500/35 rounded-2xl p-5">
           <h2 class="text-base font-bold text-sky-300">🏦 Şirket Adına Çekilen Banka Kredileri, Faiz Durumu &amp; Taksit Ödeme Planları</h2>
@@ -2920,54 +3453,64 @@
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-          <div class="lg:col-span-4 bg-slate-900 border border-slate-800 rounded-2xl p-5 h-fit space-y-3 text-xs">
-            <h3 class="text-sm font-bold text-sky-300">➕ Yeni Ticari Kredi &amp; Ödeme Planı Ekle</h3>
-            <form id="bankLoanForm" class="space-y-2.5">
-              <div class="grid grid-cols-2 gap-2">
+          <div class="lg:col-span-4 h-fit transition-all" data-fold-sidebar="lg:col-span-4" data-fold-expanded="lg:col-span-12">
+            <div class="fold-window bg-slate-900 border border-sky-500/35 rounded-2xl overflow-hidden shadow-lg text-xs" data-fold-card="fold-bank-loan">
+              <div class="p-4 flex items-center justify-between gap-2 cursor-pointer hover:bg-slate-800/60 transition select-none" data-fold-btn="fold-bank-loan">
                 <div>
-                  <label class="block text-slate-300 mb-0.5">Banka Adı</label>
-                  <input type="text" list="bankSuggestionsList" id="blBankName" required value="VakıfBank" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-1.5 text-white font-semibold">
+                  <h3 class="text-sm font-bold text-sky-300">➕ Yeni Ticari Kredi &amp; Ödeme Planı Ekle</h3>
+                  <p class="text-[11px] text-slate-400 mt-0.5">Çekilen kredinin anapara, faiz ve taksit planını girmek için tıklayın</p>
                 </div>
-                <div>
-                  <label class="block text-slate-300 mb-0.5">Kredi Adı / Türü</label>
-                  <input type="text" id="blTitle" required placeholder="Örn: Ticari Taksitli Yatırım Kredisi" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-1.5 text-white">
-                </div>
+                <span data-fold-badge="fold-bank-loan" class="px-3 py-1.5 rounded-xl bg-sky-500/20 text-sky-300 border border-sky-500/35 text-xs font-bold whitespace-nowrap">Pencereyi Aç ▾</span>
               </div>
-              <div class="grid grid-cols-2 gap-2">
-                <div>
-                  <label class="block text-emerald-300 font-semibold mb-0.5">Çekilen Anapara (₺)</label>
-                  <input type="number" step="0.01" min="1" id="blPrincipal" required placeholder="Örn: 1000000" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-1.5 text-white font-bold">
-                </div>
-                <div>
-                  <label class="block text-amber-300 font-semibold mb-0.5">Toplam Geri Ödeme (₺)</label>
-                  <input type="number" step="0.01" min="1" id="blTotalRepay" required placeholder="Örn: 1480000" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-1.5 text-white font-bold">
-                </div>
+              <div id="fold-bank-loan" class="fold-body hidden p-5 border-t border-slate-800">
+                <form id="bankLoanForm" class="space-y-3">
+                  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                    <div>
+                      <label class="block text-slate-300 mb-1">Banka Adı</label>
+                      <input type="text" list="bankSuggestionsList" id="blBankName" required value="VakıfBank" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-white font-semibold">
+                    </div>
+                    <div>
+                      <label class="block text-slate-300 mb-1">Kredi Adı / Türü</label>
+                      <input type="text" id="blTitle" required placeholder="Örn: Ticari Taksitli Yatırım Kredisi" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-white">
+                    </div>
+                    <div>
+                      <label class="block text-emerald-300 font-semibold mb-1">Çekilen Anapara (₺)</label>
+                      <input type="number" step="0.01" min="1" id="blPrincipal" required placeholder="Örn: 1000000" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-white font-bold">
+                    </div>
+                    <div>
+                      <label class="block text-amber-300 font-semibold mb-1">Toplam Geri Ödeme (₺)</label>
+                      <input type="number" step="0.01" min="1" id="blTotalRepay" required placeholder="Örn: 1480000" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-white font-bold">
+                    </div>
+                  </div>
+                  <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 items-end">
+                    <div class="grid grid-cols-3 gap-2">
+                      <div>
+                        <label class="block text-slate-300 mb-1">Aylık Faiz (%)</label>
+                        <input type="number" step="0.01" min="0" id="blInterestRate" value="3.99" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2 py-2 text-white">
+                      </div>
+                      <div>
+                        <label class="block text-slate-300 mb-1">Taksit Sayısı</label>
+                        <input type="number" min="1" max="120" id="blInstallments" required value="12" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2 py-2 text-white font-bold">
+                      </div>
+                      <div>
+                        <label class="block text-slate-300 mb-1">İlk Taksit</label>
+                        <input type="date" id="blFirstDueDate" required class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2 py-2 text-white">
+                      </div>
+                    </div>
+                    <label class="flex items-center gap-2 cursor-pointer pb-2 text-emerald-300 font-medium">
+                      <input type="checkbox" id="blDepositToBank" checked class="rounded accent-emerald-500">
+                      <span>Anaparayı Şirket Banka Kasasına (+) işle</span>
+                    </label>
+                    <button type="submit" class="w-full py-2.5 rounded-xl bg-sky-500 hover:bg-sky-400 text-slate-950 font-bold">
+                      🏦 Krediyi ve Taksit Ödeme Planını Oluştur
+                    </button>
+                  </div>
+                </form>
               </div>
-              <div class="grid grid-cols-3 gap-2">
-                <div>
-                  <label class="block text-slate-300 mb-0.5">Aylık Faiz (%)</label>
-                  <input type="number" step="0.01" min="0" id="blInterestRate" value="3.99" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2 py-1.5 text-white">
-                </div>
-                <div>
-                  <label class="block text-slate-300 mb-0.5">Taksit Sayısı</label>
-                  <input type="number" min="1" max="120" id="blInstallments" required value="12" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2 py-1.5 text-white font-bold">
-                </div>
-                <div>
-                  <label class="block text-slate-300 mb-0.5">İlk Taksit Tarihi</label>
-                  <input type="date" id="blFirstDueDate" required class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2 py-1.5 text-white">
-                </div>
-              </div>
-              <label class="flex items-center gap-2 cursor-pointer pt-1 text-emerald-300 font-medium">
-                <input type="checkbox" id="blDepositToBank" checked class="rounded accent-emerald-500">
-                <span>Çekilen anaparayı Şirket Banka Kasasına (+) giriş yap</span>
-              </label>
-              <button type="submit" class="w-full py-2.5 rounded-xl bg-sky-500 hover:bg-sky-400 text-slate-950 font-bold">
-                🏦 Krediyi ve Taksit Ödeme Planını Oluştur
-              </button>
-            </form>
+            </div>
           </div>
 
-          <div id="bankLoansContainer" class="lg:col-span-8 space-y-4"></div>
+          <div id="bankLoansContainer" class="lg:col-span-8 space-y-4" data-fold-peer="lg:col-span-8" data-fold-peer-expanded="lg:col-span-12"></div>
         </div>
       </div>
     </section>
@@ -3556,6 +4099,19 @@
       if (!Array.isArray(p.expenseCodes) || p.expenseCodes.length === 0) p.expenseCodes = JSON.parse(JSON.stringify(DEFAULT_EXPENSE_CODES));
       if (!Array.isArray(p.expenseEntries)) p.expenseEntries = [];
       if (!Array.isArray(p.taxEntries)) p.taxEntries = [];
+      const defMainTaxMap = { 'STOPAJ': '0003', 'GECICI_VERGI': '0033', 'KDV1': '0015', 'KDV2': '9015', 'SGK': '5510', 'KURUMLAR': '0010', 'DAMGA_HARC': '0040' };
+      p.taxEntries.forEach(t => {
+        if (!t.mainTaxCode) t.mainTaxCode = defMainTaxMap[t.taxType] || '0003';
+        if (typeof t.lateFee !== 'number') t.lateFee = Number(t.lateFee) || 0;
+        if (!Array.isArray(t.taxLines) || t.taxLines.length === 0) {
+          const lines = [];
+          const base = Number(t.baseAmount) || 0;
+          const stmp = Number(t.stampTax) || 0;
+          lines.push({ code: t.mainTaxCode, name: t.taxType || 'Vergi / Prim Aslı', matrah: 0, amount: base });
+          if (stmp > 0) lines.push({ code: '1047', name: 'Damga Vergisi (Beyanname)', matrah: 0, amount: stmp });
+          t.taxLines = lines;
+        }
+      });
       if (!Array.isArray(p.employees)) p.employees = [];
       if (!Array.isArray(p.employeeTransactions)) p.employeeTransactions = [];
       if (!Array.isArray(p.salesChannels) || p.salesChannels.length === 0) p.salesChannels = JSON.parse(JSON.stringify(DEFAULT_SALES_CHANNELS));
@@ -4298,7 +4854,7 @@
       }).join('');
 
       const cOptsWithNone = `<option value="">-- Cari Seçilmedi (Genel Kasa Hareketi) --</option>` + groupedOpts;
-      ['kdContractorId', 'ocContractorId', 'ecmContractorId', 'ekmContractorId'].forEach(id => {
+      ['kdContractorId', 'ocContractorId', 'ecmContractorId', 'ekmContractorId', 'dccContractorId'].forEach(id => {
         const el = document.getElementById(id);
         if (el) el.innerHTML = cOptsWithNone;
       });
@@ -4322,18 +4878,21 @@
       }).join('');
       document.getElementById('kdCompCheckLeaf').innerHTML = leafOpts;
       document.getElementById('scpCompLeaf').innerHTML = leafOpts;
+      const dccLeafEl = document.getElementById('dccLeafNo');
+      if (dccLeafEl) dccLeafEl.innerHTML = leafOpts;
 
       const firstFree = state.companyChecks.find(c => c.status === 'BOS');
       if (firstFree) {
         document.getElementById('kdCompCheckLeaf').value = String(firstFree.leafNo);
         document.getElementById('scpCompLeaf').value = String(firstFree.leafNo);
+        if (dccLeafEl) dccLeafEl.value = String(firstFree.leafNo);
       }
 
       // Şirket Kredi Kartları Dropdownları
       const cardOpts = (state.companyCards || []).map(cc =>
         `<option value="${cc.id}">💳 ${cc.cardName}${cc.last4 ? ' (*' + cc.last4 + ')' : ''}</option>`
       ).join('');
-      ['kdCompanyCardId', 'scpCompanyCardId', 'exCompanyCardId', 'pccCardId', 'ucpCardId'].forEach(id => {
+      ['kdCompanyCardId', 'scpCompanyCardId', 'exCompanyCardId', 'pccCardId', 'ucpCardId', 'txPaidCardId', 'ptmCompanyCardId'].forEach(id => {
         const el = document.getElementById(id);
         if (el) el.innerHTML = cardOpts;
       });
@@ -5530,6 +6089,17 @@
       }).join('');
     }
 
+    function getTaxEntryTotals(t) {
+      let principal = 0;
+      if (Array.isArray(t.taxLines) && t.taxLines.length > 0) {
+        principal = t.taxLines.reduce((s, ln) => s + (Number(ln.amount) || 0), 0);
+      } else {
+        principal = (Number(t.baseAmount) || 0) + (Number(t.stampTax) || 0);
+      }
+      const lateFee = Number(t.lateFee) || 0;
+      return { principal, lateFee, grandTotal: principal + lateFee };
+    }
+
     function renderTaxesSection(autoKdv2FromInvoices, netVatDiffText) {
       const tbody = document.getElementById('taxEntriesBody');
       if (!tbody) return;
@@ -5540,11 +6110,11 @@
 
       let pendingSum = 0, pendingCnt = 0, paidSum = 0;
       allTaxes.forEach(t => {
-        const tot = (Number(t.baseAmount) || 0) + (Number(t.stampTax) || 0);
+        const { principal, grandTotal } = getTaxEntryTotals(t);
         if (t.status === 'ODENDI') {
-          if (matchPeriod(t.paidDate || t.dueDate)) paidSum += tot;
+          if (matchPeriod(t.paidDate || t.dueDate)) paidSum += grandTotal;
         } else {
-          pendingSum += tot;
+          pendingSum += grandTotal;
           pendingCnt++;
         }
       });
@@ -5572,36 +6142,54 @@
       }).sort((a, b) => (b.dueDate || '').localeCompare(a.dueDate || ''));
 
       if (filtered.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="6" class="py-8 text-center text-slate-400">Bu filtrede kayıtlı Vergi veya SGK tahakkuku bulunmuyor (0,00 ₺). Soldan ekleyebilirsiniz.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="6" class="py-8 text-center text-slate-400">Bu filtrede kayıtlı Vergi veya SGK tahakkuk fişi bulunmuyor (0,00 ₺). Soldaki <strong>"➕ Yeni Vergi / SGK Tahakkuk Fişi Ekle"</strong> penceresini açarak işleyebilirsiniz.</td></tr>';
         return;
       }
 
       tbody.innerHTML = filtered.map(t => {
-        const tot = (Number(t.baseAmount) || 0) + (Number(t.stampTax) || 0);
+        const { principal, lateFee, grandTotal } = getTaxEntryTotals(t);
         const isPaid = t.status === 'ODENDI';
+        const linesHtml = (Array.isArray(t.taxLines) ? t.taxLines : []).filter(l => (Number(l.amount) || 0) > 0 || (Number(l.matrah) || 0) > 0).map(l =>
+          `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-slate-950 border border-slate-700 text-[10px] text-slate-200 mr-1 mb-1">
+            <strong class="text-amber-300 font-mono">${l.code || '-'}</strong> ${l.name || ''}: <strong class="text-white">${fmt(l.amount)}</strong>${(Number(l.matrah) || 0) > 0 ? ` <span class="text-slate-400">(Matrah: ${fmt(l.matrah)})</span>` : ''}
+          </span>`
+        ).join('');
+
         return `
-          <tr class="hover:bg-slate-800/40">
-            <td class="py-2.5 px-3 whitespace-nowrap">
-              <div class="font-bold text-indigo-300">Dönem: ${t.period || '-'}</div>
-              <div class="text-[11px] text-amber-300">Son Ödeme: ${t.dueDate}</div>
+          <tr class="hover:bg-slate-800/40 align-top">
+            <td class="py-3 px-3 whitespace-nowrap">
+              <div class="font-bold text-indigo-300">${t.period || '-'}</div>
+              <div class="text-[11px] text-amber-300 mt-0.5">Vade: ${t.dueDate || '-'}</div>
+              ${isPaid && t.paidDate ? `<div class="text-[10px] text-emerald-400">Ödendi: ${t.paidDate}</div>` : ''}
             </td>
-            <td class="py-2.5 px-3 font-semibold text-white">${typeBadge[t.taxType] || t.taxType}</td>
-            <td class="py-2.5 px-3">
-              <div class="text-slate-200">${t.note}</div>
-              <div class="mt-0.5">${getPnlBadgeHtml(t.pnlGroup)}</div>
+            <td class="py-3 px-3 whitespace-nowrap">
+              <div class="flex items-center gap-1.5">
+                <span class="px-2 py-0.5 rounded bg-amber-500/15 text-amber-300 border border-amber-500/30 font-mono font-bold text-[11px]">${t.mainTaxCode || '0003'}</span>
+                <span class="font-semibold text-white">${typeBadge[t.taxType] || t.taxType}</span>
+              </div>
+              ${t.receiptNo ? `<div class="text-[10px] text-slate-400 font-mono mt-1">Fiş No: ${t.receiptNo}</div>` : ''}
             </td>
-            <td class="py-2.5 px-3 text-right">
-              <div class="font-bold text-white">${fmt(tot)}</div>
-              <div class="text-[10px] text-slate-400">Asıl: ${fmt(t.baseAmount)} | Damga: ${fmt(t.stampTax)}</div>
+            <td class="py-3 px-3">
+              <div class="text-slate-100 font-medium mb-1">${t.note || ''}</div>
+              <div class="flex flex-wrap items-center">
+                ${linesHtml}
+                ${lateFee > 0 ? `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-rose-950/60 border border-rose-500/40 text-[10px] text-rose-300 font-bold mb-1">⚠️ 1086 Gecikme Zammı/Faizi: +${fmt(lateFee)}</span>` : ''}
+              </div>
+              <div class="mt-1">${getPnlBadgeHtml(t.pnlGroup)}</div>
             </td>
-            <td class="py-2.5 px-3 text-center">
+            <td class="py-3 px-3 text-right whitespace-nowrap">
+              <div class="font-bold text-white text-sm">${fmt(grandTotal)}</div>
+              <div class="text-[10px] text-slate-400">Asıl Tahakkuk: ${fmt(principal)}</div>
+              ${lateFee > 0 ? `<div class="text-[10px] text-rose-400 font-semibold">+ Faiz/Zam: ${fmt(lateFee)}</div>` : ''}
+            </td>
+            <td class="py-3 px-3 text-center whitespace-nowrap">
               <span class="px-2.5 py-0.5 rounded-full text-[11px] font-semibold ${isPaid ? 'bg-emerald-500/15 text-emerald-400' : 'bg-amber-500/15 text-amber-300'}">${isPaid ? '✅ Ödendi' : '⏳ Bekliyor'}</span>
             </td>
-            <td class="py-2.5 px-3 text-center whitespace-nowrap space-x-1">
+            <td class="py-3 px-3 text-center whitespace-nowrap space-x-1">
               ${!isPaid ? `
-                <button type="button" data-pay-tax="${t.id}" data-pay-src="COMPANY_BANK" class="px-2 py-1 rounded bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-[10px]">Bankadan Öde</button>
-                <button type="button" data-pay-tax="${t.id}" data-pay-src="COMPANY_CARD" class="px-2 py-1 rounded bg-purple-500/25 hover:bg-purple-500/40 text-purple-200 font-semibold text-[10px]">Şirket Kartıyla</button>
+                <button type="button" data-open-paytax="${t.id}" class="px-2.5 py-1 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-[11px]">💳 Öde / Faiz Ekle</button>
               ` : ''}
+              <button type="button" data-edit-tax="${t.id}" title="Tahakkuk Fişini / Dönemi / Faizi Düzelt" class="px-2 py-1 rounded-lg bg-amber-500/20 hover:bg-amber-500/35 text-amber-300 border border-amber-500/30 font-bold text-[11px]">✏️ Düzelt</button>
               <button type="button" data-del-tax="${t.id}" class="${state.editUnlocked ? 'text-rose-400 hover:text-rose-300' : 'text-slate-600'} px-1.5">✕</button>
             </td>
           </tr>
@@ -5856,33 +6444,49 @@
     }
 
     function renderCardsLoansSection() {
+      const cardsTableBody = document.getElementById('companyCardsTableBody');
+      const countBadge = document.getElementById('companyCardsCountBadge');
       const cardsGrid = document.getElementById('companyCardsGrid');
       const pdfList = document.getElementById('cardPdfStatementsList');
       const cardLedger = document.getElementById('companyCardLedgerBody');
       const loansBox = document.getElementById('bankLoansContainer');
-      if (!cardsGrid || !loansBox) return;
+      if (!cardsTableBody || !loansBox) return;
 
       const cards = state.companyCards || [];
+      if (countBadge) countBadge.textContent = `${cards.length} Kayıtlı Kart`;
       let allCardRows = [];
       let allStmts = [];
 
-      cardsGrid.innerHTML = cards.map(card => {
+      cardsTableBody.innerHTML = cards.map(card => {
         const st = getCardStats(card.id);
         allCardRows = allCardRows.concat(st.rows);
         (card.statements || []).forEach(s => allStmts.push({ ...s, cardName: card.cardName, last4: card.last4, cardId: card.id }));
-        const avail = (Number(card.limit) || 0) > 0 ? Math.max(0, Number(card.limit) - st.currentDebt) : null;
+        const lim = Number(card.limit) || 0;
+        const avail = lim > 0 ? Math.max(0, lim - st.currentDebt) : null;
         return `
-          <div class="bg-slate-900 border border-purple-500/35 rounded-2xl p-4 space-y-2">
-            <div class="flex items-center justify-between">
-              <div class="font-bold text-white">💳 ${card.cardName} <span class="text-amber-300 font-mono">${card.last4 ? '*' + card.last4 : ''}</span></div>
-              ${cards.length > 1 ? `<button type="button" data-del-ccard="${card.id}" class="text-slate-500 hover:text-rose-400 text-xs">✕</button>` : ''}
-            </div>
-            <div class="text-xl font-bold ${st.currentDebt > 0 ? 'text-rose-400' : 'text-emerald-400'}">${fmt(st.currentDebt)} <span class="text-xs font-normal text-slate-400">Güncel Borç</span></div>
-            <div class="text-[11px] text-slate-400 flex justify-between border-t border-slate-800 pt-2">
-              <span>Kesim: Ayın ${card.cutoffDay}. günü | Son Ödeme: ${card.dueDay}. günü</span>
-              ${avail !== null ? `<span class="text-emerald-300">Kalan Limit: ${fmt(avail)}</span>` : ''}
-            </div>
-          </div>
+          <tr class="hover:bg-slate-800/45">
+            <td class="py-3 px-3">
+              <div class="font-bold text-white flex items-center gap-1.5">💳 ${card.cardName}</div>
+              ${card.holderNote ? `<div class="text-[10px] text-slate-400 mt-0.5">${card.holderNote}</div>` : ''}
+            </td>
+            <td class="py-3 px-3 text-center font-mono font-bold text-amber-300">${card.last4 ? '*' + card.last4 : '-'}</td>
+            <td class="py-3 px-3 text-right font-semibold text-slate-200">${lim > 0 ? fmt(lim) : '<span class="text-slate-500 text-[11px]">Girilmedi</span>'}</td>
+            <td class="py-3 px-3 text-right font-bold ${st.currentDebt > 0 ? 'text-rose-400' : 'text-emerald-400'}">${fmt(st.currentDebt)}</td>
+            <td class="py-3 px-3 text-right font-semibold ${avail !== null ? 'text-emerald-300' : 'text-slate-500'}">${avail !== null ? fmt(avail) : '-'}</td>
+            <td class="py-3 px-3 text-center whitespace-nowrap">
+              <div class="text-slate-200 font-semibold">Ayın ${card.cutoffDay || 15}. günü</div>
+              ${card.nextCutoffDate ? `<div class="text-[10px] text-purple-300">${card.nextCutoffDate}</div>` : ''}
+            </td>
+            <td class="py-3 px-3 text-center whitespace-nowrap">
+              <div class="text-amber-300 font-semibold">Ayın ${card.dueDay || 25}. günü</div>
+              ${card.nextDueDate ? `<div class="text-[10px] text-amber-200">${card.nextDueDate}</div>` : ''}
+            </td>
+            <td class="py-3 px-3 text-center whitespace-nowrap space-x-1">
+              <button type="button" data-edit-ccard="${card.id}" class="px-2.5 py-1 rounded-lg bg-purple-500/20 hover:bg-purple-500/35 text-purple-200 border border-purple-500/35 font-bold text-[11px]">✏️ Düzenle</button>
+              <button type="button" data-quickpay-ccard="${card.id}" class="px-2.5 py-1 rounded-lg bg-emerald-500/20 hover:bg-emerald-500/35 text-emerald-300 border border-emerald-500/35 font-bold text-[11px]">💸 Öde</button>
+              ${cards.length > 1 ? `<button type="button" data-del-ccard="${card.id}" class="${state.editUnlocked ? 'text-rose-400 hover:text-rose-300' : 'text-slate-600'} px-1.5">✕</button>` : ''}
+            </td>
+          </tr>
         `;
       }).join('');
 
@@ -5983,11 +6587,11 @@
     // --- EVENT LISTENERS ---
     document.addEventListener('DOMContentLoaded', () => {
       const today = '2026-11-19';
-      ['kdDate', 'scpDate', 'sciDate', 'ocIssueDate', 'ciDate', 'prDate', 'ptDate', 'obDueDate', 'exDate', 'txDueDate', 'neStartDate', 'etxDate', 'cmDate', 'pccDate', 'blFirstDueDate'].forEach(id => {
+      ['kdDate', 'scpDate', 'sciDate', 'ocIssueDate', 'ciDate', 'prDate', 'ptDate', 'obDueDate', 'exDate', 'txDueDate', 'txPaidDateInput', 'ptmPaidDate', 'dccIssueDate', 'neStartDate', 'etxDate', 'cmDate', 'pccDate', 'blFirstDueDate'].forEach(id => {
         const el = document.getElementById(id);
         if (el) el.value = today;
       });
-      ['kdCompCheckDue', 'kdOnurCheckDue', 'scpCompDue', 'scpOnurDue', 'ocDueDate'].forEach(id => {
+      ['kdCompCheckDue', 'kdOnurCheckDue', 'scpCompDue', 'scpOnurDue', 'ocDueDate', 'dccDueDate'].forEach(id => {
         const el = document.getElementById(id);
         if (el) el.value = '2026-12-30';
       });
@@ -7528,53 +8132,571 @@
         showToast('Masraf hem ilgili masraf koduna hem P&L ve Kasaya işlendi.');
       });
 
-      // Vergi & SGK Etkileşimleri
+      // =======================================================================
+      // TIKLAYINCA AÇILAN VE GENİŞLEYEN PENCERE (ACCORDION / FOLD) MOTORU
+      // =======================================================================
+      function syncFoldLayout(cardEl) {
+        if (!cardEl) return;
+        const foldId = cardEl.getAttribute('data-fold-card');
+        const bodyEl = document.getElementById(foldId);
+        const badgeEl = document.querySelector(`[data-fold-badge="${foldId}"]`);
+        const isOpen = bodyEl && !bodyEl.classList.contains('hidden');
+        if (badgeEl) {
+          badgeEl.textContent = isOpen ? 'Küçült / Kapat ▴' : (badgeEl.textContent.includes('Pencereyi') || badgeEl.textContent.includes('Küçült') ? 'Pencereyi Aç ▾' : 'Aç ▾');
+        }
+        cardEl.classList.toggle('ring-1', isOpen);
+        cardEl.classList.toggle('ring-amber-400/40', isOpen);
+
+        // Eğer 3'lü cari aksiyon grubu içindeyse (fold-sc-*)
+        const colClosed = cardEl.getAttribute('data-fold-col');
+        const colOpen = cardEl.getAttribute('data-fold-open-col');
+        if (colClosed && colOpen) {
+          cardEl.classList.toggle(colClosed, !isOpen);
+          cardEl.classList.toggle(colOpen, isOpen);
+        }
+
+        // Eğer sol kenar çubuğu (sidebar) içindeyse açıkken tam genişlik pencereye büyüt!
+        const sidebar = cardEl.closest('[data-fold-sidebar]');
+        if (sidebar) {
+          const anyOpen = Boolean(sidebar.querySelector('.fold-body:not(.hidden)'));
+          const closedCls = sidebar.getAttribute('data-fold-sidebar');
+          const expCls = sidebar.getAttribute('data-fold-expanded');
+          if (closedCls && expCls) {
+            sidebar.classList.toggle(closedCls, !anyOpen);
+            sidebar.classList.toggle(expCls, anyOpen);
+          }
+          const parentGrid = sidebar.parentElement;
+          const peer = parentGrid ? parentGrid.querySelector('[data-fold-peer]') : null;
+          if (peer) {
+            const pClosed = peer.getAttribute('data-fold-peer');
+            const pExp = peer.getAttribute('data-fold-peer-expanded');
+            if (pClosed && pExp) {
+              peer.classList.toggle(pClosed, !anyOpen);
+              peer.classList.toggle(pExp, anyOpen);
+            }
+          }
+        }
+      }
+
+      function setFoldPanelState(foldId, forceOpen) {
+        const bodyEl = document.getElementById(foldId);
+        const cardEl = document.querySelector(`[data-fold-card="${foldId}"]`);
+        if (!bodyEl || !cardEl) return;
+        const willOpen = typeof forceOpen === 'boolean' ? forceOpen : bodyEl.classList.contains('hidden');
+
+        // Aynı sidebar veya cari aksiyon grubundaki diğer açık pencereleri kapat ki ekran sade kalsın
+        if (willOpen) {
+          const groupRoot = cardEl.closest('[data-fold-sidebar], [data-fold-group]');
+          if (groupRoot) {
+            groupRoot.querySelectorAll('.fold-window').forEach(otherCard => {
+              if (otherCard !== cardEl) {
+                const oid = otherCard.getAttribute('data-fold-card');
+                const obody = oid ? document.getElementById(oid) : null;
+                if (obody && !obody.classList.contains('hidden')) {
+                  obody.classList.add('hidden');
+                  syncFoldLayout(otherCard);
+                }
+              }
+            });
+          }
+        }
+
+        bodyEl.classList.toggle('hidden', !willOpen);
+        syncFoldLayout(cardEl);
+      }
+
+      document.body.addEventListener('click', (e) => {
+        const foldBtn = e.target.closest('[data-fold-btn]');
+        if (foldBtn) {
+          const fid = foldBtn.getAttribute('data-fold-btn');
+          setFoldPanelState(fid);
+        }
+      });
+
+      // Şirket Çekleri sekmesinden doğrudan çek çıkışı formu
+      const dccFormEl = document.getElementById('directCompanyCheckForm');
+      if (dccFormEl) {
+        dccFormEl.addEventListener('submit', (e) => {
+          e.preventDefault();
+          recordUnifiedPayment({
+            date: document.getElementById('dccIssueDate').value,
+            direction: 'OUT',
+            source: 'COMPANY_CHECK',
+            amount: parseFloat(document.getElementById('dccAmount').value) || 0,
+            contractorId: document.getElementById('dccContractorId').value,
+            taxStatus: 'KDVLI',
+            desc: document.getElementById('dccNote').value.trim(),
+            compLeafNo: document.getElementById('dccLeafNo').value,
+            compBank: document.getElementById('dccBank').value.trim() || 'VakıfBank',
+            compSerial: document.getElementById('dccSerial').value.trim(),
+            compDueDate: document.getElementById('dccDueDate').value,
+            compPayee: document.getElementById('dccPayee').value.trim()
+          });
+          document.getElementById('dccAmount').value = '';
+          document.getElementById('dccNote').value = '';
+          document.getElementById('dccPayee').value = '';
+          saveState();
+          populateSelects();
+          renderAll();
+          showToast('🏦 Şirket çeki karnesine, ilgili tedarikçi carisine ve Kasa Defterine işlendi.');
+        });
+      }
+
+      // =======================================================================
+      // GİB TAHAKKUK FİŞİ (ANA KOD, DÖNEM ARALIĞI, ALT KODLAR & GECİKME FAİZİ)
+      // =======================================================================
+      const TR_MONTH_NAMES = {
+        '01': 'Ocak', '02': 'Şubat', '03': 'Mart', '04': 'Nisan',
+        '05': 'Mayıs', '06': 'Haziran', '07': 'Temmuz', '08': 'Ağustos',
+        '09': 'Eylül', '10': 'Ekim', '11': 'Kasım', '12': 'Aralık'
+      };
+
+      const GIB_CODE_NAMES = {
+        '0003': 'Gelir Vergisi Stopajı (Muhtasar)',
+        '0033': 'Kurum Geçici Vergi',
+        '0015': 'Gerçek Usulde Katma Değer Vergisi (KDV-1)',
+        '9015': 'Sorumlu Sıfatıyla KDV Tevkifatı (KDV-2)',
+        '0010': 'Kurumlar Vergisi',
+        '0011': 'Kurumlar Vergisi Stopajı',
+        '0040': 'Beyannameli Damga Vergisi',
+        '1047': 'Damga Vergisi (Beyanname)',
+        '1048': '5035 Sayılı Kanuna Göre Damga Vergisi',
+        '1084': 'Gecikme Faizi',
+        '1085': 'Para Cezası Faizi',
+        '1086': 'Gecikme Zammı',
+        '3074': 'Özel Usulsüzlük Cezası',
+        '3080': 'Vergi Ziyaı Cezası',
+        '4008': 'Gelir Dahili Tevkifat',
+        '5510': 'SGK 4A Sigorta Primi',
+        '4447': 'SGK İşsizlik Sigortası Primi'
+      };
+
+      const TAX_TYPE_TEMPLATES = {
+        'STOPAJ': {
+          mainCode: '0003',
+          pnl: 'TAXES',
+          lines: [
+            { code: '0003', name: 'Gelir Vergisi Stopajı (Muhtasar - Kira/Maaş/SMMM)', matrah: 0, amount: 0 },
+            { code: '1047', name: 'Damga Vergisi (Muhtasar Beyanname)', matrah: 0, amount: 0 }
+          ]
+        },
+        'GECICI_VERGI': {
+          mainCode: '0033',
+          pnl: 'TAXES',
+          lines: [
+            { code: '0033', name: 'Kurum Geçici Vergi', matrah: 0, amount: 0 },
+            { code: '1047', name: 'Damga Vergisi (Beyanname)', matrah: 0, amount: 0 },
+            { code: '1048', name: '5035 Sayılı Kanuna Göre Damga Vergisi', matrah: 0, amount: 0 }
+          ]
+        },
+        'KDV1': {
+          mainCode: '0015',
+          pnl: 'NONE',
+          lines: [
+            { code: '0015', name: 'Gerçek Usulde Katma Değer Vergisi (KDV-1)', matrah: 0, amount: 0 },
+            { code: '1047', name: 'Damga Vergisi (KDV-1 Beyannamesi)', matrah: 0, amount: 0 }
+          ]
+        },
+        'KDV2': {
+          mainCode: '9015',
+          pnl: 'NONE',
+          lines: [
+            { code: '9015', name: 'Sorumlu Sıfatıyla KDV Tevkifatı (KDV-2)', matrah: 0, amount: 0 },
+            { code: '1047', name: 'Damga Vergisi (KDV-2 Beyannamesi)', matrah: 0, amount: 0 }
+          ]
+        },
+        'SGK': {
+          mainCode: '5510',
+          pnl: 'LABOR',
+          lines: [
+            { code: '5510', name: 'SGK 4A Sigorta Primi (İşçi + İşveren)', matrah: 0, amount: 0 },
+            { code: '4447', name: 'SGK İşsizlik Sigortası Primi', matrah: 0, amount: 0 },
+            { code: '1048', name: 'SGK Hizmet Listesi Damga Vergisi', matrah: 0, amount: 0 }
+          ]
+        },
+        'KURUMLAR': {
+          mainCode: '0010',
+          pnl: 'TAXES',
+          lines: [
+            { code: '0010', name: 'Yıllık Kurumlar Vergisi', matrah: 0, amount: 0 },
+            { code: '1047', name: 'Damga Vergisi (Kurumlar Beyannamesi)', matrah: 0, amount: 0 },
+            { code: '1048', name: '5035 Sayılı Kanuna Göre Damga Vergisi', matrah: 0, amount: 0 }
+          ]
+        },
+        'DAMGA_HARC': {
+          mainCode: '0040',
+          pnl: 'TAXES',
+          lines: [
+            { code: '0040', name: 'Damga Vergisi / Resmi Harç', matrah: 0, amount: 0 }
+          ]
+        }
+      };
+
+      let currentTaxDraftLines = JSON.parse(JSON.stringify(TAX_TYPE_TEMPLATES.STOPAJ.lines));
+
+      function updateTaxSummaryDisplay() {
+        const principal = currentTaxDraftLines.reduce((s, ln) => s + (Number(ln.amount) || 0), 0);
+        const stampPart = currentTaxDraftLines
+          .filter(ln => ['1047', '1048', '0040'].includes(String(ln.code || '').trim()))
+          .reduce((s, ln) => s + (Number(ln.amount) || 0), 0);
+        const basePart = Math.max(0, principal - stampPart);
+        const lateFee = parseFloat(document.getElementById('txLateFee')?.value) || 0;
+        const grand = principal + lateFee;
+
+        document.getElementById('txBaseAmount').value = basePart.toFixed(2);
+        document.getElementById('txStampTax').value = stampPart.toFixed(2);
+        document.getElementById('txSummaryPrincipal').textContent = fmt(principal);
+        document.getElementById('txSummaryGrandTotal').textContent = fmt(grand);
+      }
+
+      function renderTaxDraftLinesTable() {
+        const tbody = document.getElementById('txLinesBody');
+        if (!tbody) return;
+        tbody.innerHTML = currentTaxDraftLines.map((ln, idx) => `
+          <tr>
+            <td class="py-1.5 pr-2">
+              <input type="text" list="gibTaxCodeSuggestions" data-txline-code="${idx}" value="${ln.code || ''}" placeholder="0033" class="w-full bg-slate-900 border border-amber-500/35 rounded-lg px-2 py-1.5 text-amber-300 font-mono font-bold">
+            </td>
+            <td class="py-1.5 px-2">
+              <input type="text" data-txline-name="${idx}" value="${(ln.name || '').replace(/"/g, '&quot;')}" placeholder="Vergi / Damga / Fon Adı" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1.5 text-white">
+            </td>
+            <td class="py-1.5 px-2">
+              <input type="number" step="0.01" min="0" data-txline-matrah="${idx}" value="${ln.matrah ? ln.matrah : ''}" placeholder="0.00" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-2 py-1.5 text-right text-slate-300">
+            </td>
+            <td class="py-1.5 px-2">
+              <input type="number" step="0.01" min="0" data-txline-amount="${idx}" value="${ln.amount ? ln.amount : ''}" placeholder="0.00" class="w-full bg-slate-900 border border-indigo-500/45 rounded-lg px-2.5 py-1.5 text-right text-white font-bold">
+            </td>
+            <td class="py-1.5 pl-2 text-center">
+              ${currentTaxDraftLines.length > 1 ? `<button type="button" data-del-txline="${idx}" class="text-slate-500 hover:text-rose-400 px-1.5 font-bold">✕</button>` : ''}
+            </td>
+          </tr>
+        `).join('');
+        updateTaxSummaryDisplay();
+      }
+
+      document.getElementById('txLinesBody').addEventListener('input', (e) => {
+        const t = e.target;
+        if (t.hasAttribute('data-txline-code')) {
+          const i = parseInt(t.getAttribute('data-txline-code'), 10);
+          const val = t.value.trim();
+          currentTaxDraftLines[i].code = val;
+          if (GIB_CODE_NAMES[val] && !currentTaxDraftLines[i].name) {
+            currentTaxDraftLines[i].name = GIB_CODE_NAMES[val];
+            const nameInp = document.querySelector(`[data-txline-name="${i}"]`);
+            if (nameInp) nameInp.value = GIB_CODE_NAMES[val];
+          }
+          updateTaxSummaryDisplay();
+        } else if (t.hasAttribute('data-txline-name')) {
+          const i = parseInt(t.getAttribute('data-txline-name'), 10);
+          currentTaxDraftLines[i].name = t.value;
+        } else if (t.hasAttribute('data-txline-matrah')) {
+          const i = parseInt(t.getAttribute('data-txline-matrah'), 10);
+          currentTaxDraftLines[i].matrah = parseFloat(t.value) || 0;
+        } else if (t.hasAttribute('data-txline-amount')) {
+          const i = parseInt(t.getAttribute('data-txline-amount'), 10);
+          currentTaxDraftLines[i].amount = parseFloat(t.value) || 0;
+          updateTaxSummaryDisplay();
+        }
+      });
+
+      document.getElementById('txLinesBody').addEventListener('click', (e) => {
+        const delBtn = e.target.closest('[data-del-txline]');
+        if (delBtn && currentTaxDraftLines.length > 1) {
+          const idx = parseInt(delBtn.getAttribute('data-del-txline'), 10);
+          currentTaxDraftLines.splice(idx, 1);
+          renderTaxDraftLinesTable();
+        }
+      });
+
+      document.getElementById('btnAddTaxLine').addEventListener('click', () => {
+        currentTaxDraftLines.push({ code: '', name: '', matrah: 0, amount: 0 });
+        renderTaxDraftLinesTable();
+      });
+
+      document.getElementById('btnResetTaxTemplateLines').addEventListener('click', () => {
+        const tt = document.getElementById('txTaxType').value;
+        const tpl = TAX_TYPE_TEMPLATES[tt] || TAX_TYPE_TEMPLATES.STOPAJ;
+        currentTaxDraftLines = JSON.parse(JSON.stringify(tpl.lines));
+        renderTaxDraftLinesTable();
+      });
+
+      document.getElementById('txLateFee').addEventListener('input', updateTaxSummaryDisplay);
+
+      function buildTaxPeriodRangeInfo() {
+        const sm = document.getElementById('txStartMonth').value || '10';
+        const sy = parseInt(document.getElementById('txStartYear').value, 10) || 2026;
+        const em = document.getElementById('txEndMonth').value || '12';
+        const ey = parseInt(document.getElementById('txEndYear').value, 10) || 2026;
+        const sLabel = `${TR_MONTH_NAMES[sm] || sm} ${sy}`;
+        const eLabel = `${TR_MONTH_NAMES[em] || em} ${ey}`;
+        const label = (sm === em && sy === ey)
+          ? `${sLabel} (${sm}/${sy})`
+          : `${sLabel} – ${eLabel} (${sm}/${sy}-${em}/${ey})`;
+        const prev = document.getElementById('txPeriodRangePreview');
+        if (prev) prev.textContent = (sm === em && sy === ey) ? sLabel : `${sLabel} – ${eLabel}`;
+        return { startMonth: sm, startYear: sy, endMonth: em, endYear: ey, period: label };
+      }
+
+      ['txStartMonth', 'txStartYear', 'txEndMonth', 'txEndYear'].forEach(id => {
+        document.getElementById(id).addEventListener('change', buildTaxPeriodRangeInfo);
+        document.getElementById(id).addEventListener('input', buildTaxPeriodRangeInfo);
+      });
+
+      document.querySelectorAll('[data-tx-qpreset]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const p = btn.getAttribute('data-tx-qpreset');
+          const yr = parseInt(document.getElementById('txStartYear').value, 10) || 2026;
+          document.getElementById('txEndYear').value = yr;
+          if (p === 'Q1') { document.getElementById('txStartMonth').value = '01'; document.getElementById('txEndMonth').value = '03'; }
+          else if (p === 'Q2') { document.getElementById('txStartMonth').value = '04'; document.getElementById('txEndMonth').value = '06'; }
+          else if (p === 'Q3') { document.getElementById('txStartMonth').value = '07'; document.getElementById('txEndMonth').value = '09'; }
+          else if (p === 'Q4') { document.getElementById('txStartMonth').value = '10'; document.getElementById('txEndMonth').value = '12'; }
+          else if (p === 'SINGLE') { document.getElementById('txEndMonth').value = document.getElementById('txStartMonth').value; }
+          else if (p === 'YEAR') { document.getElementById('txStartMonth').value = '01'; document.getElementById('txEndMonth').value = '12'; }
+          buildTaxPeriodRangeInfo();
+        });
+      });
+
+      function syncTxPaidExtraVisibility() {
+        const isPaid = document.getElementById('txInitStatus').value === 'ODENDI';
+        const src = document.getElementById('txPaidSource').value;
+        document.getElementById('txPaidExtraRow').classList.toggle('hidden', !isPaid);
+        document.getElementById('txPaidCardSelectWrap').classList.toggle('hidden', !(isPaid && src === 'COMPANY_CARD'));
+      }
+      document.getElementById('txInitStatus').addEventListener('change', syncTxPaidExtraVisibility);
+      document.getElementById('txPaidSource').addEventListener('change', syncTxPaidExtraVisibility);
+
+      document.getElementById('txTaxType').addEventListener('change', (e) => {
+        const tt = e.target.value;
+        const tpl = TAX_TYPE_TEMPLATES[tt] || TAX_TYPE_TEMPLATES.STOPAJ;
+        const isEditing = Boolean(document.getElementById('txEditId').value);
+        document.getElementById('txMainTaxCode').value = tpl.mainCode;
+        if (!isEditing) {
+          document.getElementById('txPnlGroup').value = tpl.pnl;
+          currentTaxDraftLines = JSON.parse(JSON.stringify(tpl.lines));
+          renderTaxDraftLinesTable();
+          if (tt === 'STOPAJ' || tt === 'GECICI_VERGI') {
+            document.getElementById('txStartMonth').value = '10';
+            document.getElementById('txEndMonth').value = '12';
+          } else if (tt === 'KURUMLAR') {
+            document.getElementById('txStartMonth').value = '01';
+            document.getElementById('txEndMonth').value = '12';
+          } else {
+            document.getElementById('txStartMonth').value = '11';
+            document.getElementById('txEndMonth').value = '11';
+          }
+          buildTaxPeriodRangeInfo();
+        }
+      });
+
+      function resetTaxEditMode() {
+        document.getElementById('txEditId').value = '';
+        document.getElementById('txFormHeading').textContent = '➕ Yeni Vergi / SGK Tahakkuk Fişi Ekle';
+        document.getElementById('btnSubmitTaxForm').textContent = '🏛️ Tahakkuku Kaydet';
+        document.getElementById('btnCancelTaxEdit').classList.add('hidden');
+        document.getElementById('txReceiptNo').value = '';
+        document.getElementById('txLateFee').value = '0';
+        document.getElementById('txNote').value = '';
+        const tt = document.getElementById('txTaxType').value || 'STOPAJ';
+        const tpl = TAX_TYPE_TEMPLATES[tt] || TAX_TYPE_TEMPLATES.STOPAJ;
+        document.getElementById('txMainTaxCode').value = tpl.mainCode;
+        currentTaxDraftLines = JSON.parse(JSON.stringify(tpl.lines));
+        renderTaxDraftLinesTable();
+        syncTxPaidExtraVisibility();
+      }
+      document.getElementById('btnCancelTaxEdit').addEventListener('click', resetTaxEditMode);
+
+      // İlk yüklemede tahakkuk satırlarını hazırla
+      renderTaxDraftLinesTable();
+      buildTaxPeriodRangeInfo();
+      syncTxPaidExtraVisibility();
+
       document.getElementById('txFilterType').addEventListener('change', () => renderAll());
       document.getElementById('txFilterStatus').addEventListener('change', () => renderAll());
 
-      document.getElementById('taxEntryForm').addEventListener('submit', (e) => {
-        e.preventDefault();
-        const taxType = document.getElementById('txTaxType').value;
-        const period = document.getElementById('txPeriod').value;
-        const baseAmount = parseFloat(document.getElementById('txBaseAmount').value) || 0;
-        const stampTax = parseFloat(document.getElementById('txStampTax').value) || 0;
-        const total = baseAmount + stampTax;
-        const dueDate = document.getElementById('txDueDate').value;
-        const pnlGroup = document.getElementById('txPnlGroup').value;
-        const initStatus = document.getElementById('txInitStatus').value;
-        const paidSource = document.getElementById('txPaidSource').value;
-        const note = document.getElementById('txNote').value.trim();
-
+      function postTaxPnlAndKasa({ taxType, mainTaxCode, period, dueDate, paidDate, pnlGroup, status, paidSource, paidCardId, principal, lateFee, note }) {
         let linkedPnlId = '';
         let linkedKasaId = '';
-        if (pnlGroup !== 'NONE' && total > 0) {
-          linkedPnlId = 'PT_TX_' + Date.now();
+        const grandTotal = principal + lateFee;
+        const effDate = (status === 'ODENDI' && paidDate) ? paidDate : dueDate;
+
+        if (pnlGroup !== 'NONE' && grandTotal > 0) {
+          linkedPnlId = 'PT_TX_' + Date.now() + '_' + Math.floor(Math.random() * 1000);
           state.pnlEntries.push({
-            id: linkedPnlId, type: 'EXPENSE', date: dueDate, group: pnlGroup, amount: total, vatRate: 0,
-            desc: `[${taxType} • ${period}] ${note}`
+            id: linkedPnlId, type: 'EXPENSE', date: dueDate, group: pnlGroup, amount: grandTotal, vatRate: 0,
+            desc: `[${mainTaxCode} ${taxType} • ${period}] ${note}${lateFee > 0 ? ' (Gecikme Faizi Dahil)' : ''}`
+          });
+        } else if (pnlGroup === 'NONE' && lateFee > 0) {
+          // Ana vergi KDV mahsubu olsa bile gecikme zammı/faizi doğrudan giderdir!
+          linkedPnlId = 'PT_TXLF_' + Date.now() + '_' + Math.floor(Math.random() * 1000);
+          state.pnlEntries.push({
+            id: linkedPnlId, type: 'EXPENSE', date: effDate, group: 'TAXES', amount: lateFee, vatRate: 0,
+            desc: `[1086 Gecikme Zammı/Faizi • ${mainTaxCode} ${period}] ${note}`
           });
         }
-        if (initStatus === 'ODENDI' && total > 0) {
+
+        if (status === 'ODENDI' && grandTotal > 0) {
           linkedKasaId = recordUnifiedPayment({
-            date: dueDate, direction: 'OUT', source: paidSource,
-            companyCardId: state.companyCards[0]?.id || '',
-            amount: total, contractorId: '', taxStatus: 'KDVLI',
-            desc: `[Vergi/SGK Ödemesi - ${taxType} ${period}] ${note}`
+            date: effDate, direction: 'OUT', source: paidSource,
+            companyCardId: paidCardId || state.companyCards[0]?.id || '',
+            amount: grandTotal, contractorId: '', taxStatus: 'KDVLI',
+            desc: `[Vergi/SGK Ödemesi - ${mainTaxCode} ${period}] ${note}${lateFee > 0 ? ' (+' + fmt(lateFee) + ' Gecikme Faizi)' : ''}`
           });
         }
+        return { linkedPnlId, linkedKasaId };
+      }
+
+      document.getElementById('taxEntryForm').addEventListener('submit', (e) => {
+        e.preventDefault();
+        const editId = document.getElementById('txEditId').value;
+        const taxType = document.getElementById('txTaxType').value;
+        const mainTaxCode = document.getElementById('txMainTaxCode').value.trim() || '0003';
+        const receiptNo = document.getElementById('txReceiptNo').value.trim();
+        const pInfo = buildTaxPeriodRangeInfo();
+        const period = pInfo.period;
+
+        const cleanedLines = currentTaxDraftLines
+          .filter(l => (Number(l.amount) || 0) > 0 || (Number(l.matrah) || 0) > 0 || String(l.code || '').trim() !== '')
+          .map(l => ({
+            code: String(l.code || mainTaxCode).trim(),
+            name: String(l.name || GIB_CODE_NAMES[l.code] || 'Vergi Kalemi').trim(),
+            matrah: Number(l.matrah) || 0,
+            amount: Number(l.amount) || 0
+          }));
+        const nonZeroLines = cleanedLines.filter(l => l.amount > 0 || l.matrah > 0);
+        const finalLines = nonZeroLines.length > 0 ? nonZeroLines : (cleanedLines.length > 0 ? [cleanedLines[0]] : [{ code: mainTaxCode, name: GIB_CODE_NAMES[mainTaxCode] || taxType, matrah: 0, amount: 0 }]);
+
+        const principal = finalLines.reduce((s, l) => s + l.amount, 0);
+        const stampTax = finalLines.filter(l => ['1047', '1048', '0040'].includes(l.code)).reduce((s, l) => s + l.amount, 0);
+        const baseAmount = Math.max(0, principal - stampTax);
+        const lateFee = parseFloat(document.getElementById('txLateFee').value) || 0;
+
+        const dueDate = document.getElementById('txDueDate').value;
+        const pnlGroup = document.getElementById('txPnlGroup').value;
+        const status = document.getElementById('txInitStatus').value;
+        const paidSource = document.getElementById('txPaidSource').value;
+        const paidCardId = document.getElementById('txPaidCardId')?.value || state.companyCards[0]?.id || '';
+        const paidDate = status === 'ODENDI' ? (document.getElementById('txPaidDateInput').value || dueDate) : '';
+        const note = document.getElementById('txNote').value.trim();
+
+        if (editId) {
+          const existing = (state.taxEntries || []).find(x => x.id === editId);
+          if (existing) {
+            if (existing.linkedPnlId) state.pnlEntries = state.pnlEntries.filter(p => p.id !== existing.linkedPnlId);
+            if (existing.linkedKasaId) state.kasaEntries = state.kasaEntries.filter(k => k.id !== existing.linkedKasaId);
+
+            const { linkedPnlId, linkedKasaId } = postTaxPnlAndKasa({
+              taxType, mainTaxCode, period, dueDate, paidDate, pnlGroup, status, paidSource, paidCardId, principal, lateFee, note
+            });
+
+            Object.assign(existing, {
+              taxType, mainTaxCode, receiptNo, period,
+              startMonth: pInfo.startMonth, startYear: pInfo.startYear, endMonth: pInfo.endMonth, endYear: pInfo.endYear,
+              taxLines: finalLines, baseAmount, stampTax, lateFee,
+              dueDate, pnlGroup, status, paidDate, paidSource, paidCardId, note,
+              linkedPnlId, linkedKasaId
+            });
+            resetTaxEditMode();
+            saveState();
+            renderAll();
+            showToast('✅ Tahakkuk fişi, dönem aralığı ve kalemleri güncellendi.');
+            return;
+          }
+        }
+
+        const { linkedPnlId, linkedKasaId } = postTaxPnlAndKasa({
+          taxType, mainTaxCode, period, dueDate, paidDate, pnlGroup, status, paidSource, paidCardId, principal, lateFee, note
+        });
 
         state.taxEntries.push({
           id: 'TX_' + Date.now(),
-          taxType, period, baseAmount, stampTax, dueDate, pnlGroup,
-          status: initStatus, paidDate: initStatus === 'ODENDI' ? dueDate : '', paidSource, note,
+          taxType, mainTaxCode, receiptNo, period,
+          startMonth: pInfo.startMonth, startYear: pInfo.startYear, endMonth: pInfo.endMonth, endYear: pInfo.endYear,
+          taxLines: finalLines, baseAmount, stampTax, lateFee,
+          dueDate, pnlGroup, status, paidDate, paidSource, paidCardId, note,
           linkedPnlId, linkedKasaId
         });
 
-        document.getElementById('txBaseAmount').value = '';
-        document.getElementById('txNote').value = '';
+        resetTaxEditMode();
         saveState();
         renderAll();
-        showToast('Vergi / SGK tahakkuku kaydedildi.');
+        showToast('🏛️ Tahakkuk fişi alt vergi kodlarıyla birlikte kaydedildi.');
+      });
+
+      // Vergi Ödeme & Geç Ödeme Faizi Modalı (#payTaxModal)
+      function updatePayTaxModalTotal() {
+        const tid = document.getElementById('ptmTaxId').value;
+        const tx = (state.taxEntries || []).find(x => x.id === tid);
+        if (!tx) return;
+        const { principal } = getTaxEntryTotals(tx);
+        const lf = parseFloat(document.getElementById('ptmLateFee').value) || 0;
+        document.getElementById('ptmGrandTotalSpan').textContent = fmt(principal + lf);
+      }
+      document.getElementById('ptmLateFee').addEventListener('input', updatePayTaxModalTotal);
+      document.getElementById('ptmSource').addEventListener('change', (e) => {
+        document.getElementById('ptmCardWrap').classList.toggle('hidden', e.target.value !== 'COMPANY_CARD');
+      });
+      document.getElementById('btnClosePayTaxModal').addEventListener('click', () => document.getElementById('payTaxModal').classList.add('hidden'));
+      document.getElementById('btnCancelPayTaxModal').addEventListener('click', () => document.getElementById('payTaxModal').classList.add('hidden'));
+
+      document.getElementById('payTaxModalForm').addEventListener('submit', (e) => {
+        e.preventDefault();
+        const tid = document.getElementById('ptmTaxId').value;
+        const tx = (state.taxEntries || []).find(x => x.id === tid);
+        if (!tx) return;
+
+        if (tx.linkedPnlId) state.pnlEntries = state.pnlEntries.filter(p => p.id !== tx.linkedPnlId);
+        if (tx.linkedKasaId) state.kasaEntries = state.kasaEntries.filter(k => k.id !== tx.linkedKasaId);
+
+        const { principal } = getTaxEntryTotals(tx);
+        const lateFee = parseFloat(document.getElementById('ptmLateFee').value) || 0;
+        const paidDate = document.getElementById('ptmPaidDate').value || tx.dueDate;
+        const paidSource = document.getElementById('ptmSource').value;
+        const paidCardId = document.getElementById('ptmCompanyCardId')?.value || state.companyCards[0]?.id || '';
+
+        const { linkedPnlId, linkedKasaId } = postTaxPnlAndKasa({
+          taxType: tx.taxType, mainTaxCode: tx.mainTaxCode || '0003', period: tx.period,
+          dueDate: tx.dueDate, paidDate, pnlGroup: tx.pnlGroup || 'TAXES',
+          status: 'ODENDI', paidSource, paidCardId, principal, lateFee, note: tx.note || ''
+        });
+
+        tx.lateFee = lateFee;
+        tx.status = 'ODENDI';
+        tx.paidDate = paidDate;
+        tx.paidSource = paidSource;
+        tx.paidCardId = paidCardId;
+        tx.linkedPnlId = linkedPnlId;
+        tx.linkedKasaId = linkedKasaId;
+
+        document.getElementById('payTaxModal').classList.add('hidden');
+        saveState();
+        renderAll();
+        showToast(`✅ Tahakkuk ödemesi (${fmt(principal + lateFee)}) kasaya ve P&L'e işlendi!`);
+      });
+
+      // Şirket Kredi Kartı Düzenleme Modalı (#editCompanyCardModal)
+      document.getElementById('btnCloseEditCardModal').addEventListener('click', () => document.getElementById('editCompanyCardModal').classList.add('hidden'));
+      document.getElementById('btnCancelEditCardModal').addEventListener('click', () => document.getElementById('editCompanyCardModal').classList.add('hidden'));
+
+      document.getElementById('editCompanyCardForm').addEventListener('submit', (e) => {
+        e.preventDefault();
+        const cid = document.getElementById('eccId').value;
+        const card = (state.companyCards || []).find(c => c.id === cid);
+        if (!card) return;
+        card.cardName = document.getElementById('eccCardName').value.trim();
+        card.last4 = document.getElementById('eccLast4').value.trim();
+        card.limit = parseFloat(document.getElementById('eccLimit').value) || 0;
+        card.holderNote = document.getElementById('eccHolderNote').value.trim();
+        card.cutoffDay = Math.min(31, Math.max(1, parseInt(document.getElementById('eccCutoff').value, 10) || 15));
+        card.dueDay = Math.min(31, Math.max(1, parseInt(document.getElementById('eccDueDay').value, 10) || 25));
+        card.nextCutoffDate = document.getElementById('eccNextCutoffDate').value || '';
+        card.nextDueDate = document.getElementById('eccNextDueDate').value || '';
+
+        document.getElementById('editCompanyCardModal').classList.add('hidden');
+        saveState();
+        populateSelects();
+        renderAll();
+        showToast('💳 Şirket kredi kartı limiti, hesap kesim ve son ödeme bilgileri güncellendi.');
       });
 
       // Personel & Özlük Etkileşimleri
@@ -8018,27 +9140,128 @@
           return;
         }
 
-        const payTaxBtn = e.target.closest('[data-pay-tax]');
-        if (payTaxBtn) {
-          const tid = payTaxBtn.getAttribute('data-pay-tax');
-          const src = payTaxBtn.getAttribute('data-pay-src') || 'COMPANY_BANK';
+        const openPayTaxBtn = e.target.closest('[data-open-paytax]');
+        if (openPayTaxBtn) {
+          const tid = openPayTaxBtn.getAttribute('data-open-paytax');
           const tx = (state.taxEntries || []).find(x => x.id === tid);
-          if (tx && tx.status !== 'ODENDI') {
-            const tot = (Number(tx.baseAmount) || 0) + (Number(tx.stampTax) || 0);
-            const todayStr = document.getElementById('kdDate').value || tx.dueDate;
-            tx.status = 'ODENDI';
-            tx.paidDate = todayStr;
-            tx.paidSource = src;
-            tx.linkedKasaId = recordUnifiedPayment({
-              date: todayStr, direction: 'OUT', source: src,
-              companyCardId: state.companyCards[0]?.id || '',
-              amount: tot, contractorId: '', taxStatus: 'KDVLI',
-              desc: `[Vergi/SGK Ödemesi - ${tx.taxType} ${tx.period}] ${tx.note}`
-            });
-            saveState();
-            renderAll();
-            showToast('✅ Vergi / SGK ödemesi işlendi.');
+          if (tx) {
+            populateSelects();
+            const { principal, lateFee } = getTaxEntryTotals(tx);
+            document.getElementById('ptmTaxId').value = tx.id;
+            document.getElementById('ptmSummaryBox').innerHTML = `
+              <div class="font-bold text-indigo-300">[${tx.mainTaxCode || '0003'}] ${tx.period || '-'}</div>
+              <div class="text-[11px] text-slate-300">${tx.note || ''}</div>
+              <div class="text-[11px] text-amber-300">Normal Vade: <strong>${tx.dueDate || '-'}</strong> • Asıl Tahakkuk: <strong class="text-white">${fmt(principal)}</strong></div>
+            `;
+            document.getElementById('ptmPaidDate').value = document.getElementById('kdDate').value || tx.dueDate || '2026-11-23';
+            document.getElementById('ptmLateFee').value = lateFee > 0 ? lateFee : 0;
+            document.getElementById('ptmSource').value = tx.paidSource || 'COMPANY_BANK';
+            document.getElementById('ptmCardWrap').classList.toggle('hidden', document.getElementById('ptmSource').value !== 'COMPANY_CARD');
+            updatePayTaxModalTotal();
+            document.getElementById('payTaxModal').classList.remove('hidden');
           }
+          return;
+        }
+
+        const editTaxBtn = e.target.closest('[data-edit-tax]');
+        if (editTaxBtn) {
+          const tid = editTaxBtn.getAttribute('data-edit-tax');
+          const tx = (state.taxEntries || []).find(x => x.id === tid);
+          if (tx) {
+            populateSelects();
+            setFoldPanelState('fold-tax-entry', true);
+            document.getElementById('txEditId').value = tx.id;
+            document.getElementById('txFormHeading').textContent = '✏️ Tahakkuk Fişini & Dönemi Düzelt';
+            document.getElementById('btnSubmitTaxForm').textContent = '💾 Tahakkuk Düzeltmesini Kaydet';
+            document.getElementById('btnCancelTaxEdit').classList.remove('hidden');
+
+            document.getElementById('txTaxType').value = tx.taxType || 'STOPAJ';
+            const defCode = (TAX_TYPE_TEMPLATES[tx.taxType] || TAX_TYPE_TEMPLATES.STOPAJ).mainCode;
+            document.getElementById('txMainTaxCode').value = tx.mainTaxCode || defCode;
+            document.getElementById('txReceiptNo').value = tx.receiptNo || '';
+
+            // Dönem başlangıç ve bitiş ay/yıl çözümleme
+            let sm = tx.startMonth || '', sy = tx.startYear || 2026, em = tx.endMonth || '', ey = tx.endYear || 2026;
+            if (!sm || !em) {
+              const pStr = tx.period || '';
+              const yrM = pStr.match(/20\d\d/);
+              if (yrM) { sy = parseInt(yrM[0], 10); ey = sy; }
+              if (pStr.includes('1. Dönem') || tx.quarterCode === 'Q1') { sm = '01'; em = '03'; }
+              else if (pStr.includes('2. Dönem') || tx.quarterCode === 'Q2') { sm = '04'; em = '06'; }
+              else if (pStr.includes('3. Dönem') || tx.quarterCode === 'Q3') { sm = '07'; em = '09'; }
+              else if (pStr.includes('4. Dönem') || tx.quarterCode === 'Q4') { sm = '10'; em = '12'; }
+              else if (/^\d{4}-(\d{2})$/.test(pStr)) {
+                sm = pStr.slice(5, 7);
+                em = (tx.taxType === 'STOPAJ' || tx.taxType === 'GECICI_VERGI') ? '12' : sm;
+              } else {
+                sm = '10'; em = '12';
+              }
+            }
+            document.getElementById('txStartMonth').value = sm;
+            document.getElementById('txStartYear').value = sy;
+            document.getElementById('txEndMonth').value = em;
+            document.getElementById('txEndYear').value = ey;
+            buildTaxPeriodRangeInfo();
+
+            if (Array.isArray(tx.taxLines) && tx.taxLines.length > 0) {
+              currentTaxDraftLines = JSON.parse(JSON.stringify(tx.taxLines));
+            } else {
+              currentTaxDraftLines = [
+                { code: tx.mainTaxCode || defCode, name: GIB_CODE_NAMES[tx.mainTaxCode || defCode] || tx.taxType, matrah: 0, amount: Number(tx.baseAmount) || 0 }
+              ];
+              if ((Number(tx.stampTax) || 0) > 0) {
+                currentTaxDraftLines.push({ code: '1047', name: 'Damga Vergisi (Beyanname)', matrah: 0, amount: Number(tx.stampTax) || 0 });
+              }
+            }
+            renderTaxDraftLinesTable();
+
+            document.getElementById('txLateFee').value = Number(tx.lateFee) || 0;
+            updateTaxSummaryDisplay();
+            document.getElementById('txDueDate').value = tx.dueDate || '2026-11-23';
+            document.getElementById('txPnlGroup').value = tx.pnlGroup || 'TAXES';
+            document.getElementById('txInitStatus').value = tx.status || 'BEKLIYOR';
+            document.getElementById('txPaidSource').value = tx.paidSource || 'COMPANY_BANK';
+            document.getElementById('txPaidDateInput').value = tx.paidDate || tx.dueDate || '2026-11-23';
+            if (tx.paidCardId && document.getElementById('txPaidCardId')) {
+              document.getElementById('txPaidCardId').value = tx.paidCardId;
+            }
+            syncTxPaidExtraVisibility();
+            document.getElementById('txNote').value = tx.note || '';
+            document.getElementById('fold-tax-entry').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            showToast('Tahakkuk fişi tüm alt kodlarıyla düzenleme penceresine yüklendi.');
+          }
+          return;
+        }
+
+        const editCCardBtn = e.target.closest('[data-edit-ccard]');
+        if (editCCardBtn) {
+          const ccid = editCCardBtn.getAttribute('data-edit-ccard');
+          const card = (state.companyCards || []).find(c => c.id === ccid);
+          if (card) {
+            document.getElementById('eccId').value = card.id;
+            document.getElementById('eccCardName').value = card.cardName || '';
+            document.getElementById('eccLast4').value = card.last4 || '';
+            document.getElementById('eccLimit').value = Number(card.limit) || 0;
+            document.getElementById('eccHolderNote').value = card.holderNote || '';
+            document.getElementById('eccCutoff').value = card.cutoffDay || 15;
+            document.getElementById('eccDueDay').value = card.dueDay || 25;
+            document.getElementById('eccNextCutoffDate').value = card.nextCutoffDate || '';
+            document.getElementById('eccNextDueDate').value = card.nextDueDate || '';
+            document.getElementById('editCompanyCardModal').classList.remove('hidden');
+          }
+          return;
+        }
+
+        const quickPayCCardBtn = e.target.closest('[data-quickpay-ccard]');
+        if (quickPayCCardBtn) {
+          const ccid = quickPayCCardBtn.getAttribute('data-quickpay-ccard');
+          populateSelects();
+          setFoldPanelState('fold-cc-pay', true);
+          const sel = document.getElementById('pccCardId');
+          if (sel) sel.value = ccid;
+          const st = getCardStats(ccid);
+          if (st.currentDebt > 0) document.getElementById('pccAmount').value = st.currentDebt.toFixed(2);
+          document.getElementById('fold-cc-pay').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
           return;
         }
 
@@ -8291,13 +9514,18 @@
 
       function buildTaxesSheet() {
         return {
-          name: 'Vergi_ve_SGK',
-          headers: ['Dönem', 'Son Ödeme', 'Vergi / SGK Türü', 'Açıklama / Fiş No', 'Asıl Vergi/Prim (TL)', 'Damga Vergisi (TL)', 'Toplam (TL)', 'Durum', 'Ödeme Kaynağı'],
-          rows: (state.taxEntries || []).map(t => [
-            t.period, t.dueDate, t.taxType, t.note,
-            Number(t.baseAmount) || 0, Number(t.stampTax) || 0, (Number(t.baseAmount) || 0) + (Number(t.stampTax) || 0),
-            t.status, t.paidSource || ''
-          ])
+          name: 'Vergi_ve_SGK_Tahakkuk',
+          headers: ['Dönem Aralığı', 'Vade Tarihi', 'Fiili Ödeme Tarihi', 'Ana Vergi Kodu', 'Vergi / SGK Türü', 'Tahakkuk Fiş No', 'Alt Vergi Kodları Dökümü', 'Açıklama', 'Asıl Tahakkuk Toplamı (TL)', 'Gecikme Zammı / Faizi (TL)', 'Genel Toplam (TL)', 'Durum', 'Ödeme Kaynağı'],
+          rows: (state.taxEntries || []).map(t => {
+            const { principal, lateFee, grandTotal } = getTaxEntryTotals(t);
+            const linesStr = (Array.isArray(t.taxLines) ? t.taxLines : []).map(l => `${l.code}: ${l.name} (${l.amount} TL)`).join(' | ');
+            return [
+              t.period || '', t.dueDate || '', t.paidDate || '', t.mainTaxCode || '', t.taxType || '',
+              t.receiptNo || '', linesStr, t.note || '',
+              Number(principal.toFixed(2)), Number(lateFee.toFixed(2)), Number(grandTotal.toFixed(2)),
+              t.status, t.paidSource || ''
+            ];
+          })
         };
       }
 
@@ -8328,6 +9556,22 @@
           rows: (state.commissionEntries || []).map(c => {
             const ch = (state.salesChannels || []).find(x => x.id === c.channelId);
             return [c.date, ch ? ch.name : c.channelId, c.desc || '', c.grossSales, c.commRate, c.extraFee, Number(c.totalDeduction.toFixed(2)), Number((c.commVatCredit || 0).toFixed(2)), Number(c.netPayout.toFixed(2)), c.settledToBank ? 'Evet' : 'Valörde Bekliyor'];
+          })
+        };
+      }
+
+      function buildCompanyCardsListSheet() {
+        return {
+          name: 'Sirket_Kredi_Kartlari',
+          headers: ['Kart & Banka Adı', 'Son 4 Hane', 'Kart Hamili / Not', 'Kart Limiti (TL)', 'Güncel Dönem Borcu (TL)', 'Kalan Limit (TL)', 'Hesap Kesim Günü', 'Son Ödeme Günü'],
+          rows: (state.companyCards || []).map(c => {
+            const st = getCardStats(c.id);
+            const lim = Number(c.limit) || 0;
+            return [
+              c.cardName || '', c.last4 || '', c.holderNote || '',
+              lim, Number(st.currentDebt.toFixed(2)), lim > 0 ? Math.max(0, lim - st.currentDebt) : 0,
+              c.cutoffDay || 15, c.dueDay || 25
+            ];
           })
         };
       }
@@ -8364,7 +9608,7 @@
         }]);
       });
       document.getElementById('btnExportCommissionsXlsx').addEventListener('click', () => exportSheetsToXlsx('EMAS_POS_ve_Platform_Komisyon', [buildCommissionsSheet()]));
-      document.getElementById('btnExportCardsLoansXlsx').addEventListener('click', () => exportSheetsToXlsx('EMAS_Sirket_Kartlari_ve_Krediler', [buildCardsAndLoansSheet()]));
+      document.getElementById('btnExportCardsLoansXlsx').addEventListener('click', () => exportSheetsToXlsx('EMAS_Sirket_Kartlari_ve_Krediler', [buildCompanyCardsListSheet(), buildCardsAndLoansSheet()]));
 
       // Üst Menü Ana Excel İndir Butonu (Tüm Modülleri Tek Çok-Sayfalı .XLSX Kitabında İndirir!)
       document.getElementById('btnExportCsv').addEventListener('click', () => {
@@ -8386,6 +9630,7 @@
           buildTaxesSheet(),
           ...buildPersonnelSheets(),
           buildCommissionsSheet(),
+          buildCompanyCardsListSheet(),
           buildCardsAndLoansSheet()
         ]);
       });
