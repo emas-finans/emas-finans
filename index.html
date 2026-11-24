@@ -44,6 +44,19 @@
       background: #475569;
       border-radius: 3px;
     }
+    html.ui-scale-compact { font-size: 14.5px; }
+    html.ui-scale-normal { font-size: 16px; }
+    html.ui-scale-large { font-size: 18px; }
+    html.ui-scale-large table td,
+    html.ui-scale-large table th {
+      padding-top: 0.65rem;
+      padding-bottom: 0.65rem;
+    }
+    html.ui-scale-compact table td,
+    html.ui-scale-compact table th {
+      padding-top: 0.35rem;
+      padding-bottom: 0.35rem;
+    }
   </style>
   <meta name="theme-color" content="#081226">
   <link rel="manifest" href="manifest.json">
@@ -210,9 +223,7 @@
             <h1 id="hdrCompanyTitle" class="text-base sm:text-lg font-bold tracking-tight text-amber-300">EMAS Finans</h1>
             <span id="hdrBranchBadge" class="px-2 py-0.5 text-xs font-semibold rounded-full bg-amber-500/15 text-amber-400 border border-amber-500/30">EMAS A.Ş. • WOKA Tema World AVM</span>
             <span id="hdrCapitalBadge" class="px-2 py-0.5 text-xs font-semibold rounded-full bg-emerald-500/15 text-emerald-300 border border-emerald-500/30">Resmi Sermaye: 1.000.000 ₺</span>
-            <button id="btnOpenCustomizeApp" type="button" class="unlock-only hidden px-2 py-0.5 rounded bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 text-[11px] font-semibold transition no-print">
-              ✏️ Sekme &amp; Başlıkları Düzenle
-            </button>
+            <span id="hdrTaxInfoBadge" class="hidden px-2 py-0.5 text-xs font-semibold rounded-full bg-slate-800 text-slate-300 border border-slate-700"></span>
           </div>
           <p id="hdrSubtitle" class="text-xs text-slate-400">Kasa Defteri • Sekmeli Tedarikçi Carileri • Onur Şahsi &amp; VakıfBank Çekleri • KDV'li/KDV'siz Fatura &amp; P&amp;L</p>
         </div>
@@ -243,44 +254,38 @@
           </select>
         </div>
 
-        <button id="btnCloudSync" type="button" class="px-3 py-1.5 rounded-lg bg-sky-500/20 hover:bg-sky-500/30 text-sky-300 border border-sky-500/40 text-xs font-bold transition flex items-center gap-1.5" title="Telefon, Bilgisayar ve Rüstem Bey ile anlık canlı eşitleme ayarları">
-          <span id="cloudStatusDot">☁️</span>
-          <span id="cloudStatusText">Bulut Eşitleme</span>
+        <!-- Canlı Bulut Durum Rozeti (Tıklayınca Ayarlar > Bulut & Yedek açılır) -->
+        <button id="hdrCloudQuickPill" type="button" class="px-2.5 py-1.5 rounded-lg bg-slate-800/90 hover:bg-slate-700 text-slate-300 border border-slate-700 text-xs font-semibold transition flex items-center gap-1.5" title="Canlı bulut eşitleme durumu (Ayarlar > Bulut panelini açar)">
+          <span id="hdrCloudLiveDot">☁️</span>
+          <span id="hdrCloudLiveText">Bulut</span>
         </button>
-        <button id="btnInstallApp" type="button" class="px-3 py-1.5 rounded-lg bg-purple-500/20 hover:bg-purple-500/30 text-purple-300 border border-purple-500/40 text-xs font-semibold transition" title="Telefon ana ekranına veya bilgisayar masaüstüne uygulama olarak kur">
-          📲 Uygulamayı Kur
+
+        <!-- Dinamik Vade & Ödeme Uyarı Rozeti (Ayarlardan kaç gün önceden uyaracağı seçilir) -->
+        <button id="hdrUpcomingAlertsBtn" type="button" class="hidden px-3 py-1.5 rounded-lg bg-amber-500/20 hover:bg-amber-500/35 text-amber-300 border border-amber-400/50 text-xs font-bold transition flex items-center gap-1.5 shadow-md" title="Vadesi yaklaşan veya geçen çek, vergi, kart ve kredi ödemelerini gör">
+          <span>🔔</span>
+          <span id="hdrUpcomingAlertsText">0 Yaklaşan Ödeme</span>
         </button>
-        <button id="btnToggleGuide" class="px-3 py-1.5 rounded-lg bg-indigo-500/20 hover:bg-indigo-500/30 text-indigo-300 border border-indigo-500/30 text-xs font-semibold transition">
-          📖 Kullanım Rehberi
-        </button>
-        <button id="btnResetZero" class="px-3 py-1.5 rounded-lg bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 border border-rose-500/30 text-xs font-medium transition" title="Tüm rakamları 0,00 TL olarak sıfırlar">
-          🧹 Sıfırla (0 ₺)
-        </button>
-        <button id="btnExportCsv" class="px-3 py-1.5 rounded-lg bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-300 border border-emerald-500/30 text-xs font-medium transition">
+
+        <button id="btnExportCsv" class="px-3 py-1.5 rounded-lg bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-300 border border-emerald-500/30 text-xs font-semibold transition">
           📊 Excel / CSV İndir
         </button>
-        <button id="btnBackupJson" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-xs font-medium transition">
-          💾 Yedek Al
-        </button>
-        <label class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-xs font-medium transition cursor-pointer">
-          📂 Yükle
-          <input type="file" id="inputRestoreJson" accept=".json" class="hidden">
-        </label>
+
         <button id="btnToggleFullscreen" type="button" class="px-3 py-1.5 rounded-lg bg-teal-500/20 hover:bg-teal-500/35 text-teal-200 border border-teal-500/40 text-xs font-bold transition flex items-center gap-1.5" title="Uygulamayı kenarlıksız tam ekran moduna büyüt / küçült (F11)">
           <span id="fsIconSpan">⛶</span>
           <span id="fsTextSpan">Tam Ekran</span>
         </button>
-        <button id="btnPrint" class="px-3 py-1.5 rounded-lg bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-semibold transition">
-          🖨️ Yazdır
-        </button>
-        <button id="btnEditLock" type="button" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-600 text-xs font-bold transition flex items-center gap-1.5 shadow-md" title="Düzenleme kilidini açtığınızda çek numaraları, bankalar, sekme isimleri ve geçmiş kayıtlar üzerinde değişiklik yapabilirsiniz">
+
+        <button id="btnEditLock" type="button" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-600 text-xs font-bold transition flex items-center gap-1.5 shadow-md" title="Düzenleme kilidini aç / kapat">
           <span id="lockIconSpan">🔒</span>
           <span id="lockTextSpan">Kilitli</span>
         </button>
-        <button id="btnUserSecurity" type="button" class="px-3 py-1.5 rounded-lg bg-amber-500/15 hover:bg-amber-500/25 text-amber-300 border border-amber-500/35 text-xs font-semibold transition flex items-center gap-1.5" title="Kullanıcı hesaplarını, şifreleri ve 24 saatlik otomatik kilit ayarlarını yönet">
-          <span>🔑</span>
-          <span id="hdrActiveUserSpan">Şifreler</span>
+
+        <!-- YENİ MERKEZİ AYARLAR TUŞU -->
+        <button id="btnOpenSettingsCenter" type="button" class="px-3.5 py-1.5 rounded-lg bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-bold transition flex items-center gap-1.5 shadow-lg shadow-amber-500/20" title="Tüm şirket, görünüm, vergi, İK, banka/POS, şifre, bulut ve yedek ayarlarını yönet">
+          <span>⚙️</span>
+          <span>Ayarlar</span>
         </button>
+
         <button id="btnSessionLock" type="button" class="px-3.5 py-1.5 rounded-lg bg-rose-600 hover:bg-rose-500 text-white border border-rose-400/40 text-xs font-bold transition flex items-center gap-1.5 shadow-md" title="Uygulamayı şifre ekranıyla kilitle (Bir sonraki girişte şifre sorulur)">
           <span>🔐</span>
           <span>Kilitle</span>
@@ -289,7 +294,7 @@
     </div>
 
     <!-- ANA NAVİGASYON SEKMELERİ (12 Entegre Modül) -->
-    <div class="w-full max-w-none px-3 sm:px-5 lg:px-7 flex overflow-x-auto xl:flex-wrap no-print border-t border-slate-800/80 gap-1 pt-1 custom-scrollbar">
+    <div id="mainNavTabsBar" class="w-full max-w-none px-3 sm:px-5 lg:px-7 flex overflow-x-auto xl:flex-wrap no-print border-t border-slate-800/80 gap-1 pt-1 custom-scrollbar">
       <button data-tab="kasadefteri" class="tab-btn px-3 py-2.5 text-xs font-semibold border-b-2 border-amber-500 text-amber-400 whitespace-nowrap transition">
         📒 Kasa Defteri
       </button>
@@ -330,6 +335,461 @@
   </header>
 
 
+
+  <!-- ===================================================================== -->
+  <!-- YAKLAŞAN ÇEK, VERGİ, KART VE KREDİ VADE UYARILARI PENCERESİ           -->
+  <!-- ===================================================================== -->
+  <div id="upcomingAlertsModal" class="fixed inset-0 z-50 hidden bg-slate-950/85 backdrop-blur-sm flex items-center justify-center p-4 no-print">
+    <div class="bg-slate-900 border border-amber-500/50 rounded-2xl max-w-4xl w-full p-6 space-y-4 shadow-2xl max-h-[90vh] flex flex-col">
+      <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+        <div>
+          <h3 class="text-base font-bold text-amber-300">🔔 Vadesi Yaklaşan &amp; Geciken Ödemeler Merkezi</h3>
+          <p id="upcomingAlertsSubtitle" class="text-xs text-slate-400">Ayarlarınız doğrultusunda yaklaşan çek, vergi/SGK, şirket kredi kartı ve kredi taksitleri listelenmektedir.</p>
+        </div>
+        <div class="flex items-center gap-2">
+          <button type="button" id="btnJumpAlertSettings" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-amber-300 text-xs font-semibold">⚙️ Gün Eşiğini Değiştir</button>
+          <button type="button" id="btnCloseAlertsModal" class="text-slate-400 hover:text-white text-sm px-2">✕</button>
+        </div>
+      </div>
+      <div id="upcomingAlertsListBody" class="flex-1 overflow-y-auto space-y-2.5 custom-scrollbar pr-1 text-xs"></div>
+      <div class="flex justify-end pt-2 border-t border-slate-800">
+        <button type="button" id="btnOkAlertsModal" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold">Kapat</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================================================================== -->
+  <!-- MERKEZİ KURUMSAL AYARLAR & KONTROL MERKEZİ (7 BÖLÜMLÜ GENİŞ PENCERE)  -->
+  <!-- ===================================================================== -->
+  <div id="settingsCenterModal" class="fixed inset-0 z-50 hidden bg-slate-950/85 backdrop-blur-sm flex items-center justify-center p-3 sm:p-5 no-print">
+    <div class="bg-slate-900 border border-amber-500/45 rounded-2xl max-w-6xl w-full h-[90vh] flex flex-col shadow-2xl overflow-hidden">
+      <!-- Üst Başlık -->
+      <div class="px-6 py-4 bg-slate-950/90 border-b border-slate-800 flex items-center justify-between gap-3 shrink-0">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-amber-500/20 border border-amber-500/40 flex items-center justify-center text-lg">⚙️</div>
+          <div>
+            <h2 class="text-base sm:text-lg font-bold text-white">EMAS Finans — Kurumsal Ayarlar &amp; Yönetim Merkezi</h2>
+            <p class="text-xs text-slate-400">Şirket kuralları, ekran boyutu, vergi/İK parametreleri, banka/POS oranları, şifreler, bulut yedek ve vade uyarılarını tek merkezden yönetin.</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-2">
+          <button type="button" id="btnSaveAllSettingsTop" class="px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs shadow-lg transition">💾 Ayarları Kaydet &amp; Uygula</button>
+          <button type="button" id="btnCloseSettingsCenter" class="px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold">✕ Kapat</button>
+        </div>
+      </div>
+
+      <!-- Gövde: Sol 7 Sekmeli Menü + Sağ İçerik Paneli -->
+      <div class="flex-1 flex flex-col md:flex-row overflow-hidden">
+        <!-- Sol Kategori Menüsü -->
+        <nav class="md:w-64 bg-slate-950/75 border-b md:border-b-0 md:border-r border-slate-800 p-3 flex md:flex-col gap-1.5 overflow-x-auto md:overflow-y-auto shrink-0 text-xs custom-scrollbar">
+          <button type="button" data-stg-nav="company" class="stg-nav-btn w-full text-left px-3.5 py-2.5 rounded-xl bg-amber-500 text-slate-950 font-bold flex items-center gap-2 whitespace-nowrap transition">
+            <span>🏢</span> <span>1. Şirket, Sermaye &amp; Ortaklar</span>
+          </button>
+          <button type="button" data-stg-nav="ui" class="stg-nav-btn w-full text-left px-3.5 py-2.5 rounded-xl text-slate-300 hover:bg-slate-800 font-semibold flex items-center gap-2 whitespace-nowrap transition">
+            <span>🖥️</span> <span>2. Görünüm, Boyut &amp; Sekmeler</span>
+          </button>
+          <button type="button" data-stg-nav="tax" class="stg-nav-btn w-full text-left px-3.5 py-2.5 rounded-xl text-slate-300 hover:bg-slate-800 font-semibold flex items-center gap-2 whitespace-nowrap transition">
+            <span>🏛️</span> <span>3. Vergi, KDV &amp; P&amp;L Satırları</span>
+          </button>
+          <button type="button" data-stg-nav="hr" class="stg-nav-btn w-full text-left px-3.5 py-2.5 rounded-xl text-slate-300 hover:bg-slate-800 font-semibold flex items-center gap-2 whitespace-nowrap transition">
+            <span>👥</span> <span>4. İK &amp; Bordro Parametreleri</span>
+          </button>
+          <button type="button" data-stg-nav="bankpos" class="stg-nav-btn w-full text-left px-3.5 py-2.5 rounded-xl text-slate-300 hover:bg-slate-800 font-semibold flex items-center gap-2 whitespace-nowrap transition">
+            <span>🏦</span> <span>5. Banka, POS &amp; Valör Oranları</span>
+          </button>
+          <button type="button" data-stg-nav="security" class="stg-nav-btn w-full text-left px-3.5 py-2.5 rounded-xl text-slate-300 hover:bg-slate-800 font-semibold flex items-center gap-2 whitespace-nowrap transition">
+            <span>🔐</span> <span>6. Şifre, Kilit Süresi &amp; Yetki</span>
+          </button>
+          <button type="button" data-stg-nav="data" class="stg-nav-btn w-full text-left px-3.5 py-2.5 rounded-xl text-slate-300 hover:bg-slate-800 font-semibold flex items-center gap-2 whitespace-nowrap transition">
+            <span>☁️</span> <span>7. Bulut, Uyarı, Yedek &amp; Geri Al</span>
+          </button>
+        </nav>
+
+        <!-- Sağ Seçili Panel İçeriği -->
+        <div class="flex-1 overflow-y-auto p-5 sm:p-6 space-y-6 text-xs custom-scrollbar">
+
+          <!-- =============================================================== -->
+          <!-- PANEL 1: ŞİRKET KÜNYESİ, SERMAYE & ORTAK PAYLAŞIM KURALLARI     -->
+          <!-- =============================================================== -->
+          <div id="stg-panel-company" class="stg-panel space-y-5">
+            <div class="border-b border-slate-800 pb-2">
+              <h3 class="text-sm font-bold text-amber-300">🏢 1. Şirket Künyesi, Resmi Sermaye ve Ortak Paylaşım Kuralları</h3>
+              <p class="text-[11px] text-slate-400">Şirket ünvanı, vergi bilgileri, 500 sermaye tutarı, ortak hisse oranları ve şirket çeklerinin paylaşım yüzdelerini düzenleyin.</p>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+              <div>
+                <label class="block text-slate-300 font-semibold mb-1">Uygulama / Şirket Başlığı</label>
+                <input type="text" id="stgCompanyTitle" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-white font-bold">
+              </div>
+              <div>
+                <label class="block text-slate-300 font-semibold mb-1">Şube / Proje Rozeti</label>
+                <input type="text" id="stgBranchBadge" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-amber-300 font-semibold">
+              </div>
+              <div>
+                <label class="block text-slate-300 font-semibold mb-1">Vergi Dairesi</label>
+                <input type="text" id="stgTaxOffice" placeholder="Örn: Küçükçekmece V.D." class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-white">
+              </div>
+              <div>
+                <label class="block text-slate-300 font-semibold mb-1">Vergi Kimlik No (VKN)</label>
+                <input type="text" id="stgTaxNumber" maxlength="11" placeholder="10 Haneli VKN" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-white font-mono">
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <div class="sm:col-span-2">
+                <label class="block text-slate-300 font-semibold mb-1">Üst Bar Alt Açıklama Satırı</label>
+                <input type="text" id="stgSubtitle" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-white">
+              </div>
+              <div>
+                <label class="block text-emerald-300 font-semibold mb-1">Resmi Kuruluş Sermayesi (500 Hesabı ₺)</label>
+                <input type="number" step="1" id="stgOfficialCapital" class="w-full bg-slate-950 border border-emerald-500/40 rounded-lg px-3 py-2 text-emerald-400 font-bold">
+              </div>
+            </div>
+
+            <div class="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-3">
+              <div class="font-bold text-purple-300">🤝 Ortaklar, Resmi Hisse Oranları (%) ve Görev Tanımları</div>
+              <div id="stgPartnersContainer" class="space-y-2.5"></div>
+            </div>
+
+            <div class="p-4 rounded-xl bg-sky-950/20 border border-sky-500/35 grid grid-cols-1 sm:grid-cols-3 gap-4 items-center">
+              <div>
+                <div class="font-bold text-sky-300">🏦 Şirket Çekleri Sorumluluk Paylaşımı</div>
+                <div class="text-[11px] text-slate-400 mt-0.5">Şirket çek karnesinden verilen çeklerin Onur ve Rüstem Bey arasında bölüşüm oranı:</div>
+              </div>
+              <div>
+                <label class="block text-amber-300 font-semibold mb-1">Onur Doğan Çek Payı (%)</label>
+                <input type="number" step="0.01" min="0" max="100" id="stgCheckShareOnur" value="50" class="w-full bg-slate-950 border border-amber-500/40 rounded-lg px-3 py-2 text-white font-bold">
+              </div>
+              <div>
+                <label class="block text-sky-300 font-semibold mb-1">Rüstem Çiftçi Çek Payı (%)</label>
+                <input type="number" step="0.01" min="0" max="100" id="stgCheckShareRustem" value="50" class="w-full bg-slate-950 border border-sky-500/40 rounded-lg px-3 py-2 text-white font-bold">
+              </div>
+            </div>
+          </div>
+
+          <!-- =============================================================== -->
+          <!-- PANEL 2: GÖRÜNÜM, YAZI/TABLO BOYUTU, SEKME SIRALAMA & GİZLEME   -->
+          <!-- =============================================================== -->
+          <div id="stg-panel-ui" class="stg-panel hidden space-y-5">
+            <div class="border-b border-slate-800 pb-2">
+              <h3 class="text-sm font-bold text-amber-300">🖥️ 2. Görünüm, Yazı/Tablo Boyutu, Sekme Gizleme/Sıralama ve Form Davranışı</h3>
+              <p class="text-[11px] text-slate-400">Masaüstü ekranınıza en uygun yazı boyutunu seçin, sekmeleri istediğiniz sıraya dizin veya kullanmadıklarınızı gizleyin.</p>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div class="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
+                <label class="block font-bold text-teal-300">🔍 Yazı &amp; Tablo Ölçeği (Ekran Yoğunluğu)</label>
+                <select id="stgUiScale" class="w-full bg-slate-900 border border-teal-500/40 rounded-lg px-3 py-2 text-white font-semibold">
+                  <option value="COMPACT">Kompakt Görünüm (Daha Çok Satır Sığar)</option>
+                  <option value="NORMAL">Standart Dengeli Görünüm (Varsayılan)</option>
+                  <option value="LARGE">Geniş &amp; Büyük Masaüstü Yazı Boyutu</option>
+                </select>
+                <p class="text-[11px] text-slate-400">Tüm tablo, kart ve formların okunabilirliğini anında büyütür veya sıkılaştırır.</p>
+              </div>
+
+              <div class="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
+                <label class="block font-bold text-amber-300">📂 Veri Giriş Formlarının Açılış Durumu</label>
+                <select id="stgDefaultFormsMode" class="w-full bg-slate-900 border border-amber-500/40 rounded-lg px-3 py-2 text-white font-semibold">
+                  <option value="CLOSED">Varsayılan Kapalı Gelsin (Üzerine Tıklayınca Açılsın)</option>
+                  <option value="OPEN">Tüm Giriş Formları Açık Gelsin (Seri Veri Girişi)</option>
+                </select>
+                <p class="text-[11px] text-slate-400">Yoğun veri gireceğiniz günlerde açık, rapor incelerken kapalı tutabilirsiniz.</p>
+              </div>
+
+              <div class="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
+                <div class="font-bold text-indigo-300">🛠️ Hızlı Ekran &amp; Masaüstü Araçları</div>
+                <div class="flex flex-wrap gap-2 pt-1">
+                  <button id="btnInstallApp" type="button" class="px-3 py-1.5 rounded-lg bg-purple-500/20 hover:bg-purple-500/30 text-purple-300 border border-purple-500/40 text-xs font-semibold transition">📲 Uygulamayı Kur</button>
+                  <button id="btnToggleGuide" type="button" class="px-3 py-1.5 rounded-lg bg-indigo-500/20 hover:bg-indigo-500/30 text-indigo-300 border border-indigo-500/30 text-xs font-semibold transition">📖 Kullanım Rehberi</button>
+                  <button id="btnPrint" type="button" class="px-3 py-1.5 rounded-lg bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-semibold transition">🖨️ Yazdır</button>
+                  <button id="btnOpenCustomizeApp" type="button" class="hidden">✏️ Sekme &amp; Başlıkları Düzenle</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-3">
+              <div class="flex items-center justify-between">
+                <div>
+                  <div class="font-bold text-sky-300">📑 12 Ana Sekme Sıralaması, İsimlendirme ve Göster/Gizle Yönetimi</div>
+                  <div class="text-[11px] text-slate-400">Yukarı/Aşağı oklarıyla sekme sırasını değiştirebilir, kutucuğu kaldırarak sekmeyi üst menüden gizleyebilirsiniz.</div>
+                </div>
+              </div>
+              <div id="stgTabsListContainer" class="grid grid-cols-1 lg:grid-cols-2 gap-2"></div>
+            </div>
+          </div>
+
+          <!-- =============================================================== -->
+          <!-- PANEL 3: VERGİ, KDV, TEVKİFAT, GİB KODLARI & P&L SATIRLARI      -->
+          <!-- =============================================================== -->
+          <div id="stg-panel-tax" class="stg-panel hidden space-y-5">
+            <div class="border-b border-slate-800 pb-2">
+              <h3 class="text-sm font-bold text-amber-300">🏛️ 3. KDV, Tevkifat, GİB Vergi Kodları ve P&amp;L Satır Başlıkları</h3>
+              <p class="text-[11px] text-slate-400">Fatura ve masraf formlarındaki varsayılan KDV/tevkifat oranlarını, özel GİB tahakkuk kodlarını ve P&amp;L kalem adlarını yönetin.</p>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+              <div class="p-3.5 rounded-xl bg-slate-950 border border-slate-800">
+                <label class="block text-amber-300 font-semibold mb-1">Varsayılan Alım/Gider KDV (%)</label>
+                <input type="number" step="0.01" min="0" max="100" id="stgDefPurchaseVat" value="20" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-white font-bold">
+              </div>
+              <div class="p-3.5 rounded-xl bg-slate-950 border border-slate-800">
+                <label class="block text-emerald-300 font-semibold mb-1">Varsayılan Restoran Satış KDV (%)</label>
+                <input type="number" step="0.01" min="0" max="100" id="stgDefSalesVat" value="10" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-white font-bold">
+              </div>
+              <div class="p-3.5 rounded-xl bg-slate-950 border border-slate-800">
+                <label class="block text-purple-300 font-semibold mb-1">Varsayılan Fatura Tevkifat (%)</label>
+                <input type="number" step="0.01" min="0" max="100" id="stgDefTevkifat" value="0" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-white font-bold">
+              </div>
+              <div class="p-3.5 rounded-xl bg-slate-950 border border-slate-800">
+                <label class="block text-rose-300 font-semibold mb-1">Aylık Gecikme Zammı Referans (%)</label>
+                <input type="number" step="0.01" min="0" max="50" id="stgMonthlyLateRate" value="4.5" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-rose-300 font-bold">
+              </div>
+            </div>
+
+            <!-- Özel GİB Vergi Kodu Tanımlama -->
+            <div class="p-4 rounded-xl bg-slate-950 border border-indigo-500/30 space-y-3">
+              <div class="font-bold text-indigo-300">🧾 GİB Tahakkuk Fişi Vergi Kodları Listesi (Yeni Özel Kod Ekle)</div>
+              <div class="grid grid-cols-1 sm:grid-cols-12 gap-2">
+                <input type="text" id="stgNewGibCode" placeholder="Kod (Örn: 0040, 9047)" class="sm:col-span-3 bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-amber-300 font-mono font-bold">
+                <input type="text" id="stgNewGibName" placeholder="Vergi / Fon / Ceza Açıklaması" class="sm:col-span-7 bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-white">
+                <button type="button" id="btnAddCustomGibCode" class="sm:col-span-2 py-2 px-3 rounded-lg bg-indigo-500 hover:bg-indigo-400 text-slate-950 font-bold">+ Kod Ekle</button>
+              </div>
+              <div id="stgCustomGibCodesList" class="flex flex-wrap gap-1.5 pt-1"></div>
+            </div>
+
+            <!-- P&L Satır Başlıkları -->
+            <div class="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-3">
+              <div class="font-bold text-emerald-300">📊 Tek Sayfa P&amp;L Ana Kalem Başlıklarını Özelleştir</div>
+              <div id="stgPnlGroupsContainer" class="grid grid-cols-1 sm:grid-cols-2 gap-2.5"></div>
+            </div>
+          </div>
+
+          <!-- =============================================================== -->
+          <!-- PANEL 4: İK & PERSONEL BORDRO PARAMETRELERİ                     -->
+          <!-- =============================================================== -->
+          <div id="stg-panel-hr" class="stg-panel hidden space-y-5">
+            <div class="border-b border-slate-800 pb-2">
+              <h3 class="text-sm font-bold text-amber-300">👥 4. İnsan Kaynakları, Bordro ve Kıdem Tazminatı Parametreleri</h3>
+              <p class="text-[11px] text-slate-400">Yılda iki kez güncellenen kıdem tazminatı tavanını ve yeni personel kartı açarken otomatik gelecek SGK, yol ve yemek tutarlarını belirleyin.</p>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              <div class="p-4 rounded-xl bg-slate-950 border border-purple-500/35 space-y-1.5">
+                <label class="block text-purple-300 font-bold">⚖️ Kıdem Tazminatı Tavanı (₺)</label>
+                <input type="number" step="0.01" min="0" id="stgSeveranceCap" value="0" placeholder="0 = Tavan Sınırı Yok" class="w-full bg-slate-900 border border-purple-500/40 rounded-lg px-3 py-2 text-white font-bold">
+                <p class="text-[10px] text-slate-400">0 bırakılırsa personelin giydirilmiş brütü üzerinden tam hesaplanır; tutar girilirse yasal tavanı aşmaz.</p>
+              </div>
+
+              <div class="p-4 rounded-xl bg-slate-950 border border-sky-500/35 space-y-1.5">
+                <label class="block text-sky-300 font-bold">🏛️ Tahmini İşveren SGK/Vergi (%)</label>
+                <input type="number" step="0.1" min="0" max="150" id="stgDefSgkPct" value="35" class="w-full bg-slate-900 border border-sky-500/40 rounded-lg px-3 py-2 text-white font-bold">
+                <p class="text-[10px] text-slate-400">Yeni personel eklerken net maaş girdiğinizde SGK maliyet kutusunu bu orana göre otomatik önerir.</p>
+              </div>
+
+              <div class="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-1.5">
+                <label class="block text-amber-300 font-bold">🚌 Varsayılan Aylık Yol (₺)</label>
+                <input type="number" step="1" min="0" id="stgDefRoad" value="0" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-white font-bold">
+                <p class="text-[10px] text-slate-400">Yeni personel kişi kartı formunda varsayılan aylık yol ücreti olarak gelir.</p>
+              </div>
+
+              <div class="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-1.5">
+                <label class="block text-emerald-300 font-bold">🍽️ Varsayılan Aylık Yemek (₺)</label>
+                <input type="number" step="1" min="0" id="stgDefMeal" value="0" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-white font-bold">
+                <p class="text-[10px] text-slate-400">Yeni personel kişi kartı formunda varsayılan aylık yemek tutarı olarak gelir.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- =============================================================== -->
+          <!-- PANEL 5: BANKA LİSTESİ, POS/PLATFORM ORANLARI & VALÖR GÜNLERİ   -->
+          <!-- =============================================================== -->
+          <div id="stg-panel-bankpos" class="stg-panel hidden space-y-5">
+            <div class="border-b border-slate-800 pb-2">
+              <h3 class="text-sm font-bold text-amber-300">🏦 5. Çalışılan Bankalar, POS / Online Platform Komisyon Oranları ve Valör Günleri</h3>
+              <p class="text-[11px] text-slate-400">Çek/kart/kredi formlarında çıkan banka listesini ve Yemeksepeti, GetirYemek, Uber Eats, POS komisyon/valör ayarlarını yönetin.</p>
+            </div>
+
+            <!-- Çalışılan Bankalar Listesi -->
+            <div class="p-4 rounded-xl bg-slate-950 border border-sky-500/30 space-y-3">
+              <div class="flex flex-wrap items-center justify-between gap-2">
+                <div class="font-bold text-sky-300">🏦 Kayıtlı Bankalar Öneri Listesi &amp; Çek Karnesi Varsayılan Bankası</div>
+                <div class="flex items-center gap-2">
+                  <span class="text-slate-400">Varsayılan Şirket Çek Bankası:</span>
+                  <input type="text" id="stgDefCheckBank" value="VakıfBank" class="bg-slate-900 border border-sky-500/40 rounded-lg px-2.5 py-1 text-white font-bold w-36">
+                </div>
+              </div>
+              <div class="flex gap-2">
+                <input type="text" id="stgNewBankInput" placeholder="Yeni banka adı ekle (Örn: Albaraka Türk, Fibabanka...)" class="flex-1 bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-white">
+                <button type="button" id="btnAddStgBank" class="px-4 py-2 rounded-lg bg-sky-500 hover:bg-sky-400 text-slate-950 font-bold">+ Banka Ekle</button>
+              </div>
+              <div id="stgBanksPillsList" class="flex flex-wrap gap-1.5"></div>
+            </div>
+
+            <!-- POS & Online Satış Platformları Komisyon + Valör Tablosu -->
+            <div class="p-4 rounded-xl bg-slate-950 border border-pink-500/30 space-y-3">
+              <div class="font-bold text-pink-300">🛵 POS &amp; Online Satış Platformları Varsayılan Komisyon Oranları ve Valör (Hesaba Geçiş) Günleri</div>
+              <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse text-xs">
+                  <thead>
+                    <tr class="text-slate-400 border-b border-slate-800 uppercase text-[11px]">
+                      <th class="py-2 pr-2">Kanal / Platform Adı</th>
+                      <th class="py-2 px-2 w-32">Komisyon (%)</th>
+                      <th class="py-2 px-2 w-32">Fatura KDV (%)</th>
+                      <th class="py-2 px-2 w-32">Valör (Gün)</th>
+                      <th class="py-2 pl-2 w-12 text-center">Sil</th>
+                    </tr>
+                  </thead>
+                  <tbody id="stgSalesChannelsBody" class="divide-y divide-slate-800/60"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- =============================================================== -->
+          <!-- PANEL 6: ŞİFRE, OTOMATİK KİLİT SÜRESİ & YETKİLENDİRME           -->
+          <!-- =============================================================== -->
+          <div id="stg-panel-security" class="stg-panel hidden space-y-5">
+            <div class="border-b border-slate-800 pb-2">
+              <h3 class="text-sm font-bold text-amber-300">🔐 6. Şifre Yönetimi, Otomatik Kilit Süresi ve Salt-Okunur (Muhasebe/Ortak) Yetkisi</h3>
+              <p class="text-[11px] text-slate-400">Hareketsizlik kilidi süresini seçin, düzenleme kilidi davranışını ayarlayın ve şifre/kullanıcı hesaplarını yönetin.</p>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div class="p-4 rounded-xl bg-slate-950 border border-amber-500/35 space-y-2">
+                <label class="block font-bold text-amber-300">⏱️ Otomatik Oturum Kilitleme Süresi (Hareketsizlik)</label>
+                <select id="stgSessionTimeoutHours" class="w-full bg-slate-900 border border-amber-500/40 rounded-lg px-3 py-2 text-white font-semibold">
+                  <option value="1">1 Saat Hareketsizlikten Sonra Şifre Sor</option>
+                  <option value="4">4 Saat Hareketsizlikten Sonra Şifre Sor</option>
+                  <option value="12">12 Saat Hareketsizlikten Sonra Şifre Sor</option>
+                  <option value="24" selected>24 Saat Hareketsizlikten Sonra Şifre Sor (Varsayılan)</option>
+                  <option value="72">3 Gün (72 Saat) Açık Kalsın</option>
+                  <option value="168">7 Gün (1 Hafta) Açık Kalsın</option>
+                </select>
+                <p class="text-[11px] text-slate-400">Üst sağdaki <strong>🔐 Kilitle</strong> tuşuna basmadığınız sürece bu süre boyunca şifresiz açılır.</p>
+              </div>
+
+              <div class="p-4 rounded-xl bg-slate-950 border border-emerald-500/35 space-y-2">
+                <label class="block font-bold text-emerald-300">🔓 Girişte Düzenleme Kilidi (Silme/Düzeltme Koruması) Durumu</label>
+                <select id="stgDefaultEditUnlock" class="w-full bg-slate-900 border border-emerald-500/40 rounded-lg px-3 py-2 text-white font-semibold">
+                  <option value="LOCKED">Güvenli Mod: Girişte 🔒 Kilitli Başlasın (Yanlış Silmeyi Önler)</option>
+                  <option value="UNLOCKED">Hızlı Mod: Girişte 🔓 Kilit Açık Başlasın</option>
+                </select>
+                <p class="text-[11px] text-slate-400">Kayıt silerken veya eski çekleri değiştirirken kaza ile silmeyi önleyen emniyet kilididir.</p>
+              </div>
+            </div>
+
+            <div class="p-5 rounded-xl bg-slate-950 border border-slate-800 flex flex-wrap items-center justify-between gap-4">
+              <div class="space-y-1">
+                <div class="text-sm font-bold text-white">🔑 Kullanıcı Şifreleri &amp; Salt-Okunur (Sadece Görüntüleme) Hesap Ekle</div>
+                <p class="text-xs text-slate-400">Kendi şifrenizi değiştirebilir, Rüstem Bey veya Mali Müşaviriniz için <strong>Tam Yetkili</strong> ya da <strong>Sadece Görüntüleme (Salt Okunur)</strong> kullanıcısı açabilirsiniz.</p>
+              </div>
+              <button id="btnUserSecurity" type="button" class="px-4 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-bold transition flex items-center gap-2 shadow-lg">
+                <span>🔑</span>
+                <span id="hdrActiveUserSpan">Şifreler</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- =============================================================== -->
+          <!-- PANEL 7: BULUT, VADE UYARI SİSTEMİ, YEDEK & SİLİNENİ GERİ ALMA  -->
+          <!-- =============================================================== -->
+          <div id="stg-panel-data" class="stg-panel hidden space-y-5">
+            <div class="border-b border-slate-800 pb-2">
+              <h3 class="text-sm font-bold text-amber-300">☁️ 7. Vade Uyarı Sistemi, Canlı Bulut, Yedekleme, Tek Sekme Sıfırlama &amp; Geri Alma</h3>
+              <p class="text-[11px] text-slate-400">Yaklaşan ödemeler için kaç gün önceden uyarı alacağınızı seçin, bulut/JSON yedeklerinizi yönetin veya silinen kayıtları tek tıkla geri yükleyin.</p>
+            </div>
+
+            <!-- Vade Uyarı Ayarları -->
+            <div class="p-4 rounded-xl bg-amber-950/20 border border-amber-500/40 space-y-3">
+              <div class="flex flex-wrap items-center justify-between gap-2">
+                <div>
+                  <div class="font-bold text-amber-300">🔔 Yaklaşan Çek, Vergi/SGK, Kredi Kartı ve Kredi Vade Uyarı Sistemi</div>
+                  <div class="text-[11px] text-slate-400">Belirlediğiniz gün sayısına giren ödenmemiş kayıtlar üst menüde <strong>🔔 Yaklaşan Ödeme</strong> rozeti olarak parlar.</div>
+                </div>
+                <label class="flex items-center gap-2 cursor-pointer font-bold text-emerald-300">
+                  <input type="checkbox" id="stgAlertsEnabled" checked class="rounded accent-emerald-500 w-4 h-4">
+                  <span>Üst Bar Vade Uyarıları Aktif</span>
+                </label>
+              </div>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label class="block text-slate-300 font-semibold mb-1">Şirket &amp; Şahsi Çek Vadelerine Kaç Gün Kala Uyarsın?</label>
+                  <input type="number" min="0" max="60" id="stgAlertCheckDays" value="5" class="w-full bg-slate-950 border border-amber-500/40 rounded-lg px-3 py-2 text-white font-bold">
+                </div>
+                <div>
+                  <label class="block text-slate-300 font-semibold mb-1">Vergi/SGK, Kredi Kartı ve Kredi Taksitlerine Kaç Gün Kala Uyarsın?</label>
+                  <input type="number" min="0" max="60" id="stgAlertTaxCardDays" value="3" class="w-full bg-slate-950 border border-amber-500/40 rounded-lg px-3 py-2 text-white font-bold">
+                </div>
+              </div>
+            </div>
+
+            <!-- Bulut ve JSON Yedekleme -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div class="p-4 rounded-xl bg-slate-950 border border-sky-500/35 space-y-2.5">
+                <div class="font-bold text-sky-300">☁️ Bilgisayar &amp; Telefon Canlı Bulut Eşitleme</div>
+                <p class="text-[11px] text-slate-400">Firebase şifreli bulut adresinizi görüntüleyin veya manuel senkronizasyon tetikleyin.</p>
+                <button id="btnCloudSync" type="button" class="px-4 py-2 rounded-xl bg-sky-500/20 hover:bg-sky-500/30 text-sky-300 border border-sky-500/40 text-xs font-bold transition flex items-center gap-2">
+                  <span id="cloudStatusDot">☁️</span>
+                  <span id="cloudStatusText">Bulut Eşitleme</span>
+                </button>
+              </div>
+
+              <div class="p-4 rounded-xl bg-slate-950 border border-emerald-500/35 space-y-2.5">
+                <div class="font-bold text-emerald-300">💾 Bilgisayara / Telefona Dosya Yedeği Al &amp; Geri Yükle</div>
+                <p class="text-[11px] text-slate-400">Tüm verilerinizi istediğiniz an `.json` dosyası olarak cihazınıza indirebilir veya geri yükleyebilirsiniz.</p>
+                <div class="flex flex-wrap gap-2">
+                  <button id="btnBackupJson" type="button" class="px-4 py-2 rounded-xl bg-emerald-500/20 hover:bg-emerald-500/35 text-emerald-300 border border-emerald-500/40 text-xs font-bold transition">💾 Yedek Al</button>
+                  <label class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-xs font-bold transition cursor-pointer">
+                    📂 Yükle
+                    <input type="file" id="inputRestoreJson" accept=".json" class="hidden">
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <!-- Son Silinen Kayıtları Geri Alma (Undo / Çöp Kutusu) -->
+            <div class="p-4 rounded-xl bg-slate-950 border border-purple-500/35 space-y-3">
+              <div class="flex items-center justify-between">
+                <div>
+                  <div class="font-bold text-purple-300">↩️ Son Silinen Kayıtları Geri Alma Kutusu (Yanlış Silmeye Karşı Güvence)</div>
+                  <div class="text-[11px] text-slate-400">Sildiğiniz son 10 işlem bağlantılı kasa ve P&amp;L kayıtlarıyla birlikte burada saklanır; tek tıkla geri alabilirsiniz.</div>
+                </div>
+              </div>
+              <div id="stgUndoTrashList" class="space-y-2 max-h-48 overflow-y-auto custom-scrollbar"></div>
+            </div>
+
+            <!-- Seçmeli Modül Sıfırlama & Tam Sıfırlama -->
+            <div class="p-4 rounded-xl bg-rose-950/15 border border-rose-500/35 space-y-3">
+              <div class="font-bold text-rose-300">🧹 Seçmeli (Tek Sekme) Sıfırlama veya Tüm Verileri Sıfırlama</div>
+              <div class="grid grid-cols-1 sm:grid-cols-12 gap-2 items-center">
+                <select id="stgSelectiveResetModule" class="sm:col-span-6 bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-white font-semibold">
+                  <option value="EXPENSES">Sadece Masraf Kodları Hareketlerini Temizle</option>
+                  <option value="TAXES">Sadece Vergi &amp; SGK Tahakkuklarını Temizle</option>
+                  <option value="COMMISSIONS">Sadece POS &amp; Online Komisyon Kayıtlarını Temizle</option>
+                  <option value="INVOICES">Sadece Faturalar Listesini Temizle</option>
+                  <option value="PNL_DIRECT">Sadece Doğrudan P&amp;L Ciro/Gider Kayıtlarını Temizle</option>
+                  <option value="KASA">Sadece Kasa Defteri Hareketlerini Temizle</option>
+                </select>
+                <button type="button" id="btnRunSelectiveReset" class="sm:col-span-3 py-2 px-3 rounded-lg bg-amber-500/20 hover:bg-amber-500/35 text-amber-300 border border-amber-500/40 font-bold">Seçili Sekmeyi Temizle</button>
+                <button id="btnResetZero" type="button" class="sm:col-span-3 py-2 px-3 rounded-lg bg-rose-500/20 hover:bg-rose-500/35 text-rose-300 border border-rose-500/40 font-bold">🧹 Sıfırla (0 ₺)</button>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Alt Kaydet Çubuğu -->
+      <div class="px-6 py-3 bg-slate-950/90 border-t border-slate-800 flex items-center justify-between gap-3 shrink-0 text-xs">
+        <span class="text-slate-400">Değişiklikler kaydedildiğinde şifreli kasanıza ve canlı bulut hesabınıza otomatik işlenir.</span>
+        <div class="flex items-center gap-2">
+          <button type="button" id="btnCancelSettingsCenter" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold">Vazgeç</button>
+          <button type="button" id="btnSaveAllSettingsBottom" class="px-5 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold shadow-lg">💾 Tüm Ayarları Kaydet &amp; Kapat</button>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <!-- Sıfırlama Onay Modalı -->
   <div id="resetModal" class="fixed inset-0 z-50 hidden bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
@@ -3526,7 +3986,21 @@
     const STORAGE_KEY = 'emas_tema_world_clean_v5';
     const VAULT_STORAGE_KEY = 'emas_finans_encrypted_vault_v1';
     const SESSION_STORAGE_KEY = 'emas_finans_active_session_v1';
-    const SESSION_TIMEOUT_MS = 24 * 60 * 60 * 1000; // Tam 24 saat hareketsizlik sınırı
+    const SESSION_TIMEOUT_MS = 24 * 60 * 60 * 1000; // Varsayılan 24 saat
+    const TIMEOUT_CFG_KEY = 'emas_finans_timeout_hours_v1';
+    function getSessionTimeoutHours() {
+      try {
+        if (typeof state === 'object' && state && state.settings && Number(state.settings.sessionTimeoutHours) > 0) {
+          return Number(state.settings.sessionTimeoutHours);
+        }
+        const savedH = Number(localStorage.getItem(TIMEOUT_CFG_KEY));
+        if (savedH > 0) return savedH;
+      } catch (e) {}
+      return 24;
+    }
+    function getSessionTimeoutMs() {
+      return getSessionTimeoutHours() * 60 * 60 * 1000;
+    }
     const SETUP_ACTIVATION_SHA256 = '21f34c14dda47fa39b237392193a665237fb55bbae752776c5c52becbc8f6f63';
     const CLOUD_CFG_KEY = 'emas_woka_cloud_cfg_v1';
     let cloudPollTimer = null;
@@ -3836,15 +4310,52 @@
     ];
 
     const DEFAULT_SALES_CHANNELS = [
-      { id: 'CH_POS_VAKIF', name: 'VakıfBank Fiziki POS', defaultRate: 2.39, commVat: 0 },
-      { id: 'CH_POS_DIGER', name: 'Diğer Banka Fiziki POS', defaultRate: 2.50, commVat: 0 },
-      { id: 'CH_YEMEKSEPETI', name: 'Yemeksepeti', defaultRate: 12.00, commVat: 20 },
-      { id: 'CH_GETIRYEMEK', name: 'GetirYemek', defaultRate: 12.00, commVat: 20 },
-      { id: 'CH_TRENDYOL', name: 'Trendyol Yemek', defaultRate: 12.00, commVat: 20 },
-      { id: 'CH_UBEREATS', name: 'Uber Eats', defaultRate: 15.00, commVat: 20 },
-      { id: 'CH_MIGROSYEMEK', name: 'Migros Yemek', defaultRate: 12.00, commVat: 20 },
-      { id: 'CH_YEMEKKARTI', name: 'Yemek Kartları (Multinet / Ticket / Pluxee / Setcard)', defaultRate: 6.50, commVat: 20 }
+      { id: 'CH_POS_VAKIF', name: 'VakıfBank Fiziki POS', defaultRate: 2.39, commVat: 0, valorDays: 1 },
+      { id: 'CH_POS_DIGER', name: 'Diğer Banka Fiziki POS', defaultRate: 2.50, commVat: 0, valorDays: 1 },
+      { id: 'CH_YEMEKSEPETI', name: 'Yemeksepeti', defaultRate: 12.00, commVat: 20, valorDays: 15 },
+      { id: 'CH_GETIRYEMEK', name: 'GetirYemek', defaultRate: 12.00, commVat: 20, valorDays: 15 },
+      { id: 'CH_TRENDYOL', name: 'Trendyol Yemek', defaultRate: 12.00, commVat: 20, valorDays: 15 },
+      { id: 'CH_UBEREATS', name: 'Uber Eats', defaultRate: 15.00, commVat: 20, valorDays: 15 },
+      { id: 'CH_MIGROSYEMEK', name: 'Migros Yemek', defaultRate: 12.00, commVat: 20, valorDays: 15 },
+      { id: 'CH_YEMEKKARTI', name: 'Yemek Kartları (Multinet / Ticket / Pluxee / Setcard)', defaultRate: 6.50, commVat: 20, valorDays: 30 }
     ];
+
+    const ALL_MAIN_TAB_KEYS = [
+      'kasadefteri', 'contractors', 'invoices', 'expenses', 'taxes', 'personnel',
+      'commissions', 'cardsloans', 'onurchecks', 'companychecks', 'partners', 'pnl'
+    ];
+
+    const DEFAULT_BANK_SUGGESTIONS = [
+      'VakıfBank', 'Garanti BBVA', 'Yapı Kredi', 'Türkiye İş Bankası', 'Akbank',
+      'QNB', 'Ziraat Bankası', 'Halkbank', 'DenizBank', 'TEB', 'Kuveyt Türk'
+    ];
+
+    const DEFAULT_SETTINGS = {
+      taxOffice: '',
+      taxNumber: '',
+      checkShareOnur: 50,
+      checkShareRustem: 50,
+      uiScale: 'NORMAL',
+      defaultFormsMode: 'CLOSED',
+      tabOrder: [...ALL_MAIN_TAB_KEYS],
+      hiddenTabs: [],
+      defPurchaseVat: 20,
+      defSalesVat: 10,
+      defTevkifat: 0,
+      monthlyLateRate: 4.5,
+      customTaxCodes: [],
+      severanceCap: 0,
+      defSgkPct: 35,
+      defRoad: 0,
+      defMeal: 0,
+      defCheckBank: 'VakıfBank',
+      bankList: [...DEFAULT_BANK_SUGGESTIONS],
+      sessionTimeoutHours: 24,
+      defaultEditUnlock: 'LOCKED',
+      alertsEnabled: true,
+      alertCheckDays: 5,
+      alertTaxCardDays: 3
+    };
 
     const DEFAULT_COMPANY_CARDS = [
       {
@@ -4055,7 +4566,9 @@
       commissionEntries: [],
       companyCards: JSON.parse(JSON.stringify(DEFAULT_COMPANY_CARDS)),
       cardTransactions: [],
-      bankLoans: []
+      bankLoans: [],
+      settings: JSON.parse(JSON.stringify(DEFAULT_SETTINGS)),
+      undoHistory: []
     };
 
     function normalizeStateObj(p) {
@@ -4119,11 +4632,31 @@
       if (!Array.isArray(p.employees)) p.employees = [];
       if (!Array.isArray(p.employeeTransactions)) p.employeeTransactions = [];
       if (!Array.isArray(p.salesChannels) || p.salesChannels.length === 0) p.salesChannels = JSON.parse(JSON.stringify(DEFAULT_SALES_CHANNELS));
+      p.salesChannels.forEach(ch => {
+        if (typeof ch.valorDays !== 'number') {
+          ch.valorDays = ch.id && ch.id.startsWith('CH_POS_') ? 1 : (ch.id === 'CH_YEMEKKARTI' ? 30 : 15);
+        }
+      });
       if (!Array.isArray(p.commissionEntries)) p.commissionEntries = [];
       if (!Array.isArray(p.companyCards) || p.companyCards.length === 0) p.companyCards = JSON.parse(JSON.stringify(DEFAULT_COMPANY_CARDS));
       p.companyCards.forEach(cc => { if (!Array.isArray(cc.statements)) cc.statements = []; });
       if (!Array.isArray(p.cardTransactions)) p.cardTransactions = [];
       if (!Array.isArray(p.bankLoans)) p.bankLoans = [];
+      p.settings = { ...JSON.parse(JSON.stringify(DEFAULT_SETTINGS)), ...(p.settings || {}) };
+      if (!Array.isArray(p.settings.tabOrder) || p.settings.tabOrder.length === 0) {
+        p.settings.tabOrder = [...ALL_MAIN_TAB_KEYS];
+      } else {
+        ALL_MAIN_TAB_KEYS.forEach(k => {
+          if (!p.settings.tabOrder.includes(k)) p.settings.tabOrder.push(k);
+        });
+      }
+      if (!Array.isArray(p.settings.hiddenTabs)) p.settings.hiddenTabs = [];
+      if (!Array.isArray(p.settings.customTaxCodes)) p.settings.customTaxCodes = [];
+      if (!Array.isArray(p.settings.bankList) || p.settings.bankList.length === 0) {
+        p.settings.bankList = [...DEFAULT_BANK_SUGGESTIONS];
+      }
+      if (!Array.isArray(p.undoHistory)) p.undoHistory = [];
+      p.undoHistory = p.undoHistory.slice(0, 10);
       return p;
     }
 
@@ -4225,16 +4758,26 @@
 
       // Özel başlıklar & sekme adları
       const at = state.appTexts || DEFAULT_STATE.appTexts;
+      const stg = state.settings || DEFAULT_SETTINGS;
       document.getElementById('hdrCompanyTitle').textContent = at.companyTitle || 'EMAS Finans';
       document.getElementById('hdrBranchBadge').textContent = at.branchBadge || 'WOKA • Tema World AVM';
       document.getElementById('hdrCapitalBadge').textContent = `Resmi Sermaye: ${fmt(state.officialCapital || 1000000)}`;
       document.getElementById('hdrSubtitle').textContent = at.subtitle || '';
+      const taxBadge = document.getElementById('hdrTaxInfoBadge');
+      if (taxBadge) {
+        const taxParts = [stg.taxOffice, stg.taxNumber ? `VKN: ${stg.taxNumber}` : ''].filter(Boolean);
+        taxBadge.textContent = taxParts.join(' • ');
+        taxBadge.classList.toggle('hidden', taxParts.length === 0);
+      }
 
       if (at.tabs) {
         document.querySelectorAll('.tab-btn').forEach(btn => {
           const tKey = btn.getAttribute('data-tab');
           if (at.tabs[tKey]) btn.textContent = at.tabs[tKey];
         });
+      }
+      if (typeof window.applySettingsToRuntime === 'function') {
+        window.applySettingsToRuntime(false);
       }
     }
 
@@ -4282,6 +4825,9 @@
       const dot = document.getElementById('cloudStatusDot');
       const txt = document.getElementById('cloudStatusText');
       const btn = document.getElementById('btnCloudSync');
+      const hdrDot = document.getElementById('hdrCloudLiveDot');
+      const hdrTxt = document.getElementById('hdrCloudLiveText');
+      const hdrPill = document.getElementById('hdrCloudQuickPill');
       const modalLine = document.getElementById('cloudModalStatusLine');
       const lastLine = document.getElementById('cloudModalLastSyncLine');
       if (!dot || !txt || !btn) return;
@@ -4289,21 +4835,32 @@
       if (!cloudConfig.enabled || !cloudConfig.dbUrl) {
         dot.textContent = '☁️';
         txt.textContent = 'Bulut Eşitleme (Kur)';
-        btn.className = 'px-3 py-1.5 rounded-lg bg-sky-500/15 hover:bg-sky-500/25 text-sky-300 border border-sky-500/30 text-xs font-semibold transition flex items-center gap-1.5';
+        btn.className = 'px-4 py-2 rounded-xl bg-sky-500/15 hover:bg-sky-500/25 text-sky-300 border border-sky-500/30 text-xs font-semibold transition flex items-center gap-2';
+        if (hdrDot) hdrDot.textContent = '☁️';
+        if (hdrTxt) hdrTxt.textContent = 'Bulut';
+        if (hdrPill) hdrPill.className = 'px-2.5 py-1.5 rounded-lg bg-slate-800/90 hover:bg-slate-700 text-slate-300 border border-slate-700 text-xs font-semibold transition flex items-center gap-1.5';
         if (modalLine) modalLine.textContent = 'Durum: Bulut eşitleme kapalı (Veriler bu cihazda saklanıyor)';
       } else if (statusMode === 'OK') {
         dot.textContent = '🟢';
         txt.textContent = `Canlı Eşitlendi (${cloudConfig.userName.split(' ')[0]})`;
-        btn.className = 'px-3 py-1.5 rounded-lg bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 border border-emerald-500/40 text-xs font-bold transition flex items-center gap-1.5';
+        btn.className = 'px-4 py-2 rounded-xl bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 border border-emerald-500/40 text-xs font-bold transition flex items-center gap-2';
+        if (hdrDot) hdrDot.textContent = '🟢';
+        if (hdrTxt) hdrTxt.textContent = 'Canlı Eşitlendi';
+        if (hdrPill) hdrPill.className = 'px-2.5 py-1.5 rounded-lg bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 border border-emerald-500/40 text-xs font-bold transition flex items-center gap-1.5';
         if (modalLine) modalLine.textContent = `Durum: 🟢 Canlı Bulut Bağlantısı Aktif (Oda: ${cloudConfig.roomKey})`;
         if (lastLine && detailMsg) lastLine.textContent = detailMsg;
       } else if (statusMode === 'SYNCING') {
         dot.textContent = '🔄';
         txt.textContent = 'Eşitleniyor...';
+        if (hdrDot) hdrDot.textContent = '🔄';
+        if (hdrTxt) hdrTxt.textContent = 'Eşitleniyor';
       } else if (statusMode === 'ERROR') {
         dot.textContent = '🔴';
         txt.textContent = 'Bulut Hatası';
-        btn.className = 'px-3 py-1.5 rounded-lg bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 border border-rose-500/40 text-xs font-bold transition flex items-center gap-1.5';
+        btn.className = 'px-4 py-2 rounded-xl bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 border border-rose-500/40 text-xs font-bold transition flex items-center gap-2';
+        if (hdrDot) hdrDot.textContent = '🔴';
+        if (hdrTxt) hdrTxt.textContent = 'Bulut Hatası';
+        if (hdrPill) hdrPill.className = 'px-2.5 py-1.5 rounded-lg bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 border border-rose-500/40 text-xs font-bold transition flex items-center gap-1.5';
         if (modalLine) modalLine.textContent = 'Durum: 🔴 Bağlantı kurulamadı (Firebase adresini ve Test Mode kurallarını kontrol edin)';
         if (lastLine && detailMsg) lastLine.textContent = detailMsg;
       }
@@ -4475,7 +5032,7 @@
       if (!activeAuthSession.unlocked) return false;
       const now = Date.now();
       const elapsed = now - (Number(activeAuthSession.lastActiveAt) || 0);
-      if (elapsed >= SESSION_TIMEOUT_MS) {
+      if (elapsed >= getSessionTimeoutMs()) {
         lockAppSession('TIMEOUT_24H');
         return false;
       }
@@ -4608,6 +5165,14 @@
 
     function unlockAndEnterApp(decryptedState, masterKeyB64, userEntry) {
       state = normalizeStateObj(decryptedState);
+      if (state.settings && state.settings.defaultEditUnlock === 'UNLOCKED') {
+        state.editUnlocked = true;
+      } else if (state.settings && state.settings.defaultEditUnlock === 'LOCKED') {
+        state.editUnlocked = false;
+      }
+      try {
+        localStorage.setItem(TIMEOUT_CFG_KEY, String(state.settings?.sessionTimeoutHours || 24));
+      } catch (e) {}
       activeAuthSession = {
         unlocked: true,
         username: userEntry.username,
@@ -4638,7 +5203,7 @@
       if (sessionWatchTimer) clearInterval(sessionWatchTimer);
       sessionWatchTimer = setInterval(() => {
         if (!activeAuthSession.unlocked) return;
-        if (Date.now() - (Number(activeAuthSession.lastActiveAt) || 0) >= SESSION_TIMEOUT_MS) {
+        if (Date.now() - (Number(activeAuthSession.lastActiveAt) || 0) >= getSessionTimeoutMs()) {
           lockAppSession('TIMEOUT_24H');
         }
       }, 30000);
@@ -4678,7 +5243,7 @@
       switchAuthMode('LOGIN');
 
       if (reason === 'TIMEOUT_24H') {
-        showAuthNotice('⏱️ Son girişinizden veya işleminizden bu yana 24 saat geçtiği için güvenlik kilidi otomatik devreye girdi. Devam etmek için şifrenizi girin.');
+        showAuthNotice(`⏱️ Son girişinizden veya işleminizden bu yana ${getSessionTimeoutHours()} saat geçtiği için güvenlik kilidi otomatik devreye girdi. Devam etmek için şifrenizi girin.`);
       } else {
         showAuthNotice('🔐 Oturumunuz kilitlendi. Tekrar giriş yapmak için kullanıcı adı ve şifrenizi girin.');
       }
@@ -4704,7 +5269,7 @@
         const savedSess = readSessionStorageObj();
         if (savedSess && savedSess.unlocked && savedSess.masterKeyB64) {
           const elapsed = Date.now() - (Number(savedSess.lastActiveAt) || 0);
-          if (elapsed < SESSION_TIMEOUT_MS) {
+          if (elapsed < getSessionTimeoutMs()) {
             try {
               const plainJson = await decryptWithRawKey(b64ToBytes(savedSess.masterKeyB64), localVault.encryptedState);
               const restoredState = JSON.parse(plainJson);
@@ -5081,6 +5646,9 @@
     function renderAll() {
       refreshPeriodOptions();
       applyLockAndCustomTexts();
+      if (typeof window.renderUpcomingAlertsBadgeAndModal === 'function') {
+        window.renderUpcomingAlertsBadgeAndModal();
+      }
       // Rehber görünürlüğü
       document.getElementById('globalGuideBox').classList.toggle('hidden', state.guideVisible === false);
 
@@ -5613,11 +6181,25 @@
     }
 
     // --- SEKME 4 RENDER: ŞİRKET ÇEKLERİ (VAKIFBANK) ---
+    function getCompanyCheckShareAmounts(amount) {
+      const a = Number(amount) || 0;
+      const oPct = Number(state.settings?.checkShareOnur ?? 50);
+      const rPct = Number(state.settings?.checkShareRustem ?? (100 - oPct));
+      const sumPct = (oPct + rPct) > 0 ? (oPct + rPct) : 100;
+      return {
+        oPct,
+        rPct,
+        onurAmt: a * (oPct / sumPct),
+        rustemAmt: a * (rPct / sumPct)
+      };
+    }
+
     function renderCompanyChecksSection() {
       const tbody = document.getElementById('companyChecksTableBody');
+      const shCfg = getCompanyCheckShareAmounts(100);
       const modeMap = {
         'COMPANY_BANK': 'Şirket Bankasından Ödendi',
-        'SPLIT_ONUR_RUSTEM': 'Onur (%50) & Rüstem (%50) Ödedi',
+        'SPLIT_ONUR_RUSTEM': `Onur (%${shCfg.oPct}) & Rüstem (%${shCfg.rPct}) Ödedi`,
         'ONUR_EXTERNAL': 'Onur Doğan Ödedi',
         'RUSTEM_EXTERNAL': 'Rüstem Çiftçi Ödedi'
       };
@@ -5625,7 +6207,7 @@
       tbody.innerHTML = state.companyChecks.map(c => {
         const isBos = c.status === 'BOS';
         const isPaid = c.status === 'ODENDI';
-        const half = (Number(c.amount) || 0) / 2;
+        const shares = getCompanyCheckShareAmounts(c.amount);
 
         return `
           <tr class="hover:bg-slate-800/40">
@@ -5643,7 +6225,7 @@
             </td>
             <td class="py-3 px-4 text-right font-bold ${isBos ? 'text-slate-500' : 'text-white'}">${fmt(c.amount)}</td>
             <td class="py-3 px-4 text-[11px] text-slate-300">
-              ${isBos ? '-' : `Onur: ${fmt(half)}<br>Rüstem: ${fmt(half)}`}
+              ${isBos ? '-' : `Onur (%${shares.oPct}): ${fmt(shares.onurAmt)}<br>Rüstem (%${shares.rPct}): ${fmt(shares.rustemAmt)}`}
             </td>
             <td class="py-3 px-4 text-center">
               ${isBos
@@ -5997,7 +6579,9 @@
       const startMs = emp.startDate ? new Date(emp.startDate).getTime() : Date.now();
       const endMs = (emp.status === 'AYRILDI' && emp.endDate) ? new Date(emp.endDate).getTime() : Date.now();
       const workedDays = Math.max(0, Math.floor((endMs - startMs) / (1000 * 60 * 60 * 24)));
-      const grossBase = Number(emp.grossSeveranceBase) > 0 ? Number(emp.grossSeveranceBase) : (netSal * 1.38 + meal + road);
+      const rawGrossBase = Number(emp.grossSeveranceBase) > 0 ? Number(emp.grossSeveranceBase) : (netSal * 1.38 + meal + road);
+      const sevCap = Number(state.settings?.severanceCap) || 0;
+      const grossBase = sevCap > 0 ? Math.min(rawGrossBase, sevCap) : rawGrossBase;
       const accruedSeverance = (grossBase * workedDays) / 365;
 
       const txs = (state.employeeTransactions || []).filter(t => t.empId === emp.id);
@@ -7684,6 +8268,7 @@
           const leafNo = parseInt(delCompLeafBtn.getAttribute('data-del-compchk-leaf'), 10);
           const chk = state.companyChecks.find(x => x.leafNo === leafNo);
           if (chk) {
+            recordUndoSnapshot(`Şirket Çeki Yaprak #${leafNo} (${chk.payee || 'Boş'})`);
             if (chk.status !== 'BOS') {
               if (chk.linkedKasaId) state.kasaEntries = state.kasaEntries.filter(k => k.id !== chk.linkedKasaId);
               if (chk.payTagId) state.kasaEntries = state.kasaEntries.filter(k => k.payTagId !== chk.payTagId);
@@ -7776,6 +8361,8 @@
         if (delPnlBtn) {
           if (!requireUnlock('P&L kaydını silmek')) return;
           const pid = delPnlBtn.getAttribute('data-del-pnl');
+          const _delPe = state.pnlEntries.find(x => x.id === pid);
+          recordUndoSnapshot(`P&L Kaydı: ${_delPe ? (_delPe.desc || fmt(_delPe.amount)) : pid}`);
           state.pnlEntries = state.pnlEntries.filter(x => x.id !== pid);
           saveState();
           renderAll();
@@ -7787,6 +8374,8 @@
         if (delPaBtn) {
           if (!requireUnlock('Ortak cari kaydını silmek')) return;
           const paid = delPaBtn.getAttribute('data-del-pa');
+          const _delPa = state.partnerAdjustments.find(x => x.id === paid);
+          recordUndoSnapshot(`Ortak Cari Hareketi: ${_delPa ? (_delPa.note || fmt(_delPa.amount)) : paid}`);
           state.partnerAdjustments = state.partnerAdjustments.filter(x => x.id !== paid);
           saveState();
           renderAll();
@@ -7822,6 +8411,8 @@
         if (delKasa) {
           if (!requireUnlock('Kaydı silmek')) return;
           const kid = delKasa.getAttribute('data-del-kasa');
+          const _delK = state.kasaEntries.find(x => x.id === kid);
+          recordUndoSnapshot(`Kasa Kaydı: ${_delK ? (_delK.desc || fmt(_delK.amount)) : kid}`);
           state.kasaEntries = state.kasaEntries.filter(x => x.id !== kid);
           state.onurChecks = state.onurChecks.filter(x => x.linkedKasaId !== kid);
           state.companyChecks.forEach(c => {
@@ -7856,6 +8447,8 @@
         if (delOb) {
           if (!requireUnlock('Takvim kaydını silmek')) return;
           const oid = delOb.getAttribute('data-del-ob');
+          const _delOb = (state.obligations || []).find(x => x.id === oid);
+          recordUndoSnapshot(`Takvim Kaydı: ${_delOb ? _delOb.title : oid}`);
           state.obligations = (state.obligations || []).filter(x => x.id !== oid);
           saveState();
           renderAll();
@@ -7867,6 +8460,8 @@
         if (delInv) {
           if (!requireUnlock('Faturayı silmek')) return;
           const iid = delInv.getAttribute('data-del-inv');
+          const _delInv = state.invoices.find(x => x.id === iid);
+          recordUndoSnapshot(`Fatura: ${_delInv ? ((_delInv.invoiceNo || '') + ' ' + fmt(_delInv.amount)) : iid}`);
           state.invoices = state.invoices.filter(x => x.id !== iid);
           saveState();
           renderAll();
@@ -7880,11 +8475,11 @@
           activePayCompanyLeaf = parseInt(openCompChk.getAttribute('data-open-compchk'), 10);
           const chk = state.companyChecks.find(x => x.leafNo === activePayCompanyLeaf);
           if (chk) {
-            const half = (Number(chk.amount) || 0) / 2;
+            const shares = getCompanyCheckShareAmounts(chk.amount);
             document.getElementById('payCompanyCheckInfo').innerHTML = `
-              <div class="font-bold text-white">VakıfBank Yaprak #${chk.leafNo} — ${fmt(chk.amount)}</div>
+              <div class="font-bold text-white">${chk.bankName || 'VakıfBank'} Yaprak #${chk.leafNo} — ${fmt(chk.amount)}</div>
               <div>Lehdar: <strong>${chk.payee}</strong> | Vade: <strong>${chk.dueDate}</strong></div>
-              <div class="text-amber-300">Onur Payı: ${fmt(half)} • Rüstem Payı: ${fmt(half)}</div>
+              <div class="text-amber-300">Onur Payı (%${shares.oPct}): ${fmt(shares.onurAmt)} • Rüstem Payı (%${shares.rPct}): ${fmt(shares.rustemAmt)}</div>
             `;
             document.getElementById('payCompanyCheckModal').classList.remove('hidden');
           }
@@ -7911,8 +8506,13 @@
             } else if (mode === 'RUSTEM_EXTERNAL') {
               state.kasaEntries.push({ id: tag, payTagId: tag, date: todayStr, direction: 'OUT', source: 'RUSTEM_PERSONAL', amount: amt, contractorId: '', taxStatus: 'KDVLI', desc: `VakıfBank Çek #${chk.leafNo} Ödemesi (${chk.payee}) — Rüstem Ödedi` });
             } else if (mode === 'SPLIT_ONUR_RUSTEM') {
-              state.kasaEntries.push({ id: tag + '_1', payTagId: tag, date: todayStr, direction: 'OUT', source: 'ONUR_PERSONAL', amount: amt / 2, contractorId: '', taxStatus: 'KDVLI', desc: `VakıfBank Çek #${chk.leafNo} (%50 Onur Payı - ${chk.payee})` });
-              state.kasaEntries.push({ id: tag + '_2', payTagId: tag, date: todayStr, direction: 'OUT', source: 'RUSTEM_PERSONAL', amount: amt / 2, contractorId: '', taxStatus: 'KDVLI', desc: `VakıfBank Çek #${chk.leafNo} (%50 Rüstem Payı - ${chk.payee})` });
+              const shares = getCompanyCheckShareAmounts(amt);
+              if (shares.onurAmt > 0) {
+                state.kasaEntries.push({ id: tag + '_1', payTagId: tag, date: todayStr, direction: 'OUT', source: 'ONUR_PERSONAL', amount: Number(shares.onurAmt.toFixed(2)), contractorId: '', taxStatus: 'KDVLI', desc: `${chk.bankName || 'VakıfBank'} Çek #${chk.leafNo} (%${shares.oPct} Onur Payı - ${chk.payee})` });
+              }
+              if (shares.rustemAmt > 0) {
+                state.kasaEntries.push({ id: tag + '_2', payTagId: tag, date: todayStr, direction: 'OUT', source: 'RUSTEM_PERSONAL', amount: Number(shares.rustemAmt.toFixed(2)), contractorId: '', taxStatus: 'KDVLI', desc: `${chk.bankName || 'VakıfBank'} Çek #${chk.leafNo} (%${shares.rPct} Rüstem Payı - ${chk.payee})` });
+              }
             }
             document.getElementById('payCompanyCheckModal').classList.add('hidden');
             activePayCompanyLeaf = null;
@@ -9152,6 +9752,7 @@ document.getElementById('btnToggleFullscreen').addEventListener('click', async (
           const eid = delExpBtn.getAttribute('data-del-expense');
           const ex = (state.expenseEntries || []).find(x => x.id === eid);
           if (ex) {
+            recordUndoSnapshot(`Masraf Kaydı: ${ex.desc || fmt(ex.amount)}`);
             if (ex.linkedPnlId) state.pnlEntries = state.pnlEntries.filter(p => p.id !== ex.linkedPnlId);
             if (ex.linkedKasaId) state.kasaEntries = state.kasaEntries.filter(k => k.id !== ex.linkedKasaId);
             state.expenseEntries = state.expenseEntries.filter(x => x.id !== eid);
@@ -9175,8 +9776,10 @@ document.getElementById('btnToggleFullscreen').addEventListener('click', async (
               <div class="text-[11px] text-slate-300">${tx.note || ''}</div>
               <div class="text-[11px] text-amber-300">Normal Vade: <strong>${tx.dueDate || '-'}</strong> • Asıl Tahakkuk: <strong class="text-white">${fmt(principal)}</strong></div>
             `;
-            document.getElementById('ptmPaidDate').value = document.getElementById('kdDate').value || tx.dueDate || '2026-11-23';
+            const initPaidD = document.getElementById('kdDate').value || tx.dueDate || '2026-11-23';
+            document.getElementById('ptmPaidDate').value = initPaidD;
             document.getElementById('ptmLateFee').value = lateFee > 0 ? lateFee : 0;
+            if (typeof window.updatePayTaxLateHint === 'function') window.updatePayTaxLateHint();
             document.getElementById('ptmSource').value = tx.paidSource || 'COMPANY_BANK';
             document.getElementById('ptmCardWrap').classList.toggle('hidden', document.getElementById('ptmSource').value !== 'COMPANY_CARD');
             updatePayTaxModalTotal();
@@ -9293,6 +9896,7 @@ document.getElementById('btnToggleFullscreen').addEventListener('click', async (
           const tid = delTaxBtn.getAttribute('data-del-tax');
           const tx = (state.taxEntries || []).find(x => x.id === tid);
           if (tx) {
+            recordUndoSnapshot(`Vergi/SGK Tahakkuku: [${tx.mainTaxCode || ''}] ${tx.period || ''}`);
             if (tx.linkedPnlId) state.pnlEntries = state.pnlEntries.filter(p => p.id !== tx.linkedPnlId);
             if (tx.linkedKasaId) state.kasaEntries = state.kasaEntries.filter(k => k.id !== tx.linkedKasaId);
             state.taxEntries = state.taxEntries.filter(x => x.id !== tid);
@@ -9309,6 +9913,7 @@ document.getElementById('btnToggleFullscreen').addEventListener('click', async (
           const etid = delEmpTxBtn.getAttribute('data-del-emptx');
           const et = (state.employeeTransactions || []).find(x => x.id === etid);
           if (et) {
+            recordUndoSnapshot(`Personel Hareketi: ${et.desc || fmt(et.amount)}`);
             if (et.linkedPnlId) state.pnlEntries = state.pnlEntries.filter(p => p.id !== et.linkedPnlId);
             if (et.linkedKasaId) state.kasaEntries = state.kasaEntries.filter(k => k.id !== et.linkedKasaId);
             state.employeeTransactions = state.employeeTransactions.filter(x => x.id !== etid);
@@ -9343,6 +9948,7 @@ document.getElementById('btnToggleFullscreen').addEventListener('click', async (
           const cid = delCommBtn.getAttribute('data-del-comm');
           const cm = (state.commissionEntries || []).find(x => x.id === cid);
           if (cm) {
+            recordUndoSnapshot(`POS/Komisyon Mutabakatı: ${cm.date} (${fmt(cm.grossSales)})`);
             if (cm.linkedRevPnlId) state.pnlEntries = state.pnlEntries.filter(p => p.id !== cm.linkedRevPnlId);
             if (cm.linkedCommPnlId) state.pnlEntries = state.pnlEntries.filter(p => p.id !== cm.linkedCommPnlId);
             if (cm.linkedKasaId) state.kasaEntries = state.kasaEntries.filter(k => k.id !== cm.linkedKasaId);
@@ -9390,6 +9996,8 @@ document.getElementById('btnToggleFullscreen').addEventListener('click', async (
           if (!requireUnlock('Şirket kartını silmek')) return;
           const ccid = delCCardBtn.getAttribute('data-del-ccard');
           if (state.companyCards.length > 1) {
+            const _delCc = state.companyCards.find(c => c.id === ccid);
+            recordUndoSnapshot(`Şirket Kredi Kartı: ${_delCc ? _delCc.cardName : ccid}`);
             state.companyCards = state.companyCards.filter(c => c.id !== ccid);
             saveState();
             populateSelects();
@@ -9431,6 +10039,7 @@ document.getElementById('btnToggleFullscreen').addEventListener('click', async (
           const lid = delLoanBtn.getAttribute('data-del-loan');
           const ln = (state.bankLoans || []).find(x => x.id === lid);
           if (ln) {
+            recordUndoSnapshot(`Banka Kredisi: ${ln.bankName} - ${ln.loanTitle}`);
             if (ln.linkedDepositKasaId) state.kasaEntries = state.kasaEntries.filter(k => k.id !== ln.linkedDepositKasaId);
             (ln.installments || []).forEach(ins => {
               if (ins.linkedKasaId) state.kasaEntries = state.kasaEntries.filter(k => k.id !== ins.linkedKasaId);
@@ -9689,6 +10298,889 @@ document.getElementById('btnToggleFullscreen').addEventListener('click', async (
         };
         reader.readAsText(file);
       });
+
+      // =======================================================================
+      // v8 MERKEZİ AYARLAR SİSTEMİ (7 PANEL), VADE UYARILARI & GERİ ALMA MOTORU
+      // =======================================================================
+      const UNDO_TRACKED_KEYS = [
+        'kasaEntries', 'invoices', 'onurChecks', 'companyChecks', 'partnerAdjustments',
+        'pnlEntries', 'obligations', 'expenseCodes', 'expenseEntries', 'taxEntries',
+        'employees', 'employeeTransactions', 'salesChannels', 'commissionEntries',
+        'companyCards', 'cardTransactions', 'bankLoans'
+      ];
+
+      function recordUndoSnapshot(label) {
+        if (!Array.isArray(state.undoHistory)) state.undoHistory = [];
+        const snapData = {};
+        UNDO_TRACKED_KEYS.forEach(k => {
+          snapData[k] = JSON.parse(JSON.stringify(state[k] || []));
+        });
+        state.undoHistory.unshift({
+          id: 'UNDO_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6),
+          ts: Date.now(),
+          timeStr: new Date().toLocaleString('tr-TR'),
+          label: label || 'Silinen Kayıt',
+          data: snapData
+        });
+        state.undoHistory = state.undoHistory.slice(0, 10);
+      }
+      window.recordUndoSnapshot = recordUndoSnapshot;
+
+      function restoreUndoSnapshot(undoId) {
+        const entry = (state.undoHistory || []).find(u => u.id === undoId);
+        if (!entry || !entry.data) return;
+        UNDO_TRACKED_KEYS.forEach(k => {
+          if (entry.data[k] !== undefined) {
+            state[k] = JSON.parse(JSON.stringify(entry.data[k]));
+          }
+        });
+        state.undoHistory = (state.undoHistory || []).filter(u => u.id !== undoId);
+        saveState();
+        populateSelects();
+        renderAll();
+        renderSettingsUndoList();
+        showToast(`↩️ "${entry.label}" bağlantılı tüm hesap hareketleriyle geri yüklendi!`);
+      }
+
+      let lastAppliedFormsMode = null;
+
+      function syncCustomGibCodesAndBanks() {
+        const stg = state.settings || DEFAULT_SETTINGS;
+        // Özel GİB Vergi Kodları -> GIB_CODE_NAMES & #gibTaxCodeSuggestions
+        (stg.customTaxCodes || []).forEach(item => {
+          if (item && item.code && item.name) {
+            GIB_CODE_NAMES[String(item.code).trim()] = String(item.name).trim();
+          }
+        });
+        const gibDl = document.getElementById('gibTaxCodeSuggestions');
+        if (gibDl) {
+          gibDl.innerHTML = Object.entries(GIB_CODE_NAMES)
+            .map(([c, n]) => `<option value="${c}">${c} - ${n}</option>`)
+            .join('');
+        }
+        // Bankalar -> #bankSuggestionsList & varsayılan çek bankası alanları
+        const bankDl = document.getElementById('bankSuggestionsList');
+        const banks = Array.isArray(stg.bankList) && stg.bankList.length > 0 ? stg.bankList : DEFAULT_BANK_SUGGESTIONS;
+        if (bankDl) {
+          bankDl.innerHTML = banks.map(b => `<option value="${b}"></option>`).join('');
+        }
+        const defBank = (stg.defCheckBank || 'VakıfBank').trim();
+        ['kdCompCheckBank', 'scpCompBank', 'dccBank', 'blBankName'].forEach(id => {
+          const el = document.getElementById(id);
+          if (el && (!el.value || el.value === 'VakıfBank')) el.value = defBank;
+        });
+      }
+
+      function applyDefaultRatesToEmptyForms() {
+        const stg = state.settings || DEFAULT_SETTINGS;
+        ['sciVatRate', 'ciVatRate', 'exVatRate'].forEach(id => {
+          const el = document.getElementById(id);
+          if (el && document.activeElement !== el) el.value = String(stg.defPurchaseVat ?? 20);
+        });
+        ['sciTevkifatRate', 'ciTevkifatRate', 'exTevkifatRate'].forEach(id => {
+          const el = document.getElementById(id);
+          if (el && document.activeElement !== el) el.value = String(stg.defTevkifat ?? 0);
+        });
+        const ptVat = document.getElementById('ptVat');
+        if (ptVat && document.activeElement !== ptVat && document.getElementById('ptType')?.value === 'INCOME') {
+          const sVatStr = String(stg.defSalesVat ?? 10);
+          if (!Array.from(ptVat.options).some(o => o.value === sVatStr)) {
+            const opt = document.createElement('option');
+            opt.value = sVatStr;
+            opt.textContent = `%${sVatStr} (Varsayılan Satış KDV)`;
+            ptVat.prepend(opt);
+          }
+          ptVat.value = sVatStr;
+        }
+        const neRoad = document.getElementById('neRoad');
+        if (neRoad && (Number(neRoad.value) === 0) && (Number(stg.defRoad) > 0)) neRoad.value = stg.defRoad;
+        const neMeal = document.getElementById('neMeal');
+        if (neMeal && (Number(neMeal.value) === 0) && (Number(stg.defMeal) > 0)) neMeal.value = stg.defMeal;
+      }
+
+      function applyFormsOpenClosedPreference(forceApply) {
+        const stg = state.settings || DEFAULT_SETTINGS;
+        const mode = stg.defaultFormsMode === 'OPEN' ? 'OPEN' : 'CLOSED';
+        if (!forceApply && lastAppliedFormsMode === mode) return;
+        lastAppliedFormsMode = mode;
+        const shouldOpen = mode === 'OPEN';
+        document.querySelectorAll('.fold-window').forEach(cardEl => {
+          const fid = cardEl.getAttribute('data-fold-card');
+          const bodyEl = fid ? document.getElementById(fid) : null;
+          if (!bodyEl) return;
+          // 3'lü cari alt grubunda hepsini aynı anda açmak yerine kapalı bırak, ana formları aç/kapat
+          if (cardEl.closest('[data-fold-group]') && shouldOpen) return;
+          bodyEl.classList.toggle('hidden', !shouldOpen);
+          syncFoldLayout(cardEl);
+        });
+      }
+
+      function applySettingsToRuntime(forceFormsSync) {
+        const stg = state.settings || DEFAULT_SETTINGS;
+        // 1. UI Yazı & Tablo Ölçeği
+        const root = document.documentElement;
+        root.classList.remove('ui-scale-compact', 'ui-scale-normal', 'ui-scale-large');
+        if (stg.uiScale === 'COMPACT') root.classList.add('ui-scale-compact');
+        else if (stg.uiScale === 'LARGE') root.classList.add('ui-scale-large');
+        else root.classList.add('ui-scale-normal');
+
+        // 2. 12 Ana Sekme Sıralaması ve Gizleme
+        const navBar = document.getElementById('mainNavTabsBar');
+        if (navBar) {
+          const hiddenSet = new Set(stg.hiddenTabs || []);
+          const order = Array.isArray(stg.tabOrder) ? stg.tabOrder : ALL_MAIN_TAB_KEYS;
+          order.forEach(tKey => {
+            const btn = navBar.querySelector(`.tab-btn[data-tab="${tKey}"]`);
+            if (btn) {
+              navBar.appendChild(btn);
+              btn.classList.toggle('hidden', hiddenSet.has(tKey));
+            }
+          });
+          // Eğer aktif sekme gizlendiyse ilk görünür sekmeye geç
+          const activePanel = document.querySelector('.tab-panel:not(.hidden)');
+          const activeKey = activePanel ? activePanel.id.replace(/^tab-/, '') : 'kasadefteri';
+          if (hiddenSet.has(activeKey)) {
+            const firstVisible = order.find(k => !hiddenSet.has(k)) || 'kasadefteri';
+            switchTab(firstVisible);
+          }
+        }
+
+        // 3. Özel GİB kodları, bankalar ve varsayılan oranlar
+        syncCustomGibCodesAndBanks();
+        applyDefaultRatesToEmptyForms();
+        applyFormsOpenClosedPreference(!!forceFormsSync);
+      }
+      window.applySettingsToRuntime = applySettingsToRuntime;
+
+      // Yeni personel formunda net maaş yazılınca SGK maliyetini stg.defSgkPct oranıyla öner
+      let neSgkManuallyEdited = false;
+      const neSgkEl = document.getElementById('neSgkCost');
+      const neNetEl = document.getElementById('neNetSalary');
+      if (neSgkEl) {
+        neSgkEl.addEventListener('input', () => { neSgkManuallyEdited = true; });
+      }
+      if (neNetEl && neSgkEl) {
+        neNetEl.addEventListener('input', () => {
+          if (neSgkManuallyEdited) return;
+          const netVal = parseFloat(neNetEl.value) || 0;
+          const pct = Number(state.settings?.defSgkPct ?? 35);
+          neSgkEl.value = netVal > 0 ? ((netVal * pct) / 100).toFixed(2) : '0';
+        });
+      }
+      document.getElementById('btnToggleNewEmployeeForm')?.addEventListener('click', () => {
+        neSgkManuallyEdited = false;
+        const stg = state.settings || DEFAULT_SETTINGS;
+        if (document.getElementById('neRoad')) document.getElementById('neRoad').value = Number(stg.defRoad) || 0;
+        if (document.getElementById('neMeal')) document.getElementById('neMeal').value = Number(stg.defMeal) || 0;
+      });
+
+      // Vergi Ödeme Modalında Gecikme Zammı Referans Hesabı
+      function updatePayTaxLateHint() {
+        const tid = document.getElementById('ptmTaxId')?.value;
+        const tx = (state.taxEntries || []).find(x => x.id === tid);
+        if (!tx || !tx.dueDate) return;
+        const paidDateStr = document.getElementById('ptmPaidDate')?.value;
+        if (!paidDateStr) return;
+        const dueMs = new Date(tx.dueDate + 'T00:00:00').getTime();
+        const paidMs = new Date(paidDateStr + 'T00:00:00').getTime();
+        const diffDays = Math.floor((paidMs - dueMs) / (1000 * 60 * 60 * 24));
+        const sumBox = document.getElementById('ptmSummaryBox');
+        const oldHint = document.getElementById('ptmAutoLateHintBar');
+        if (oldHint) oldHint.remove();
+        if (diffDays > 0 && sumBox) {
+          const { principal } = getTaxEntryTotals(tx);
+          const mRate = Number(state.settings?.monthlyLateRate ?? 4.5);
+          const estFee = Number(((principal * (mRate / 100) * diffDays) / 30).toFixed(2));
+          const bar = document.createElement('div');
+          bar.id = 'ptmAutoLateHintBar';
+          bar.className = 'mt-1.5 pt-1.5 border-t border-slate-800 flex flex-wrap items-center justify-between gap-2 text-[11px] text-rose-300';
+          bar.innerHTML = `<span>⚠️ Vadesinden <strong>${diffDays} gün</strong> geç ödeme — Aylık %${mRate} referans gecikme zammı tahmini: <strong>${fmt(estFee)}</strong></span>
+            <button type="button" id="btnApplySuggestedLateFee" class="px-2 py-0.5 rounded bg-rose-500/25 hover:bg-rose-500/40 text-rose-200 font-bold">Faize Uygula</button>`;
+          sumBox.appendChild(bar);
+          bar.querySelector('#btnApplySuggestedLateFee')?.addEventListener('click', () => {
+            document.getElementById('ptmLateFee').value = estFee;
+            updatePayTaxModalTotal();
+          });
+        }
+      }
+      window.updatePayTaxLateHint = updatePayTaxLateHint;
+      document.getElementById('ptmPaidDate')?.addEventListener('change', updatePayTaxLateHint);
+
+      // =======================================================================
+      // DİNAMİK YAKLAŞAN ÇEK, VERGİ/SGK, KART VE KREDİ VADE UYARI SİSTEMİ
+      // =======================================================================
+      function computeUpcomingDueAlerts() {
+        const stg = state.settings || DEFAULT_SETTINGS;
+        const chkDays = Math.max(0, Number(stg.alertCheckDays ?? 5));
+        const taxCardDays = Math.max(0, Number(stg.alertTaxCardDays ?? 3));
+        const now = new Date();
+        const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+        const dayDiffFromToday = (isoDate) => {
+          if (!isoDate || !/^\d{4}-\d{2}-\d{2}$/.test(isoDate)) return null;
+          const [y, m, d] = isoDate.split('-').map(Number);
+          const target = new Date(y, m - 1, d).getTime();
+          return Math.round((target - todayStart) / (1000 * 60 * 60 * 24));
+        };
+
+        const items = [];
+
+        // 1. Şirket Çekleri
+        (state.companyChecks || []).forEach(c => {
+          if (c.status !== 'BOS' && c.status !== 'ODENDI' && c.dueDate && (Number(c.amount) || 0) > 0) {
+            const diff = dayDiffFromToday(c.dueDate);
+            if (diff !== null && diff <= chkDays) {
+              items.push({
+                kind: '🏦 Şirket Çeki',
+                title: `${c.bankName || 'VakıfBank'} Yaprak #${c.leafNo} — ${c.payee || 'Lehdar'}`,
+                dueDate: c.dueDate,
+                daysLeft: diff,
+                amount: Number(c.amount) || 0,
+                tab: 'companychecks'
+              });
+            }
+          }
+        });
+
+        // 2. Onur Şahsi Çekleri
+        (state.onurChecks || []).forEach(oc => {
+          if (oc.status === 'VADELI_BEKLIYOR' && oc.dueDate && (Number(oc.amount) || 0) > 0) {
+            const diff = dayDiffFromToday(oc.dueDate);
+            if (diff !== null && diff <= chkDays) {
+              items.push({
+                kind: '📝 Onur Şahsi Çeki',
+                title: `${oc.bankName || ''} (${oc.serialNo || ''}) — ${oc.payee || ''}`,
+                dueDate: oc.dueDate,
+                daysLeft: diff,
+                amount: Number(oc.amount) || 0,
+                tab: 'onurchecks'
+              });
+            }
+          }
+        });
+
+        // 3. Vergi & SGK Tahakkukları
+        (state.taxEntries || []).forEach(tx => {
+          if (tx.status !== 'ODENDI' && tx.dueDate) {
+            const { grandTotal: total } = getTaxEntryTotals(tx);
+            const diff = dayDiffFromToday(tx.dueDate);
+            if (total > 0 && diff !== null && diff <= taxCardDays) {
+              items.push({
+                kind: '🏛️ Vergi / SGK',
+                title: `[${tx.mainTaxCode || '0003'}] ${tx.period || ''} ${tx.note ? '• ' + tx.note : ''}`,
+                dueDate: tx.dueDate,
+                daysLeft: diff,
+                amount: total,
+                tab: 'taxes'
+              });
+            }
+          }
+        });
+
+        // 4. Şirket Kredi Kartları (Güncel borcu > 0 olanlar)
+        (state.companyCards || []).forEach(card => {
+          const st = getCardStats(card.id);
+          if (st.currentDebt > 0) {
+            let dueIso = card.nextDueDate && /^\d{4}-\d{2}-\d{2}$/.test(card.nextDueDate) ? card.nextDueDate : '';
+            if (!dueIso) {
+              const dueDay = Math.min(28, Math.max(1, parseInt(card.dueDay, 10) || 25));
+              let cand = new Date(now.getFullYear(), now.getMonth(), dueDay);
+              if (cand.getTime() < todayStart - 5 * 86400000) {
+                cand = new Date(now.getFullYear(), now.getMonth() + 1, dueDay);
+              }
+              dueIso = `${cand.getFullYear()}-${String(cand.getMonth() + 1).padStart(2, '0')}-${String(cand.getDate()).padStart(2, '0')}`;
+            }
+            const diff = dayDiffFromToday(dueIso);
+            if (diff !== null && diff <= taxCardDays) {
+              items.push({
+                kind: '💳 Şirket Kredi Kartı',
+                title: `${card.cardName} (*${card.last4 || ''}) Dönem Borcu`,
+                dueDate: dueIso,
+                daysLeft: diff,
+                amount: st.currentDebt,
+                tab: 'cardsloans'
+              });
+            }
+          }
+        });
+
+        // 5. Banka Kredisi Taksitleri
+        (state.bankLoans || []).forEach(ln => {
+          (ln.installments || []).forEach(ins => {
+            if (ins.status !== 'ODENDI' && ins.dueDate) {
+              const diff = dayDiffFromToday(ins.dueDate);
+              if (diff !== null && diff <= taxCardDays) {
+                items.push({
+                  kind: '🏦 Kredi Taksiti',
+                  title: `${ln.bankName} — ${ln.loanTitle} (#${ins.no}. Taksit)`,
+                  dueDate: ins.dueDate,
+                  daysLeft: diff,
+                  amount: Number(ins.totalAmt) || 0,
+                  tab: 'cardsloans'
+                });
+              }
+            }
+          });
+        });
+
+        // 6. Sabit Vergi / Kira Ödeme Takvimi
+        (state.obligations || []).forEach(ob => {
+          if (!ob.paid && ob.dueDate && (Number(ob.amount) || 0) > 0) {
+            const diff = dayDiffFromToday(ob.dueDate);
+            if (diff !== null && diff <= taxCardDays) {
+              items.push({
+                kind: '📅 Takvim Ödemesi',
+                title: ob.title || 'Planlı Ödeme',
+                dueDate: ob.dueDate,
+                daysLeft: diff,
+                amount: Number(ob.amount) || 0,
+                tab: 'pnl'
+              });
+            }
+          }
+        });
+
+        items.sort((a, b) => a.daysLeft - b.daysLeft);
+        return items;
+      }
+
+      function renderUpcomingAlertsBadgeAndModal() {
+        const btn = document.getElementById('hdrUpcomingAlertsBtn');
+        const txt = document.getElementById('hdrUpcomingAlertsText');
+        const body = document.getElementById('upcomingAlertsListBody');
+        const sub = document.getElementById('upcomingAlertsSubtitle');
+        if (!btn || !txt) return;
+
+        const stg = state.settings || DEFAULT_SETTINGS;
+        const alerts = computeUpcomingDueAlerts();
+        const totalSum = alerts.reduce((s, x) => s + x.amount, 0);
+        const hasOverdueOrToday = alerts.some(x => x.daysLeft <= 0);
+
+        if (stg.alertsEnabled === false || alerts.length === 0) {
+          btn.classList.add('hidden');
+        } else {
+          btn.classList.remove('hidden');
+          txt.textContent = `${alerts.length} Yaklaşan Ödeme (${fmt(totalSum)})`;
+          btn.className = hasOverdueOrToday
+            ? 'px-3 py-1.5 rounded-lg bg-rose-500/25 hover:bg-rose-500/40 text-rose-200 border border-rose-400/60 text-xs font-bold transition flex items-center gap-1.5 shadow-md'
+            : 'px-3 py-1.5 rounded-lg bg-amber-500/20 hover:bg-amber-500/35 text-amber-300 border border-amber-400/50 text-xs font-bold transition flex items-center gap-1.5 shadow-md';
+        }
+
+        if (sub) {
+          sub.textContent = `Çekler için ${stg.alertCheckDays ?? 5} gün, Vergi/Kart/Kredi için ${stg.alertTaxCardDays ?? 3} gün öncesinden uyarı veriliyor • Toplam: ${fmt(totalSum)}`;
+        }
+        if (body) {
+          if (alerts.length === 0) {
+            body.innerHTML = `<div class="p-6 text-center text-slate-400 bg-slate-950 rounded-xl border border-slate-800">🎉 Seçtiğiniz gün eşiği içinde vadesi yaklaşan veya geciken ödenmemiş çek, vergi, kart ya da kredi taksiti bulunmuyor.</div>`;
+          } else {
+            body.innerHTML = alerts.map(item => {
+              const badge = item.daysLeft < 0
+                ? `<span class="px-2 py-0.5 rounded-full bg-rose-500/25 text-rose-300 font-bold">${Math.abs(item.daysLeft)} Gün Gecikti!</span>`
+                : item.daysLeft === 0
+                  ? `<span class="px-2 py-0.5 rounded-full bg-rose-500 text-white font-bold">BUGÜN SON GÜN!</span>`
+                  : `<span class="px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 font-bold">${item.daysLeft} Gün Kaldı</span>`;
+              return `
+                <div class="p-3.5 rounded-xl bg-slate-950 border ${item.daysLeft <= 0 ? 'border-rose-500/45' : 'border-slate-800'} flex flex-wrap items-center justify-between gap-3">
+                  <div class="space-y-0.5">
+                    <div class="flex items-center gap-2">
+                      <span class="text-[11px] font-bold text-sky-300">${item.kind}</span>
+                      ${badge}
+                      <span class="text-[11px] text-slate-400">Vade: <strong class="text-white">${item.dueDate}</strong></span>
+                    </div>
+                    <div class="font-semibold text-white text-sm">${item.title}</div>
+                  </div>
+                  <div class="flex items-center gap-3">
+                    <div class="text-right font-bold text-amber-300 text-sm">${fmt(item.amount)}</div>
+                    <button type="button" data-alert-goto-tab="${item.tab}" class="px-3 py-1.5 rounded-lg bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs">Sekmeye Git →</button>
+                  </div>
+                </div>
+              `;
+            }).join('');
+          }
+        }
+      }
+      window.renderUpcomingAlertsBadgeAndModal = renderUpcomingAlertsBadgeAndModal;
+
+      // =======================================================================
+      // 7 PANELLİ MERKEZİ AYARLAR PENCERESİ DOLDURMA & ETKİLEŞİMLERİ
+      // =======================================================================
+      let draftTabOrder = [];
+      let draftHiddenTabs = new Set();
+      let draftCustomTaxCodes = [];
+      let draftBankList = [];
+      let draftSalesChannels = [];
+
+      function switchSettingsPanel(panelKey) {
+        document.querySelectorAll('.stg-panel').forEach(p => p.classList.add('hidden'));
+        const target = document.getElementById('stg-panel-' + panelKey);
+        if (target) target.classList.remove('hidden');
+        document.querySelectorAll('.stg-nav-btn').forEach(btn => {
+          const active = btn.getAttribute('data-stg-nav') === panelKey;
+          btn.className = active
+            ? 'stg-nav-btn w-full text-left px-3.5 py-2.5 rounded-xl bg-amber-500 text-slate-950 font-bold flex items-center gap-2 whitespace-nowrap transition'
+            : 'stg-nav-btn w-full text-left px-3.5 py-2.5 rounded-xl text-slate-300 hover:bg-slate-800 font-semibold flex items-center gap-2 whitespace-nowrap transition';
+        });
+      }
+
+      function renderSettingsTabsEditor() {
+        const container = document.getElementById('stgTabsListContainer');
+        if (!container) return;
+        const atTabs = (state.appTexts && state.appTexts.tabs) ? state.appTexts.tabs : DEFAULT_STATE.appTexts.tabs;
+        container.innerHTML = draftTabOrder.map((tKey, idx) => {
+          const isVisible = !draftHiddenTabs.has(tKey);
+          const curLabel = document.querySelector(`[data-stg-tab-label="${tKey}"]`)?.value ?? (atTabs[tKey] || tKey);
+          return `
+            <div class="p-2.5 rounded-xl bg-slate-900 border ${isVisible ? 'border-slate-800' : 'border-rose-500/30 opacity-65'} flex items-center gap-2">
+              <input type="checkbox" data-stg-tab-vis="${tKey}" ${isVisible ? 'checked' : ''} class="rounded accent-emerald-500 w-4 h-4 shrink-0 cursor-pointer" title="Sekmeyi Göster / Gizle">
+              <span class="text-[11px] font-mono text-slate-500 w-5 text-center">${idx + 1}.</span>
+              <input type="text" data-stg-tab-label="${tKey}" value="${String(curLabel).replace(/"/g, '&quot;')}" class="flex-1 bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-1.5 text-white font-medium text-xs">
+              <div class="flex items-center gap-1 shrink-0">
+                <button type="button" data-stg-tab-up="${idx}" ${idx === 0 ? 'disabled' : ''} class="px-2 py-1 rounded bg-slate-800 hover:bg-slate-700 disabled:opacity-30 text-slate-200 text-xs" title="Yukarı Taşı">▲</button>
+                <button type="button" data-stg-tab-down="${idx}" ${idx === draftTabOrder.length - 1 ? 'disabled' : ''} class="px-2 py-1 rounded bg-slate-800 hover:bg-slate-700 disabled:opacity-30 text-slate-200 text-xs" title="Aşağı Taşı">▼</button>
+              </div>
+            </div>
+          `;
+        }).join('');
+      }
+
+      function renderSettingsCustomGibCodes() {
+        const box = document.getElementById('stgCustomGibCodesList');
+        if (!box) return;
+        const baseEntries = Object.entries(GIB_CODE_NAMES);
+        const customMap = new Set(draftCustomTaxCodes.map(c => c.code));
+        box.innerHTML = [
+          ...draftCustomTaxCodes.map(c => `
+            <span class="px-2.5 py-1 rounded-lg bg-indigo-500/20 border border-indigo-400/40 text-indigo-200 text-[11px] font-semibold flex items-center gap-1.5">
+              <strong class="text-amber-300 font-mono">${c.code}</strong> ${c.name}
+              <button type="button" data-del-custom-gib="${c.code}" class="text-rose-400 hover:text-rose-200 font-bold ml-1">✕</button>
+            </span>
+          `),
+          ...baseEntries.filter(([k]) => !customMap.has(k)).map(([k, v]) => `
+            <span class="px-2 py-1 rounded-lg bg-slate-900 border border-slate-800 text-slate-400 text-[10px]">
+              <strong class="text-slate-200 font-mono">${k}</strong> ${v}
+            </span>
+          `)
+        ].join('');
+      }
+
+      function renderSettingsBanksPills() {
+        const box = document.getElementById('stgBanksPillsList');
+        if (!box) return;
+        box.innerHTML = draftBankList.map((b, idx) => `
+          <span class="px-2.5 py-1 rounded-lg bg-sky-500/15 border border-sky-500/35 text-sky-200 text-xs font-semibold flex items-center gap-1.5">
+            <span>🏦 ${b}</span>
+            ${draftBankList.length > 1 ? `<button type="button" data-del-stg-bank="${idx}" class="text-rose-400 hover:text-rose-200 font-bold">✕</button>` : ''}
+          </span>
+        `).join('');
+      }
+
+      function renderSettingsSalesChannels() {
+        const tbody = document.getElementById('stgSalesChannelsBody');
+        if (!tbody) return;
+        tbody.innerHTML = draftSalesChannels.map((ch, idx) => `
+          <tr>
+            <td class="py-2 pr-2">
+              <input type="text" data-stg-ch-name="${idx}" value="${String(ch.name || '').replace(/"/g, '&quot;')}" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1.5 text-white font-semibold">
+            </td>
+            <td class="py-2 px-2">
+              <input type="number" step="0.01" min="0" max="100" data-stg-ch-rate="${idx}" value="${Number(ch.defaultRate) || 0}" class="w-full bg-slate-900 border border-pink-500/40 rounded-lg px-2.5 py-1.5 text-pink-300 font-bold">
+            </td>
+            <td class="py-2 px-2">
+              <input type="number" step="0.01" min="0" max="100" data-stg-ch-vat="${idx}" value="${Number(ch.commVat) || 0}" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1.5 text-white">
+            </td>
+            <td class="py-2 px-2">
+              <input type="number" step="1" min="0" max="120" data-stg-ch-valor="${idx}" value="${Number(ch.valorDays ?? 1)}" class="w-full bg-slate-900 border border-amber-500/40 rounded-lg px-2.5 py-1.5 text-amber-300 font-bold">
+            </td>
+            <td class="py-2 pl-2 text-center">
+              ${draftSalesChannels.length > 1 ? `<button type="button" data-del-stg-ch="${idx}" class="text-rose-400 hover:text-rose-300 font-bold px-1.5">✕</button>` : '-'}
+            </td>
+          </tr>
+        `).join('');
+      }
+
+      function renderSettingsUndoList() {
+        const box = document.getElementById('stgUndoTrashList');
+        if (!box) return;
+        const list = state.undoHistory || [];
+        if (list.length === 0) {
+          box.innerHTML = `<div class="p-3 rounded-lg bg-slate-900 border border-slate-800 text-slate-400 text-[11px]">Henüz silinmiş bir kayıt bulunmuyor. Herhangi bir kaydı sildiğinizde otomatik yedeği burada belirecektir.</div>`;
+          return;
+        }
+        box.innerHTML = list.map(u => `
+          <div class="p-2.5 rounded-xl bg-slate-900 border border-purple-500/30 flex flex-wrap items-center justify-between gap-2">
+            <div>
+              <div class="font-bold text-white text-xs">${u.label}</div>
+              <div class="text-[10px] text-slate-400">Silinme Zamanı: ${u.timeStr || '-'}</div>
+            </div>
+            <button type="button" data-restore-undo="${u.id}" class="px-3 py-1.5 rounded-lg bg-purple-500 hover:bg-purple-400 text-slate-950 font-bold text-xs">↩️ Tek Tıkla Geri Yükle</button>
+          </div>
+        `).join('');
+      }
+
+      function openSettingsCenterModal(initialPanel) {
+        const stg = state.settings || DEFAULT_SETTINGS;
+        const at = state.appTexts || DEFAULT_STATE.appTexts;
+
+        // Panel 1: Şirket, Sermaye & Ortaklar
+        document.getElementById('stgCompanyTitle').value = at.companyTitle || 'EMAS Finans';
+        document.getElementById('stgBranchBadge').value = at.branchBadge || 'EMAS A.Ş. • WOKA Tema World AVM';
+        document.getElementById('stgTaxOffice').value = stg.taxOffice || '';
+        document.getElementById('stgTaxNumber').value = stg.taxNumber || '';
+        document.getElementById('stgSubtitle').value = at.subtitle || '';
+        document.getElementById('stgOfficialCapital').value = Number(state.officialCapital) || 1000000;
+        document.getElementById('stgCheckShareOnur').value = stg.checkShareOnur ?? 50;
+        document.getElementById('stgCheckShareRustem').value = stg.checkShareRustem ?? 50;
+
+        document.getElementById('stgPartnersContainer').innerHTML = (state.partners || []).map((p, idx) => `
+          <div class="grid grid-cols-1 sm:grid-cols-12 gap-2 items-center">
+            <div class="sm:col-span-4">
+              <input type="text" data-stg-p-name="${idx}" value="${String(p.name || '').replace(/"/g, '&quot;')}" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1.5 text-white font-bold">
+            </div>
+            <div class="sm:col-span-3">
+              <input type="number" step="0.01" data-stg-p-share="${idx}" value="${Number(p.share) || 0}" class="w-full bg-slate-900 border border-purple-500/40 rounded-lg px-2.5 py-1.5 text-purple-300 font-bold">
+            </div>
+            <div class="sm:col-span-5">
+              <input type="text" data-stg-p-role="${idx}" value="${String(p.role || '').replace(/"/g, '&quot;')}" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1.5 text-slate-200">
+            </div>
+          </div>
+        `).join('');
+
+        // Panel 2: Görünüm & Sekmeler
+        document.getElementById('stgUiScale').value = stg.uiScale || 'NORMAL';
+        document.getElementById('stgDefaultFormsMode').value = stg.defaultFormsMode || 'CLOSED';
+        draftTabOrder = [...(stg.tabOrder || ALL_MAIN_TAB_KEYS)];
+        draftHiddenTabs = new Set(stg.hiddenTabs || []);
+        renderSettingsTabsEditor();
+
+        // Panel 3: Vergi, KDV & P&L Satırları
+        document.getElementById('stgDefPurchaseVat').value = stg.defPurchaseVat ?? 20;
+        document.getElementById('stgDefSalesVat').value = stg.defSalesVat ?? 10;
+        document.getElementById('stgDefTevkifat').value = stg.defTevkifat ?? 0;
+        document.getElementById('stgMonthlyLateRate').value = stg.monthlyLateRate ?? 4.5;
+        draftCustomTaxCodes = JSON.parse(JSON.stringify(stg.customTaxCodes || []));
+        renderSettingsCustomGibCodes();
+
+        document.getElementById('stgPnlGroupsContainer').innerHTML = getPnlGroups().map((g, idx) => `
+          <div>
+            <label class="block text-[10px] text-slate-400 mb-0.5">${g.type === 'INCOME' ? '➕ Gelir Kalemi' : '➖ Gider Kalemi'} (${g.code})</label>
+            <input type="text" data-stg-pnl-title="${idx}" value="${String(g.title || '').replace(/"/g, '&quot;')}" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1.5 text-white font-medium">
+          </div>
+        `).join('');
+
+        // Panel 4: İK Parametreleri
+        document.getElementById('stgSeveranceCap').value = stg.severanceCap ?? 0;
+        document.getElementById('stgDefSgkPct').value = stg.defSgkPct ?? 35;
+        document.getElementById('stgDefRoad').value = stg.defRoad ?? 0;
+        document.getElementById('stgDefMeal').value = stg.defMeal ?? 0;
+
+        // Panel 5: Banka & POS
+        document.getElementById('stgDefCheckBank').value = stg.defCheckBank || 'VakıfBank';
+        draftBankList = [...(stg.bankList || DEFAULT_BANK_SUGGESTIONS)];
+        draftSalesChannels = JSON.parse(JSON.stringify(state.salesChannels || DEFAULT_SALES_CHANNELS));
+        renderSettingsBanksPills();
+        renderSettingsSalesChannels();
+
+        // Panel 6: Güvenlik & Kilit Süresi
+        document.getElementById('stgSessionTimeoutHours').value = String(stg.sessionTimeoutHours || 24);
+        document.getElementById('stgDefaultEditUnlock').value = stg.defaultEditUnlock || 'LOCKED';
+
+        // Panel 7: Vade Uyarıları & Geri Alma
+        document.getElementById('stgAlertsEnabled').checked = stg.alertsEnabled !== false;
+        document.getElementById('stgAlertCheckDays').value = stg.alertCheckDays ?? 5;
+        document.getElementById('stgAlertTaxCardDays').value = stg.alertTaxCardDays ?? 3;
+        renderSettingsUndoList();
+
+        switchSettingsPanel(initialPanel || 'company');
+        document.getElementById('settingsCenterModal').classList.remove('hidden');
+      }
+
+      function saveAllSettingsFromCenter() {
+        if (!state.settings) state.settings = JSON.parse(JSON.stringify(DEFAULT_SETTINGS));
+        const stg = state.settings;
+
+        // Panel 1
+        state.appTexts.companyTitle = document.getElementById('stgCompanyTitle').value.trim() || 'EMAS Finans';
+        state.appTexts.branchBadge = document.getElementById('stgBranchBadge').value.trim() || 'EMAS A.Ş. • WOKA Tema World AVM';
+        stg.taxOffice = document.getElementById('stgTaxOffice').value.trim();
+        stg.taxNumber = document.getElementById('stgTaxNumber').value.trim();
+        state.appTexts.subtitle = document.getElementById('stgSubtitle').value.trim();
+        state.officialCapital = parseFloat(document.getElementById('stgOfficialCapital').value) || 1000000;
+        stg.checkShareOnur = Math.max(0, parseFloat(document.getElementById('stgCheckShareOnur').value) || 0);
+        stg.checkShareRustem = Math.max(0, parseFloat(document.getElementById('stgCheckShareRustem').value) || 0);
+
+        (state.partners || []).forEach((p, idx) => {
+          const nEl = document.querySelector(`[data-stg-p-name="${idx}"]`);
+          const sEl = document.querySelector(`[data-stg-p-share="${idx}"]`);
+          const rEl = document.querySelector(`[data-stg-p-role="${idx}"]`);
+          if (nEl && nEl.value.trim()) p.name = nEl.value.trim();
+          if (sEl) p.share = parseFloat(sEl.value) || 0;
+          if (rEl) p.role = rEl.value.trim();
+        });
+
+        // Panel 2
+        stg.uiScale = document.getElementById('stgUiScale').value || 'NORMAL';
+        const prevFormsMode = stg.defaultFormsMode;
+        stg.defaultFormsMode = document.getElementById('stgDefaultFormsMode').value || 'CLOSED';
+        // En az 1 sekme görünür kalmalı
+        if (draftHiddenTabs.size >= draftTabOrder.length) {
+          draftHiddenTabs.delete(draftTabOrder[0]);
+        }
+        stg.tabOrder = [...draftTabOrder];
+        stg.hiddenTabs = Array.from(draftHiddenTabs);
+        document.querySelectorAll('[data-stg-tab-label]').forEach(inp => {
+          const tk = inp.getAttribute('data-stg-tab-label');
+          if (tk && inp.value.trim()) state.appTexts.tabs[tk] = inp.value.trim();
+        });
+
+        // Panel 3
+        stg.defPurchaseVat = parseFloat(document.getElementById('stgDefPurchaseVat').value) || 0;
+        stg.defSalesVat = parseFloat(document.getElementById('stgDefSalesVat').value) || 0;
+        stg.defTevkifat = parseFloat(document.getElementById('stgDefTevkifat').value) || 0;
+        stg.monthlyLateRate = parseFloat(document.getElementById('stgMonthlyLateRate').value) || 0;
+        stg.customTaxCodes = JSON.parse(JSON.stringify(draftCustomTaxCodes));
+        const groups = getPnlGroups();
+        groups.forEach((g, idx) => {
+          const gEl = document.querySelector(`[data-stg-pnl-title="${idx}"]`);
+          if (gEl && gEl.value.trim()) g.title = gEl.value.trim();
+        });
+        state.pnlGroups = groups;
+
+        // Panel 4
+        stg.severanceCap = Math.max(0, parseFloat(document.getElementById('stgSeveranceCap').value) || 0);
+        stg.defSgkPct = Math.max(0, parseFloat(document.getElementById('stgDefSgkPct').value) || 0);
+        stg.defRoad = Math.max(0, parseFloat(document.getElementById('stgDefRoad').value) || 0);
+        stg.defMeal = Math.max(0, parseFloat(document.getElementById('stgDefMeal').value) || 0);
+
+        // Panel 5
+        stg.defCheckBank = document.getElementById('stgDefCheckBank').value.trim() || 'VakıfBank';
+        stg.bankList = draftBankList.length > 0 ? [...draftBankList] : [...DEFAULT_BANK_SUGGESTIONS];
+        draftSalesChannels.forEach((ch, idx) => {
+          const nm = document.querySelector(`[data-stg-ch-name="${idx}"]`);
+          const rt = document.querySelector(`[data-stg-ch-rate="${idx}"]`);
+          const vt = document.querySelector(`[data-stg-ch-vat="${idx}"]`);
+          const vl = document.querySelector(`[data-stg-ch-valor="${idx}"]`);
+          if (nm && nm.value.trim()) ch.name = nm.value.trim();
+          if (rt) ch.defaultRate = parseFloat(rt.value) || 0;
+          if (vt) ch.commVat = parseFloat(vt.value) || 0;
+          if (vl) ch.valorDays = parseInt(vl.value, 10) || 0;
+        });
+        state.salesChannels = JSON.parse(JSON.stringify(draftSalesChannels));
+
+        // Panel 6
+        stg.sessionTimeoutHours = parseInt(document.getElementById('stgSessionTimeoutHours').value, 10) || 24;
+        stg.defaultEditUnlock = document.getElementById('stgDefaultEditUnlock').value || 'LOCKED';
+        try {
+          localStorage.setItem(TIMEOUT_CFG_KEY, String(stg.sessionTimeoutHours));
+        } catch (e) {}
+
+        // Panel 7
+        stg.alertsEnabled = document.getElementById('stgAlertsEnabled').checked;
+        stg.alertCheckDays = Math.max(0, parseInt(document.getElementById('stgAlertCheckDays').value, 10) || 0);
+        stg.alertTaxCardDays = Math.max(0, parseInt(document.getElementById('stgAlertTaxCardDays').value, 10) || 0);
+
+        document.getElementById('settingsCenterModal').classList.add('hidden');
+        applySettingsToRuntime(prevFormsMode !== stg.defaultFormsMode);
+        saveState();
+        populateSelects();
+        renderAll();
+        showToast('⚙️ Tüm kurumsal ayarlar kaydedildi ve uygulandı!');
+      }
+
+      // Ayarlar Açma / Kapatma & Sol Menü Geçişleri
+      document.getElementById('btnOpenSettingsCenter').addEventListener('click', () => openSettingsCenterModal('company'));
+      document.getElementById('hdrCloudQuickPill').addEventListener('click', () => openSettingsCenterModal('data'));
+      document.getElementById('btnCloseSettingsCenter').addEventListener('click', () => document.getElementById('settingsCenterModal').classList.add('hidden'));
+      document.getElementById('btnCancelSettingsCenter').addEventListener('click', () => document.getElementById('settingsCenterModal').classList.add('hidden'));
+      document.getElementById('btnSaveAllSettingsTop').addEventListener('click', saveAllSettingsFromCenter);
+      document.getElementById('btnSaveAllSettingsBottom').addEventListener('click', saveAllSettingsFromCenter);
+
+      document.querySelectorAll('.stg-nav-btn').forEach(btn => {
+        btn.addEventListener('click', () => switchSettingsPanel(btn.getAttribute('data-stg-nav')));
+      });
+
+      // Çek paylaşım oranı birini yazınca diğerini otomatik 100'e tamamla
+      document.getElementById('stgCheckShareOnur').addEventListener('input', (e) => {
+        const v = Math.min(100, Math.max(0, parseFloat(e.target.value) || 0));
+        document.getElementById('stgCheckShareRustem').value = Number((100 - v).toFixed(2));
+      });
+      document.getElementById('stgCheckShareRustem').addEventListener('input', (e) => {
+        const v = Math.min(100, Math.max(0, parseFloat(e.target.value) || 0));
+        document.getElementById('stgCheckShareOnur').value = Number((100 - v).toFixed(2));
+      });
+
+      // Özel GİB Vergi Kodu Ekleme
+      document.getElementById('btnAddCustomGibCode').addEventListener('click', () => {
+        const code = document.getElementById('stgNewGibCode').value.trim();
+        const name = document.getElementById('stgNewGibName').value.trim();
+        if (!code || !name) {
+          showToast('Lütfen vergi kodunu (Örn: 9047) ve açıklamasını girin.');
+          return;
+        }
+        draftCustomTaxCodes = draftCustomTaxCodes.filter(x => x.code !== code);
+        draftCustomTaxCodes.push({ code, name });
+        document.getElementById('stgNewGibCode').value = '';
+        document.getElementById('stgNewGibName').value = '';
+        renderSettingsCustomGibCodes();
+      });
+
+      // Yeni Banka Ekleme
+      document.getElementById('btnAddStgBank').addEventListener('click', () => {
+        const bName = document.getElementById('stgNewBankInput').value.trim();
+        if (!bName) return;
+        if (!draftBankList.includes(bName)) draftBankList.push(bName);
+        document.getElementById('stgNewBankInput').value = '';
+        renderSettingsBanksPills();
+      });
+
+      // Seçmeli (Tek Sekme) Sıfırlama
+      document.getElementById('btnRunSelectiveReset').addEventListener('click', () => {
+        if (!requireUnlock('Seçili modül verilerini temizlemek')) return;
+        const mod = document.getElementById('stgSelectiveResetModule').value;
+        const modLabels = {
+          EXPENSES: 'Masraf Kodları Hareketleri',
+          TAXES: 'Vergi & SGK Tahakkukları',
+          COMMISSIONS: 'POS & Online Komisyon Kayıtları',
+          INVOICES: 'Faturalar Listesi',
+          PNL_DIRECT: 'Doğrudan P&L Ciro/Gider Kayıtları',
+          KASA: 'Kasa Defteri Hareketleri'
+        };
+        recordUndoSnapshot(`Toplu Sekme Temizliği: ${modLabels[mod] || mod}`);
+        if (mod === 'EXPENSES') {
+          const pnlIds = new Set((state.expenseEntries || []).map(x => x.linkedPnlId).filter(Boolean));
+          const kasaIds = new Set((state.expenseEntries || []).map(x => x.linkedKasaId).filter(Boolean));
+          state.pnlEntries = state.pnlEntries.filter(p => !pnlIds.has(p.id));
+          state.kasaEntries = state.kasaEntries.filter(k => !kasaIds.has(k.id));
+          state.expenseEntries = [];
+        } else if (mod === 'TAXES') {
+          const pnlIds = new Set((state.taxEntries || []).map(x => x.linkedPnlId).filter(Boolean));
+          const kasaIds = new Set((state.taxEntries || []).map(x => x.linkedKasaId).filter(Boolean));
+          state.pnlEntries = state.pnlEntries.filter(p => !pnlIds.has(p.id));
+          state.kasaEntries = state.kasaEntries.filter(k => !kasaIds.has(k.id));
+          state.taxEntries = [];
+        } else if (mod === 'COMMISSIONS') {
+          const pnlIds = new Set();
+          (state.commissionEntries || []).forEach(c => {
+            if (c.linkedRevPnlId) pnlIds.add(c.linkedRevPnlId);
+            if (c.linkedCommPnlId) pnlIds.add(c.linkedCommPnlId);
+          });
+          const kasaIds = new Set((state.commissionEntries || []).map(x => x.linkedKasaId).filter(Boolean));
+          state.pnlEntries = state.pnlEntries.filter(p => !pnlIds.has(p.id));
+          state.kasaEntries = state.kasaEntries.filter(k => !kasaIds.has(k.id));
+          state.commissionEntries = [];
+        } else if (mod === 'INVOICES') {
+          state.invoices = [];
+        } else if (mod === 'PNL_DIRECT') {
+          state.pnlEntries = [];
+        } else if (mod === 'KASA') {
+          state.kasaEntries = [];
+        }
+        saveState();
+        populateSelects();
+        renderAll();
+        renderSettingsUndoList();
+        showToast(`🧹 ${modLabels[mod] || mod} temizlendi (İsterseniz üstteki Geri Alma kutusundan geri yükleyebilirsiniz).`);
+      });
+
+      // Yaklaşan Vadeler Modalı Etkileşimleri
+      document.getElementById('hdrUpcomingAlertsBtn').addEventListener('click', () => {
+        renderUpcomingAlertsBadgeAndModal();
+        document.getElementById('upcomingAlertsModal').classList.remove('hidden');
+      });
+      document.getElementById('btnCloseAlertsModal').addEventListener('click', () => document.getElementById('upcomingAlertsModal').classList.add('hidden'));
+      document.getElementById('btnOkAlertsModal').addEventListener('click', () => document.getElementById('upcomingAlertsModal').classList.add('hidden'));
+      document.getElementById('btnJumpAlertSettings').addEventListener('click', () => {
+        document.getElementById('upcomingAlertsModal').classList.add('hidden');
+        openSettingsCenterModal('data');
+      });
+
+      // Ayarlar İçi Dinamik Liste Tıklamaları (Sekme Sıralama, GİB Sil, Banka Sil, Kanal Sil, Geri Al, Uyarıdan Sekmeye Git)
+      document.body.addEventListener('click', (e) => {
+        const upBtn = e.target.closest('[data-stg-tab-up]');
+        if (upBtn) {
+          const i = parseInt(upBtn.getAttribute('data-stg-tab-up'), 10);
+          if (i > 0) {
+            const tmp = draftTabOrder[i - 1];
+            draftTabOrder[i - 1] = draftTabOrder[i];
+            draftTabOrder[i] = tmp;
+            renderSettingsTabsEditor();
+          }
+          return;
+        }
+        const downBtn = e.target.closest('[data-stg-tab-down]');
+        if (downBtn) {
+          const i = parseInt(downBtn.getAttribute('data-stg-tab-down'), 10);
+          if (i >= 0 && i < draftTabOrder.length - 1) {
+            const tmp = draftTabOrder[i + 1];
+            draftTabOrder[i + 1] = draftTabOrder[i];
+            draftTabOrder[i] = tmp;
+            renderSettingsTabsEditor();
+          }
+          return;
+        }
+        const delGib = e.target.closest('[data-del-custom-gib]');
+        if (delGib) {
+          const code = delGib.getAttribute('data-del-custom-gib');
+          draftCustomTaxCodes = draftCustomTaxCodes.filter(c => c.code !== code);
+          renderSettingsCustomGibCodes();
+          return;
+        }
+        const delBank = e.target.closest('[data-del-stg-bank]');
+        if (delBank) {
+          const bi = parseInt(delBank.getAttribute('data-del-stg-bank'), 10);
+          if (draftBankList.length > 1) {
+            draftBankList.splice(bi, 1);
+            renderSettingsBanksPills();
+          }
+          return;
+        }
+        const delCh = e.target.closest('[data-del-stg-ch]');
+        if (delCh) {
+          const ci = parseInt(delCh.getAttribute('data-del-stg-ch'), 10);
+          if (draftSalesChannels.length > 1) {
+            draftSalesChannels.splice(ci, 1);
+            renderSettingsSalesChannels();
+          }
+          return;
+        }
+        const undoBtn = e.target.closest('[data-restore-undo]');
+        if (undoBtn) {
+          restoreUndoSnapshot(undoBtn.getAttribute('data-restore-undo'));
+          return;
+        }
+        const gotoAlertTab = e.target.closest('[data-alert-goto-tab]');
+        if (gotoAlertTab) {
+          const targetTab = gotoAlertTab.getAttribute('data-alert-goto-tab');
+          document.getElementById('upcomingAlertsModal').classList.add('hidden');
+          if (state.settings && Array.isArray(state.settings.hiddenTabs)) {
+            state.settings.hiddenTabs = state.settings.hiddenTabs.filter(t => t !== targetTab);
+            applySettingsToRuntime(false);
+          }
+          switchTab(targetTab);
+          return;
+        }
+      });
+
+      document.body.addEventListener('change', (e) => {
+        const visChk = e.target.closest('[data-stg-tab-vis]');
+        if (visChk) {
+          const tk = visChk.getAttribute('data-stg-tab-vis');
+          if (visChk.checked) draftHiddenTabs.delete(tk);
+          else draftHiddenTabs.add(tk);
+          renderSettingsTabsEditor();
+        }
+      });
+
+      // Ayarlar içinden alt modal açıldığında (Bulut, Şifreler, Rehber, Kurulum, Yazdır, Sıfırla) Ayarlar penceresini kapat ki çakışmasın
+      ['btnCloudSync', 'btnUserSecurity', 'btnInstallApp', 'btnToggleGuide', 'btnResetZero'].forEach(btnId => {
+        document.getElementById(btnId)?.addEventListener('click', () => {
+          document.getElementById('settingsCenterModal').classList.add('hidden');
+        });
+      });
+      document.getElementById('btnPrint')?.addEventListener('click', () => {
+        document.getElementById('settingsCenterModal').classList.add('hidden');
+      });
+
+      applySettingsToRuntime(true);
+      renderUpcomingAlertsBadgeAndModal();
     });
   </script>
   <script>
